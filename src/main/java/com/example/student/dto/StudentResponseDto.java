@@ -2,17 +2,17 @@ package com.example.student.dto;
 
 public class StudentResponseDto {
 
-    private String studentId;
-    private String fullName;
-    private String groupNumber;
-    private int attendanceCount;
-    private double averageGrade;
+    private final String studentId;
+    private final String fullName;
+    private final String groupNumber;
+    private final int attendanceCount;
+    private final double averageGrade;
 
-    public StudentResponseDto() {
-    }
-
-    public StudentResponseDto(String studentId, String fullName, String groupNumber, int attendanceCount, double averageGrade)
-    {
+    public StudentResponseDto(String studentId,
+                              String fullName,
+                              String groupNumber,
+                              int attendanceCount,
+                              double averageGrade) {
         this.studentId = studentId;
         this.fullName = fullName;
         this.groupNumber = groupNumber;
