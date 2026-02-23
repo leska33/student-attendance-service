@@ -17,19 +17,19 @@ public class Student {
         this.averageGrade = averageGrade;
     }
 
-//    public String getStudentId() {
-//        return studentId;
-//    }
-//    public String getFullName() {
-//        return fullName;
-//    }
-//    public String getGroupNumber() {
-//        return groupNumber;
-//    }
-//    public int getAttendanceCount() {
-//        return attendanceCount;
-//    }
-//    public double getAverageGrade() {
-//        return averageGrade;
-//    }
+    public String getStudentId() {
+        return studentId;
+    }
+    public String getFullName() {
+        return fullName;
+    }
+    public String getGroupNumber() {
+        return groupNumber;
+    }
+    public int getAttendanceCount() {
+        return attendanceCount;
+    }
+    public double getAverageGrade() {
+        return averageGrade;
+    }
 }
