@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+
+    <property name="charset" value="UTF-8"/>
+
+    <module name="TreeWalker">
+
+        <!-- ========================= -->
+        <!--     НАЗВАНИЯ              -->
+        <!-- ========================= -->
+
+        <!-- Классы - PascalCase -->
+        <module name="TypeName">
+            <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Методы - camelCase -->
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+        </module>
+
+        <!-- Переменные - camelCase -->
+        <module name="LocalVariableName"/>
+        <module name="MemberName"/>
+
+        <!-- Константы - UPPER_CASE -->
+        <module name="ConstantName"/>
+
+        <!-- ========================= -->
+        <!--     ФОРМАТИРОВАНИЕ        -->
+        <!-- ========================= -->
+
+        <!-- Отступы (4 пробела) -->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+        </module>
+
+        <!-- Обязательные фигурные скобки -->
+        <module name="NeedBraces"/>
+
+        <!-- Удаление неиспользуемых импортов -->
+        <module name="UnusedImports"/>
+
+        <!-- Пробелы вокруг операторов -->
+        <module name="WhitespaceAround"/>
+
+        <!-- Пробел после запятой -->
+        <module name="WhitespaceAfter"/>
+
+        <!-- Пустые блоки запрещены -->
+        <module name="EmptyBlock"/>
+
+    </module>
+
+    <!-- Максимальная длина строки -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
+
+</module>

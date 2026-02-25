@@ -1,5 +1,10 @@
 package com.example.student.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class StudentResponseDto {
 
     private final String studentId;
@@ -7,36 +12,4 @@ public class StudentResponseDto {
     private final String groupNumber;
     private final int attendanceCount;
     private final double averageGrade;
-
-    public StudentResponseDto(String studentId,
-                              String fullName,
-                              String groupNumber,
-                              int attendanceCount,
-                              double averageGrade) {
-        this.studentId = studentId;
-        this.fullName = fullName;
-        this.groupNumber = groupNumber;
-        this.attendanceCount = attendanceCount;
-        this.averageGrade = averageGrade;
-    }
-
-    public String getStudentId() {
-        return studentId;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getGroupNumber() {
-        return groupNumber;
-    }
-
-    public int getAttendanceCount() {
-        return attendanceCount;
-    }
-
-    public double getAverageGrade() {
-        return averageGrade;
-    }
 }
