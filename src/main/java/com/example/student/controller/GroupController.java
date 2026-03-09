@@ -1,7 +1,7 @@
 package com.example.student.controller;
 
+import com.example.student.dto.GroupCreateDto;
 import com.example.student.dto.GroupResponseDto;
-import com.example.student.entity.Group;
 import com.example.student.service.GroupService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,8 +35,8 @@ public class GroupController {
     }
 
     @PostMapping
-    public Group createGroup(@RequestBody Group group) {
-        return groupService.createGroup(group);
+    public void createGroup(@RequestBody GroupCreateDto dto) {
+        groupService.createGroup(dto);
     }
 
     @DeleteMapping("/{id}")

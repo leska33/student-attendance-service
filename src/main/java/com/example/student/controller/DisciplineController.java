@@ -1,7 +1,7 @@
 package com.example.student.controller;
 
+import com.example.student.dto.DisciplineCreateDto;
 import com.example.student.dto.DisciplineResponseDto;
-import com.example.student.entity.Discipline;
 import com.example.student.service.DisciplineService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,8 +35,8 @@ public class DisciplineController {
     }
 
     @PostMapping
-    public Discipline createDiscipline(@RequestBody Discipline discipline) {
-        return disciplineService.createDiscipline(discipline);
+    public void createDiscipline(@RequestBody DisciplineCreateDto dto) {
+        disciplineService.createDiscipline(dto);
     }
 
     @DeleteMapping("/{id}")

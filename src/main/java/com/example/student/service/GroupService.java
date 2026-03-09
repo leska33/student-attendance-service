@@ -1,9 +1,10 @@
 package com.example.student.service;
 
-import com.example.student.entity.Group;
-import com.example.student.repository.GroupRepository;
+import com.example.student.dto.GroupCreateDto;
 import com.example.student.dto.GroupResponseDto;
+import com.example.student.entity.Group;
 import com.example.student.mapper.GroupMapper;
+import com.example.student.repository.GroupRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,11 @@ public class GroupService {
                 .toList();
     }
 
-    public Group createGroup(Group group) {
+    public Group createGroup(GroupCreateDto dto) {
+
+        Group group = new Group();
+        group.setGroupNumber(dto.getGroupNumber());
+
         return groupRepository.save(group);
     }
 

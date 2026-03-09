@@ -1,12 +1,12 @@
 package com.example.student.service;
 
-import com.example.student.entity.Teacher;
-import com.example.student.repository.TeacherRepository;
+import com.example.student.dto.TeacherCreateDto;
 import com.example.student.dto.TeacherResponseDto;
+import com.example.student.entity.Teacher;
 import com.example.student.mapper.TeacherMapper;
+import com.example.student.repository.TeacherRepository;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,12 +33,14 @@ public class TeacherService {
                 .toList();
     }
 
-    @Transactional
-    public Teacher createTeacher(Teacher teacher) {
+    public Teacher createTeacher(TeacherCreateDto dto) {
+
+        Teacher teacher = new Teacher();
+        teacher.setFullName(dto.getFullName());
+
         return teacherRepository.save(teacher);
     }
 
-    @Transactional
     public void deleteTeacher(Long id) {
         teacherRepository.deleteById(id);
     }

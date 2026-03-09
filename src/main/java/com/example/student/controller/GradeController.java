@@ -1,7 +1,7 @@
 package com.example.student.controller;
 
+import com.example.student.dto.GradeCreateDto;
 import com.example.student.dto.GradeResponseDto;
-import com.example.student.entity.Grade;
 import com.example.student.service.GradeService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,8 +35,8 @@ public class GradeController {
     }
 
     @PostMapping
-    public Grade createGrade(@RequestBody Grade grade) {
-        return gradeService.createGrade(grade);
+    public void createGrade(@RequestBody GradeCreateDto dto) {
+        gradeService.createGrade(dto);
     }
 
     @DeleteMapping("/{id}")

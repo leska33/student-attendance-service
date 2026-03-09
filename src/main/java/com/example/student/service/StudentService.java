@@ -1,16 +1,15 @@
 package com.example.student.service;
 
-import com.example.student.entity.Student;
-import com.example.student.entity.Group;
-import com.example.student.entity.Discipline;
-
-import com.example.student.repository.StudentRepository;
-import com.example.student.repository.GroupRepository;
-import com.example.student.repository.DisciplineRepository;
-import com.example.student.exception.ResourceNotFoundException;
-
+import com.example.student.dto.StudentCreateDto;
 import com.example.student.dto.StudentResponseDto;
+import com.example.student.entity.Discipline;
+import com.example.student.entity.Group;
+import com.example.student.entity.Student;
+import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.StudentMapper;
+import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.GroupRepository;
+import com.example.student.repository.StudentRepository;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,23 +31,6 @@ public class StudentService {
         this.disciplineRepository = disciplineRepository;
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-    public Student getStudentById(Long id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
-    }
-
-    public Student createStudent(Student student) {
-        return studentRepository.save(student);
-    }
-
-    public void deleteStudent(Long id) {
-        studentRepository.deleteById(id);
-    }
-
     public List<StudentResponseDto> getAllStudentsDtoLazy() {
         return studentRepository.findAll()
                 .stream()
@@ -63,31 +45,52 @@ public class StudentService {
                 .toList();
     }
 
-    @Transactional
-    public Student createStudentWithRelations(
-            Student student,
-            Long groupId,
-            List<Long> disciplineIds) {
+    public Student createStudent(StudentCreateDto dto) {
 
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+        Student student = new Student();
+        student.setFullName(dto.getFullName());
+        student.setAttendanceCount(dto.getAttendanceCount());
+        student.setAverageGrade(dto.getAverageGrade());
 
-        List<Discipline> disciplines = disciplineRepository.findAllById(disciplineIds);
+        if (dto.getGroupId() != null) {
+            Group group = groupRepository.findById(dto.getGroupId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+            student.setGroup(group);
+        }
 
-        student.setGroup(group);
-        student.setDisciplines(disciplines);
+        if (dto.getDisciplineIds() != null) {
+            List<Discipline> disciplines =
+                    disciplineRepository.findAllById(dto.getDisciplineIds());
+            student.setDisciplines(disciplines);
+        }
 
         return studentRepository.save(student);
     }
 
-    public void saveWithoutTransaction(Student student) {
+    public void deleteStudent(Long id) {
+        studentRepository.deleteById(id);
+    }
+
+    public void saveWithoutTransaction(StudentCreateDto dto) {
+
+        Student student = new Student();
+        student.setFullName(dto.getFullName());
+
         studentRepository.save(student);
-        throw new ResourceNotFoundException("Ошибка после сохранения — данные частично сохранены");
+
+        throw new ResourceNotFoundException(
+                "Ошибка после сохранения — данные частично сохранены");
     }
 
     @Transactional
-    public void saveWithTransaction(Student student) {
+    public void saveWithTransaction(StudentCreateDto dto) {
+
+        Student student = new Student();
+        student.setFullName(dto.getFullName());
+
         studentRepository.save(student);
-        throw new ResourceNotFoundException("Ошибка — транзакция откатится, данные не сохранятся");
+
+        throw new ResourceNotFoundException(
+                "Ошибка — транзакция откатится");
     }
 }

@@ -1,12 +1,14 @@
 package com.example.student.service;
 
-import com.example.student.entity.Discipline;
-import com.example.student.repository.DisciplineRepository;
+import com.example.student.dto.DisciplineCreateDto;
 import com.example.student.dto.DisciplineResponseDto;
+import com.example.student.entity.Discipline;
+import com.example.student.entity.Teacher;
 import com.example.student.mapper.DisciplineMapper;
+import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.TeacherRepository;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class DisciplineService {
 
     private final DisciplineRepository disciplineRepository;
+    private final TeacherRepository teacherRepository;
 
-    public DisciplineService(DisciplineRepository disciplineRepository) {
+    public DisciplineService(DisciplineRepository disciplineRepository,
+                             TeacherRepository teacherRepository) {
         this.disciplineRepository = disciplineRepository;
+        this.teacherRepository = teacherRepository;
     }
 
     public List<DisciplineResponseDto> getAllDisciplinesDtoLazy() {
@@ -33,12 +38,20 @@ public class DisciplineService {
                 .toList();
     }
 
-    @Transactional
-    public Discipline createDiscipline(Discipline discipline) {
+    public Discipline createDiscipline(DisciplineCreateDto dto) {
+
+        Discipline discipline = new Discipline();
+        discipline.setName(dto.getName());
+
+        if (dto.getTeacherId() != null) {
+            Teacher teacher = teacherRepository.findById(dto.getTeacherId())
+                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+            discipline.setTeacher(teacher);
+        }
+
         return disciplineRepository.save(discipline);
     }
 
-    @Transactional
     public void deleteDiscipline(Long id) {
         disciplineRepository.deleteById(id);
     }
