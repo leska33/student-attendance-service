@@ -7,6 +7,7 @@ import com.example.student.entity.Discipline;
 import com.example.student.repository.StudentRepository;
 import com.example.student.repository.GroupRepository;
 import com.example.student.repository.DisciplineRepository;
+import com.example.student.exception.ResourceNotFoundException;
 
 import com.example.student.dto.StudentResponseDto;
 import com.example.student.mapper.StudentMapper;
@@ -81,12 +82,12 @@ public class StudentService {
 
     public void saveWithoutTransaction(Student student) {
         studentRepository.save(student);
-        throw new RuntimeException("Ошибка после сохранения — данные частично сохранены");
+        throw new ResourceNotFoundException("Ошибка после сохранения — данные частично сохранены");
     }
 
     @Transactional
     public void saveWithTransaction(Student student) {
         studentRepository.save(student);
-        throw new RuntimeException("Ошибка — транзакция откатится, данные не сохранятся");
+        throw new ResourceNotFoundException("Ошибка — транзакция откатится, данные не сохранятся");
     }
 }
