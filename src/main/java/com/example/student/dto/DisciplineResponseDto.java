@@ -7,10 +7,10 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class StudentResponseDto {
+public class DisciplineResponseDto {
 
     private Long id;
-    private String fullName;
-    private String groupNumber;
-    private List<String> disciplines;
+    private String name;
+    private String teacherName;
+    private List<String> students;
 }

@@ -1,0 +1,31 @@
+package com.example.student.controller;
+
+import com.example.student.dto.TeacherResponseDto;
+import com.example.student.service.TeacherService;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/teachers")
+public class TeacherController {
+
+    private final TeacherService teacherService;
+
+    public TeacherController(TeacherService teacherService) {
+        this.teacherService = teacherService;
+    }
+
+    @GetMapping("/lazy")
+    public List<TeacherResponseDto> getTeachersLazy() {
+        return teacherService.getAllTeachersDtoLazy();
+    }
+
+    @GetMapping("/optimized")
+    public List<TeacherResponseDto> getTeachersOptimized() {
+        return teacherService.getAllTeachersDtoOptimized();
+    }
+}
