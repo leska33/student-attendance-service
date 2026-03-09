@@ -8,7 +8,6 @@ import com.example.student.mapper.GroupMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -23,14 +22,14 @@ public class GroupService {
         return groupRepository.findAll()
                 .stream()
                 .map(GroupMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<GroupResponseDto> getAllGroupsDtoOptimized() {
         return groupRepository.findAllWithStudents()
                 .stream()
                 .map(GroupMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Group createGroup(Group group) {

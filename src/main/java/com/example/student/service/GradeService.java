@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GradeService {
@@ -24,14 +23,14 @@ public class GradeService {
         return gradeRepository.findAll()
                 .stream()
                 .map(GradeMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<GradeResponseDto> getAllGradesDtoOptimized() {
         return gradeRepository.findAllWithRelations()
                 .stream()
                 .map(GradeMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DisciplineService {
@@ -24,14 +23,14 @@ public class DisciplineService {
         return disciplineRepository.findAll()
                 .stream()
                 .map(DisciplineMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<DisciplineResponseDto> getAllDisciplinesDtoOptimized() {
         return disciplineRepository.findAllWithRelations()
                 .stream()
                 .map(DisciplineMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional

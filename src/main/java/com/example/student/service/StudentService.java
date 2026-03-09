@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -53,14 +52,14 @@ public class StudentService {
         return studentRepository.findAll()
                 .stream()
                 .map(StudentMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<StudentResponseDto> getAllStudentsDtoOptimized() {
         return studentRepository.findAllWithRelations()
                 .stream()
                 .map(StudentMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
