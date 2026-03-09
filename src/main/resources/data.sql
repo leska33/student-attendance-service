@@ -8,10 +8,10 @@ INSERT INTO discipline (id, name, teacher_id) VALUES (1, 'ПнаЯВУ', 1);
 INSERT INTO discipline (id, name, teacher_id) VALUES (2, 'ОСиСП', 2);
 
 INSERT INTO student (id, full_name, group_id, attendance_count, average_grade)
-VALUES (3580045, 'Лубочко Ульяна Ивановна', 1, 10, 8.5);
+VALUES (45830094, 'Лубочко Ульяна Антоновна', 1, 10, 8.5);
 
 INSERT INTO student (id, full_name, group_id, attendance_count, average_grade)
-VALUES (3580011, 'Басюк Алеся Владимировна', 2, 12, 7.5);
+VALUES (45830011, 'Басюк Алеся Владимировна', 2, 12, 7.5);
 
 INSERT INTO student_disciplines (student_id, discipline_id)
 VALUES (1,1);
