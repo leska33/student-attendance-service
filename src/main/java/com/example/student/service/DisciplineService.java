@@ -17,6 +17,8 @@ import java.util.List;
 @Service
 public class DisciplineService {
 
+    private static final String DISCIPLINE_NOT_FOUND = "Discipline not found";
+    private static final String TEACHER_NOT_FOUND = "Teacher not found";
     private final DisciplineRepository disciplineRepository;
     private final TeacherRepository teacherRepository;
 
@@ -42,7 +44,7 @@ public class DisciplineService {
 
     public DisciplineResponseDto getDisciplineById(Long id) {
         Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
         return DisciplineMapper.toDto(discipline);
     }
 
@@ -52,7 +54,7 @@ public class DisciplineService {
         discipline.setName(dto.getName());
         if (dto.getTeacherId() != null) {
             Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
             discipline.setTeacher(teacher);
         }
         Discipline saved = disciplineRepository.save(discipline);
@@ -62,11 +64,13 @@ public class DisciplineService {
     @Transactional
     public DisciplineResponseDto updateDiscipline(Long id, DisciplineCreateDto dto) {
         Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+
         discipline.setName(dto.getName());
         if (dto.getTeacherId() != null) {
             Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+
             discipline.setTeacher(teacher);
         }
         Discipline updated = disciplineRepository.save(discipline);
@@ -76,7 +80,7 @@ public class DisciplineService {
     @Transactional
     public void deleteDiscipline(Long id) {
         Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
         if (discipline.getStudents() != null) {
             discipline.getStudents().clear();
         }

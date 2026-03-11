@@ -19,6 +19,8 @@ import java.util.List;
 @Service
 public class StudentService {
 
+    private static final String STUDENT_NOT_FOUND = "Student not found";
+    private static final String GROUP_NOT_FOUND = "Group not found";
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
     private final DisciplineRepository disciplineRepository;
@@ -47,7 +49,7 @@ public class StudentService {
 
     public StudentResponseDto getStudentById(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
         return StudentMapper.toDto(student);
     }
 
@@ -59,43 +61,41 @@ public class StudentService {
         student.setAverageGrade(dto.getAverageGrade());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
             student.setGroup(group);
         }
         if (dto.getDisciplineIds() != null) {
-            List<Discipline> disciplines =
-                    disciplineRepository.findAllById(dto.getDisciplineIds());
+            List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
             student.setDisciplines(disciplines);
         }
-        Student savedStudent = studentRepository.save(student);
-        return StudentMapper.toDto(savedStudent);
+        Student saved = studentRepository.save(student);
+        return StudentMapper.toDto(saved);
     }
 
     @Transactional
     public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
         student.setFullName(dto.getFullName());
         student.setAttendanceCount(dto.getAttendanceCount());
         student.setAverageGrade(dto.getAverageGrade());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
             student.setGroup(group);
         }
         if (dto.getDisciplineIds() != null) {
-            List<Discipline> disciplines =
-                    disciplineRepository.findAllById(dto.getDisciplineIds());
+            List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
             student.setDisciplines(disciplines);
         }
-        Student updatedStudent = studentRepository.save(student);
-        return StudentMapper.toDto(updatedStudent);
+        Student updated = studentRepository.save(student);
+        return StudentMapper.toDto(updated);
     }
 
     @Transactional
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
         if (student.getDisciplines() != null) {
             student.getDisciplines().clear();
         }

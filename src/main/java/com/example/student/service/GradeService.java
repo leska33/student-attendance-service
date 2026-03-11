@@ -19,6 +19,9 @@ import java.util.List;
 @Service
 public class GradeService {
 
+    private static final String GRADE_NOT_FOUND = "Grade not found";
+    private static final String STUDENT_NOT_FOUND = "Student not found";
+    private static final String DISCIPLINE_NOT_FOUND = "Discipline not found";
     private final GradeRepository gradeRepository;
     private final StudentRepository studentRepository;
     private final DisciplineRepository disciplineRepository;
@@ -47,7 +50,7 @@ public class GradeService {
 
     public GradeResponseDto getGradeById(Long id) {
         Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Grade not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
         return GradeMapper.toDto(grade);
     }
 
@@ -56,9 +59,9 @@ public class GradeService {
         Grade grade = new Grade();
         grade.setValue(dto.getValue());
         Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
         Discipline discipline = disciplineRepository.findById(dto.getDisciplineId())
-                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
         grade.setStudent(student);
         grade.setDiscipline(discipline);
         Grade saved = gradeRepository.save(grade);
@@ -68,18 +71,9 @@ public class GradeService {
     @Transactional
     public GradeResponseDto updateGrade(Long id, GradeCreateDto dto) {
         Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Grade not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
+
         grade.setValue(dto.getValue());
-        if (dto.getStudentId() != null) {
-            Student student = studentRepository.findById(dto.getStudentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-            grade.setStudent(student);
-        }
-        if (dto.getDisciplineId() != null) {
-            Discipline discipline = disciplineRepository.findById(dto.getDisciplineId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
-            grade.setDiscipline(discipline);
-        }
         Grade updated = gradeRepository.save(grade);
         return GradeMapper.toDto(updated);
     }
@@ -87,7 +81,7 @@ public class GradeService {
     @Transactional
     public void deleteGrade(Long id) {
         Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Grade not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
         gradeRepository.delete(grade);
     }
 }

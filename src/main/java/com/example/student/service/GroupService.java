@@ -16,6 +16,7 @@ import java.util.List;
 @Service
 public class GroupService {
 
+    private static final String GROUP_NOT_FOUND = "Group not found";
     private final GroupRepository groupRepository;
 
     public GroupService(GroupRepository groupRepository) {
@@ -38,7 +39,7 @@ public class GroupService {
 
     public GroupResponseDto getGroupById(Long id) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
         return GroupMapper.toDto(group);
     }
 
@@ -53,7 +54,8 @@ public class GroupService {
     @Transactional
     public GroupResponseDto updateGroup(Long id, GroupCreateDto dto) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+
         group.setGroupNumber(dto.getGroupNumber());
         Group updated = groupRepository.save(group);
         return GroupMapper.toDto(updated);
@@ -62,7 +64,7 @@ public class GroupService {
     @Transactional
     public void deleteGroup(Long id) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
         if (group.getStudents() != null) {
             for (Student s : group.getStudents()) {
                 s.setGroup(null);

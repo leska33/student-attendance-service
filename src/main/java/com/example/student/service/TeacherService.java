@@ -16,6 +16,7 @@ import java.util.List;
 @Service
 public class TeacherService {
 
+    private static final String TEACHER_NOT_FOUND = "Teacher not found";
     private final TeacherRepository teacherRepository;
 
     public TeacherService(TeacherRepository teacherRepository) {
@@ -38,7 +39,7 @@ public class TeacherService {
 
     public TeacherResponseDto getTeacherById(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
         return TeacherMapper.toDto(teacher);
     }
 
@@ -53,7 +54,8 @@ public class TeacherService {
     @Transactional
     public TeacherResponseDto updateTeacher(Long id, TeacherCreateDto dto) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+
         teacher.setFullName(dto.getFullName());
         Teacher updated = teacherRepository.save(teacher);
         return TeacherMapper.toDto(updated);
@@ -62,7 +64,7 @@ public class TeacherService {
     @Transactional
     public void deleteTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
         if (teacher.getDisciplines() != null) {
             for (Discipline d : teacher.getDisciplines()) {
                 d.setTeacher(null);
