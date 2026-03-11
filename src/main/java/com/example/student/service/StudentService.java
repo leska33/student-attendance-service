@@ -45,51 +45,76 @@ public class StudentService {
                 .toList();
     }
 
-    public Student createStudent(StudentCreateDto dto) {
+    public StudentResponseDto getStudentById(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return StudentMapper.toDto(student);
+    }
 
+    @Transactional
+    public StudentResponseDto createStudent(StudentCreateDto dto) {
         Student student = new Student();
         student.setFullName(dto.getFullName());
         student.setAttendanceCount(dto.getAttendanceCount());
         student.setAverageGrade(dto.getAverageGrade());
-
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
             student.setGroup(group);
         }
-
         if (dto.getDisciplineIds() != null) {
             List<Discipline> disciplines =
                     disciplineRepository.findAllById(dto.getDisciplineIds());
             student.setDisciplines(disciplines);
         }
-
-        return studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        return StudentMapper.toDto(savedStudent);
     }
 
+    @Transactional
+    public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        student.setFullName(dto.getFullName());
+        student.setAttendanceCount(dto.getAttendanceCount());
+        student.setAverageGrade(dto.getAverageGrade());
+        if (dto.getGroupId() != null) {
+            Group group = groupRepository.findById(dto.getGroupId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+            student.setGroup(group);
+        }
+        if (dto.getDisciplineIds() != null) {
+            List<Discipline> disciplines =
+                    disciplineRepository.findAllById(dto.getDisciplineIds());
+            student.setDisciplines(disciplines);
+        }
+        Student updatedStudent = studentRepository.save(student);
+        return StudentMapper.toDto(updatedStudent);
+    }
+
+    @Transactional
     public void deleteStudent(Long id) {
-        studentRepository.deleteById(id);
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        if (student.getDisciplines() != null) {
+            student.getDisciplines().clear();
+        }
+        studentRepository.delete(student);
     }
 
     public void saveWithoutTransaction(StudentCreateDto dto) {
-
         Student student = new Student();
         student.setFullName(dto.getFullName());
-
         studentRepository.save(student);
-
         throw new ResourceNotFoundException(
                 "Ошибка после сохранения — данные частично сохранены");
     }
 
     @Transactional
     public void saveWithTransaction(StudentCreateDto dto) {
-
         Student student = new Student();
         student.setFullName(dto.getFullName());
-
         studentRepository.save(student);
-
         throw new ResourceNotFoundException(
                 "Ошибка — транзакция откатится");
     }

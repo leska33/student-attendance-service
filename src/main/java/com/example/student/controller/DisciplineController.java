@@ -4,10 +4,13 @@ import com.example.student.dto.DisciplineCreateDto;
 import com.example.student.dto.DisciplineResponseDto;
 import com.example.student.service.DisciplineService;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,23 +27,39 @@ public class DisciplineController {
         this.disciplineService = disciplineService;
     }
 
-    @GetMapping("/lazy")
-    public List<DisciplineResponseDto> getDisciplinesLazy() {
-        return disciplineService.getAllDisciplinesDtoLazy();
-    }
-
-    @GetMapping("/optimized")
-    public List<DisciplineResponseDto> getDisciplinesOptimized() {
-        return disciplineService.getAllDisciplinesDtoOptimized();
-    }
-
     @PostMapping
-    public void createDiscipline(@RequestBody DisciplineCreateDto dto) {
-        disciplineService.createDiscipline(dto);
+    public ResponseEntity<DisciplineResponseDto> createDiscipline(@RequestBody DisciplineCreateDto dto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(disciplineService.createDiscipline(dto));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DisciplineResponseDto>> getAllDisciplines() {
+        return ResponseEntity.ok(disciplineService.getAllDisciplinesDtoOptimized());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DisciplineResponseDto> getDisciplineById(@PathVariable Long id) {
+        return ResponseEntity.ok(disciplineService.getDisciplineById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DisciplineResponseDto> updateDiscipline(
+            @PathVariable Long id,
+            @RequestBody DisciplineCreateDto dto) {
+
+        return ResponseEntity.ok(disciplineService.updateDiscipline(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDiscipline(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDiscipline(@PathVariable Long id) {
         disciplineService.deleteDiscipline(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/lazy")
+    public ResponseEntity<List<DisciplineResponseDto>> getDisciplinesLazy() {
+        return ResponseEntity.ok(disciplineService.getAllDisciplinesDtoLazy());
     }
 }

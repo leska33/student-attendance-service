@@ -2,11 +2,14 @@ package com.example.student.service;
 
 import com.example.student.dto.TeacherCreateDto;
 import com.example.student.dto.TeacherResponseDto;
+import com.example.student.entity.Discipline;
 import com.example.student.entity.Teacher;
+import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.TeacherMapper;
 import com.example.student.repository.TeacherRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,15 +36,38 @@ public class TeacherService {
                 .toList();
     }
 
-    public Teacher createTeacher(TeacherCreateDto dto) {
-
-        Teacher teacher = new Teacher();
-        teacher.setFullName(dto.getFullName());
-
-        return teacherRepository.save(teacher);
+    public TeacherResponseDto getTeacherById(Long id) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+        return TeacherMapper.toDto(teacher);
     }
 
+    @Transactional
+    public TeacherResponseDto createTeacher(TeacherCreateDto dto) {
+        Teacher teacher = new Teacher();
+        teacher.setFullName(dto.getFullName());
+        Teacher saved = teacherRepository.save(teacher);
+        return TeacherMapper.toDto(saved);
+    }
+
+    @Transactional
+    public TeacherResponseDto updateTeacher(Long id, TeacherCreateDto dto) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+        teacher.setFullName(dto.getFullName());
+        Teacher updated = teacherRepository.save(teacher);
+        return TeacherMapper.toDto(updated);
+    }
+
+    @Transactional
     public void deleteTeacher(Long id) {
-        teacherRepository.deleteById(id);
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+        if (teacher.getDisciplines() != null) {
+            for (Discipline d : teacher.getDisciplines()) {
+                d.setTeacher(null);
+            }
+        }
+        teacherRepository.delete(teacher);
     }
 }

@@ -4,11 +4,13 @@ import com.example.student.dto.DisciplineCreateDto;
 import com.example.student.dto.DisciplineResponseDto;
 import com.example.student.entity.Discipline;
 import com.example.student.entity.Teacher;
+import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.DisciplineMapper;
 import com.example.student.repository.DisciplineRepository;
 import com.example.student.repository.TeacherRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,21 +40,46 @@ public class DisciplineService {
                 .toList();
     }
 
-    public Discipline createDiscipline(DisciplineCreateDto dto) {
-
-        Discipline discipline = new Discipline();
-        discipline.setName(dto.getName());
-
-        if (dto.getTeacherId() != null) {
-            Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
-            discipline.setTeacher(teacher);
-        }
-
-        return disciplineRepository.save(discipline);
+    public DisciplineResponseDto getDisciplineById(Long id) {
+        Discipline discipline = disciplineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+        return DisciplineMapper.toDto(discipline);
     }
 
+    @Transactional
+    public DisciplineResponseDto createDiscipline(DisciplineCreateDto dto) {
+        Discipline discipline = new Discipline();
+        discipline.setName(dto.getName());
+        if (dto.getTeacherId() != null) {
+            Teacher teacher = teacherRepository.findById(dto.getTeacherId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+            discipline.setTeacher(teacher);
+        }
+        Discipline saved = disciplineRepository.save(discipline);
+        return DisciplineMapper.toDto(saved);
+    }
+
+    @Transactional
+    public DisciplineResponseDto updateDiscipline(Long id, DisciplineCreateDto dto) {
+        Discipline discipline = disciplineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+        discipline.setName(dto.getName());
+        if (dto.getTeacherId() != null) {
+            Teacher teacher = teacherRepository.findById(dto.getTeacherId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+            discipline.setTeacher(teacher);
+        }
+        Discipline updated = disciplineRepository.save(discipline);
+        return DisciplineMapper.toDto(updated);
+    }
+
+    @Transactional
     public void deleteDiscipline(Long id) {
-        disciplineRepository.deleteById(id);
+        Discipline discipline = disciplineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+        if (discipline.getStudents() != null) {
+            discipline.getStudents().clear();
+        }
+        disciplineRepository.delete(discipline);
     }
 }
