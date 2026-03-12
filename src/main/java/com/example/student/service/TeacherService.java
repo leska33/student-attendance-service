@@ -46,7 +46,9 @@ public class TeacherService {
     @Transactional
     public TeacherResponseDto createTeacher(TeacherCreateDto dto) {
         Teacher teacher = new Teacher();
-        teacher.setFullName(dto.getFullName());
+        teacher.setFirstName(dto.getFirstName());
+        teacher.setLastName(dto.getLastName());
+        teacher.setMiddleName(dto.getMiddleName());
         Teacher saved = teacherRepository.save(teacher);
         return TeacherMapper.toDto(saved);
     }
@@ -56,7 +58,10 @@ public class TeacherService {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
 
-        teacher.setFullName(dto.getFullName());
+        teacher.setFirstName(dto.getFirstName());
+        teacher.setLastName(dto.getLastName());
+        teacher.setMiddleName(dto.getMiddleName());
+
         Teacher updated = teacherRepository.save(teacher);
         return TeacherMapper.toDto(updated);
     }

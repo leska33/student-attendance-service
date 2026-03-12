@@ -46,7 +46,8 @@ public class GroupService {
     @Transactional
     public GroupResponseDto createGroup(GroupCreateDto dto) {
         Group group = new Group();
-        group.setGroupNumber(dto.getGroupNumber());
+        // теперь просто используем поле number из GroupCreateDto
+        group.setNumber(dto.getNumber());
         Group saved = groupRepository.save(group);
         return GroupMapper.toDto(saved);
     }
@@ -55,8 +56,7 @@ public class GroupService {
     public GroupResponseDto updateGroup(Long id, GroupCreateDto dto) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-
-        group.setGroupNumber(dto.getGroupNumber());
+        group.setNumber(dto.getNumber());
         Group updated = groupRepository.save(group);
         return GroupMapper.toDto(updated);
     }

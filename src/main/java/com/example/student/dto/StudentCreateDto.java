@@ -4,18 +4,37 @@ import java.util.List;
 
 public class StudentCreateDto {
 
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+
     private int attendanceCount;
-    private double averageGrade;
+
     private Long groupId;
     private List<Long> disciplineIds;
 
-    public String getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public int getAttendanceCount() {
@@ -24,14 +43,6 @@ public class StudentCreateDto {
 
     public void setAttendanceCount(int attendanceCount) {
         this.attendanceCount = attendanceCount;
-    }
-
-    public double getAverageGrade() {
-        return averageGrade;
-    }
-
-    public void setAverageGrade(double averageGrade) {
-        this.averageGrade = averageGrade;
     }
 
     public Long getGroupId() {

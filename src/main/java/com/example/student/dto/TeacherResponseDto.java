@@ -10,6 +10,8 @@ import java.util.List;
 public class TeacherResponseDto {
 
     private Long id;
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String middleName;
     private List<String> disciplines;
 }

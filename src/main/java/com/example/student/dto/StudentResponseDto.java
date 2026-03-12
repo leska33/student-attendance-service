@@ -10,7 +10,9 @@ import java.util.List;
 public class StudentResponseDto {
 
     private Long id;
-    private String fullName;
-    private String groupNumber;
+    private String firstName;
+    private String lastName;
+    private String middleName;
+    private Long groupId;
     private List<String> disciplines;
 }

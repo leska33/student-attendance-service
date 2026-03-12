@@ -2,13 +2,13 @@ package com.example.student.dto;
 
 public class GroupCreateDto {
 
-    private String groupNumber;
+    private String number;
 
-    public String getGroupNumber() {
-        return groupNumber;
+    public String getNumber() {
+        return number;
     }
 
-    public void setGroupNumber(String groupNumber) {
-        this.groupNumber = groupNumber;
+    public void setNumber(String number) {
+        this.number = number;
     }
 }

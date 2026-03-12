@@ -17,11 +17,12 @@ public final class DisciplineMapper {
         if (discipline == null) {
             return null;
         }
-
         String teacherName = null;
-
         if (discipline.getTeacher() != null) {
-            teacherName = discipline.getTeacher().getFullName();
+            teacherName =
+                    discipline.getTeacher().getLastName() + " " +
+                            discipline.getTeacher().getFirstName() + " " +
+                            discipline.getTeacher().getMiddleName();
         }
 
         List<String> studentNames = null;
@@ -29,7 +30,11 @@ public final class DisciplineMapper {
         if (discipline.getStudents() != null) {
             studentNames = discipline.getStudents()
                     .stream()
-                    .map(Student::getFullName)
+                    .map(student ->
+                            student.getLastName() + " " +
+                                    student.getFirstName() + " " +
+                                    student.getMiddleName()
+                    )
                     .collect(Collectors.toList());
         }
 

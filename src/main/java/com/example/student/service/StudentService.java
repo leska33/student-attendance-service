@@ -56,9 +56,10 @@ public class StudentService {
     @Transactional
     public StudentResponseDto createStudent(StudentCreateDto dto) {
         Student student = new Student();
-        student.setFullName(dto.getFullName());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
         student.setAttendanceCount(dto.getAttendanceCount());
-        student.setAverageGrade(dto.getAverageGrade());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
@@ -76,17 +77,23 @@ public class StudentService {
     public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
-        student.setFullName(dto.getFullName());
+
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
         student.setAttendanceCount(dto.getAttendanceCount());
-        student.setAverageGrade(dto.getAverageGrade());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
             student.setGroup(group);
+        } else {
+            student.setGroup(null);
         }
         if (dto.getDisciplineIds() != null) {
             List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
             student.setDisciplines(disciplines);
+        } else {
+            student.getDisciplines().clear();
         }
         Student updated = studentRepository.save(student);
         return StudentMapper.toDto(updated);
@@ -104,7 +111,9 @@ public class StudentService {
 
     public void saveWithoutTransaction(StudentCreateDto dto) {
         Student student = new Student();
-        student.setFullName(dto.getFullName());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
         studentRepository.save(student);
         throw new ResourceNotFoundException(
                 "Ошибка после сохранения — данные частично сохранены");
@@ -113,7 +122,9 @@ public class StudentService {
     @Transactional
     public void saveWithTransaction(StudentCreateDto dto) {
         Student student = new Student();
-        student.setFullName(dto.getFullName());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
         studentRepository.save(student);
         throw new ResourceNotFoundException(
                 "Ошибка — транзакция откатится");

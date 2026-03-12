@@ -23,13 +23,17 @@ public final class GroupMapper {
         if (group.getStudents() != null) {
             studentNames = group.getStudents()
                     .stream()
-                    .map(Student::getFullName)
+                    .map(student ->
+                            student.getLastName() + " " +
+                                    student.getFirstName() + " " +
+                                    student.getMiddleName()
+                    )
                     .collect(Collectors.toList());
         }
 
         return new GroupResponseDto(
                 group.getId(),
-                group.getGroupNumber(),
+                group.getNumber(),
                 studentNames
         );
     }

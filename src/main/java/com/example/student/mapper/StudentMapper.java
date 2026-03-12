@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 
 public final class StudentMapper {
 
-    private StudentMapper() {
-    }
+    private StudentMapper() {}
 
     public static StudentResponseDto toDto(Student student) {
 
@@ -18,24 +17,24 @@ public final class StudentMapper {
             return null;
         }
 
-        String groupNumber = null;
-
-        if (student.getGroup() != null) {
-            groupNumber = student.getGroup().getGroupNumber();
-        }
-
         List<String> disciplineNames = null;
-
         if (student.getDisciplines() != null) {
             disciplineNames = student.getDisciplines()
                     .stream()
                     .map(Discipline::getName)
                     .collect(Collectors.toList());
         }
+        Long groupId = null;
+        if (student.getGroup() != null) {
+            groupId = student.getGroup().getId();
+        }
+
         return new StudentResponseDto(
                 student.getId(),
-                student.getFullName(),
-                groupNumber,
+                student.getFirstName(),
+                student.getLastName(),
+                student.getMiddleName(),
+                groupId,
                 disciplineNames
         );
     }

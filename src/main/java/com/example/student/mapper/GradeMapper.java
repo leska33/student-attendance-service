@@ -18,7 +18,10 @@ public final class GradeMapper {
         String disciplineName = null;
 
         if (grade.getStudent() != null) {
-            studentName = grade.getStudent().getFullName();
+            studentName =
+                    grade.getStudent().getLastName() + " " +
+                            grade.getStudent().getFirstName() + " " +
+                            grade.getStudent().getMiddleName();
         }
 
         if (grade.getDiscipline() != null) {

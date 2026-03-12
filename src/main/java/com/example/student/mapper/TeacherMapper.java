@@ -9,8 +9,7 @@ import java.util.stream.Collectors;
 
 public final class TeacherMapper {
 
-    private TeacherMapper() {
-    }
+    private TeacherMapper() {}
 
     public static TeacherResponseDto toDto(Teacher teacher) {
 
@@ -19,7 +18,6 @@ public final class TeacherMapper {
         }
 
         List<String> disciplineNames = null;
-
         if (teacher.getDisciplines() != null) {
             disciplineNames = teacher.getDisciplines()
                     .stream()
@@ -29,7 +27,9 @@ public final class TeacherMapper {
 
         return new TeacherResponseDto(
                 teacher.getId(),
-                teacher.getFullName(),
+                teacher.getFirstName(),
+                teacher.getLastName(),
+                teacher.getMiddleName(),
                 disciplineNames
         );
     }
