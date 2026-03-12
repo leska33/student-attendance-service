@@ -10,6 +10,6 @@ import java.util.List;
 public class GroupResponseDto {
 
     private Long id;
-    private String Number;
+    private String number;
     private List<String> students;
 }
