@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 
 public final class StudentMapper {
 
-    private StudentMapper() {}
+    private StudentMapper() {
+    }
 
     public static StudentResponseDto toDto(Student student) {
 

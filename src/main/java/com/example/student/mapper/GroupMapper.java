@@ -2,7 +2,6 @@ package com.example.student.mapper;
 
 import com.example.student.dto.GroupResponseDto;
 import com.example.student.entity.Group;
-import com.example.student.entity.Student;
 
 import java.util.List;
 import java.util.stream.Collectors;
