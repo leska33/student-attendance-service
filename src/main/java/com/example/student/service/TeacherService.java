@@ -71,9 +71,10 @@ public class TeacherService {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
         if (teacher.getDisciplines() != null) {
-            for (Discipline d : teacher.getDisciplines()) {
-                d.setTeacher(null);
+            for (Discipline discipline : teacher.getDisciplines()) {
+                discipline.setTeacher(null);
             }
+            teacher.getDisciplines().clear();
         }
         teacherRepository.delete(teacher);
     }

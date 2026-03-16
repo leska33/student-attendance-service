@@ -66,9 +66,10 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
         if (group.getStudents() != null) {
-            for (Student s : group.getStudents()) {
-                s.setGroup(null);
+            for (Student student : group.getStudents()) {
+                student.setGroup(null);
             }
+            group.getStudents().clear();
         }
         groupRepository.delete(group);
     }

@@ -8,6 +8,7 @@ import com.example.student.entity.Student;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.StudentMapper;
 import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.GradeRepository;
 import com.example.student.repository.GroupRepository;
 import com.example.student.repository.StudentRepository;
 
@@ -24,13 +25,16 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
     private final DisciplineRepository disciplineRepository;
+    private final GradeRepository gradeRepository;
 
     public StudentService(StudentRepository studentRepository,
                           GroupRepository groupRepository,
-                          DisciplineRepository disciplineRepository) {
+                          DisciplineRepository disciplineRepository,
+                          GradeRepository gradeRepository) {
         this.studentRepository = studentRepository;
         this.groupRepository = groupRepository;
         this.disciplineRepository = disciplineRepository;
+        this.gradeRepository = gradeRepository;
     }
 
     public List<StudentResponseDto> getAllStudentsDtoLazy() {
@@ -90,7 +94,7 @@ public class StudentService {
         if (dto.getDisciplineIds() != null) {
             List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
             student.setDisciplines(disciplines);
-        } else {
+        } else if (student.getDisciplines() != null) {
             student.getDisciplines().clear();
         }
         Student updated = studentRepository.save(student);
@@ -101,9 +105,21 @@ public class StudentService {
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+        gradeRepository.deleteAllByStudent(student);
         if (student.getDisciplines() != null) {
+            for (Discipline discipline : student.getDisciplines()) {
+                discipline.getStudents().remove(student);
+            }
             student.getDisciplines().clear();
         }
+        if (student.getGroup() != null) {
+            Group group = student.getGroup();
+            student.setGroup(null);
+            if (group.getStudents() != null) {
+                group.getStudents().remove(student);
+            }
+        }
+
         studentRepository.delete(student);
     }
 
