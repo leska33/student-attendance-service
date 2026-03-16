@@ -12,9 +12,6 @@ public class StudentCreateDto {
     private String firstName;
     private String lastName;
     private String middleName;
-
-    private int attendanceCount;
-
     private Long groupId;
     private List<Long> disciplineIds;
 

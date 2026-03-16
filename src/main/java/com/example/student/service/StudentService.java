@@ -59,7 +59,6 @@ public class StudentService {
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setMiddleName(dto.getMiddleName());
-        student.setAttendanceCount(dto.getAttendanceCount());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
@@ -81,7 +80,6 @@ public class StudentService {
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setMiddleName(dto.getMiddleName());
-        student.setAttendanceCount(dto.getAttendanceCount());
         if (dto.getGroupId() != null) {
             Group group = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));

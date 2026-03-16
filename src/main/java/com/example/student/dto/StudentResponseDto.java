@@ -13,6 +13,6 @@ public class StudentResponseDto {
     private String firstName;
     private String lastName;
     private String middleName;
-    private Long groupId;
+    private String groupNumber;
     private List<String> disciplines;
 }

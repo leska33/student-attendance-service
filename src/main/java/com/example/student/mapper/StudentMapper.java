@@ -3,6 +3,7 @@ package com.example.student.mapper;
 import com.example.student.dto.StudentResponseDto;
 import com.example.student.entity.Student;
 import com.example.student.entity.Discipline;
+import com.example.student.entity.Group;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,9 +26,11 @@ public final class StudentMapper {
                     .map(Discipline::getName)
                     .collect(Collectors.toList());
         }
-        Long groupId = null;
-        if (student.getGroup() != null) {
-            groupId = student.getGroup().getId();
+
+        String groupNumber = null;
+        Group group = student.getGroup();
+        if (group != null) {
+            groupNumber = group.getNumber();
         }
 
         return new StudentResponseDto(
@@ -35,7 +38,7 @@ public final class StudentMapper {
                 student.getFirstName(),
                 student.getLastName(),
                 student.getMiddleName(),
-                groupId,
+                groupNumber,
                 disciplineNames
         );
     }

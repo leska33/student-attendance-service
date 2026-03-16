@@ -33,8 +33,6 @@ public class Student {
     private String lastName;
     private String middleName;
 
-    private int attendanceCount;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
