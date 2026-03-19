@@ -46,7 +46,6 @@ public class GroupService {
     @Transactional
     public GroupResponseDto createGroup(GroupCreateDto dto) {
         Group group = new Group();
-        // теперь просто используем поле number из GroupCreateDto
         group.setNumber(dto.getNumber());
         Group saved = groupRepository.save(group);
         return GroupMapper.toDto(saved);

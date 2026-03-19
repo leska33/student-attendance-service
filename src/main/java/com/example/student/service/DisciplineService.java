@@ -7,10 +7,9 @@ import com.example.student.entity.Student;
 import com.example.student.entity.Teacher;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.DisciplineMapper;
-import com.example.student.repository.DisciplineRepository;
 import com.example.student.repository.GradeRepository;
 import com.example.student.repository.TeacherRepository;
-
+import com.example.student.repository.DisciplineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
