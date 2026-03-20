@@ -26,7 +26,8 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     @Query(value = "SELECT g.* FROM grades g " +
             "JOIN disciplines d ON g.discipline_id = d.id " +
             "WHERE d.name = :disciplineName",
-            countQuery = "SELECT COUNT(*) FROM grades g JOIN disciplines d ON g.discipline_id = d.id WHERE d.name = :disciplineName",
+            countQuery = "SELECT COUNT(*) FROM grades g JOIN disciplines d ON " +
+                    "g.discipline_id = d.id WHERE d.name = :disciplineName",
             nativeQuery = true)
     Page<Grade> findByDisciplineNameNative(String disciplineName, Pageable pageable);
 
@@ -36,7 +37,8 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     @Query(value = "SELECT g.* FROM grades g " +
             "JOIN students s ON g.student_id = s.id " +
             "WHERE s.last_name = :studentLastName",
-            countQuery = "SELECT COUNT(*) FROM grades g JOIN students s ON g.student_id = s.id WHERE s.last_name = :studentLastName",
+            countQuery = "SELECT COUNT(*) FROM grades g JOIN students s ON " +
+                    "g.student_id = s.id WHERE s.last_name = :studentLastName",
             nativeQuery = true)
     Page<Grade> findByStudentLastNameNative(String studentLastName, Pageable pageable);
 }

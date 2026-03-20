@@ -1,5 +1,8 @@
 package com.example.student.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +12,17 @@ import java.util.List;
 @Setter
 public class StudentCreateDto {
 
+    @NotBlank(message = "Имя обязательно")
     private String firstName;
-    private String lastName;
-    private String middleName;
-    private Long groupId;
-    private List<Long> disciplineIds;
 
+    @NotBlank(message = "Фамилия обязательна")
+    private String lastName;
+
+    private String middleName;
+
+    @NotNull(message = "groupId обязателен")
+    private Long groupId;
+
+    @NotEmpty(message = "Список дисциплин не должен быть пустым")
+    private List<Long> disciplineIds;
 }

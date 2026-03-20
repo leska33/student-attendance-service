@@ -27,7 +27,9 @@ public class GradeQueryService {
 
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
-        if (cache.containsKey(key)) return cache.get(key);
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
@@ -45,7 +47,9 @@ public class GradeQueryService {
 
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
-        if (cache.containsKey(key)) return cache.get(key);
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))

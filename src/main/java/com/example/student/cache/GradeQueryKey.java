@@ -18,8 +18,12 @@ public class GradeQueryKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GradeQueryKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GradeQueryKey)) {
+            return false;
+        }
         GradeQueryKey that = (GradeQueryKey) o;
         return page == that.page &&
                 size == that.size &&

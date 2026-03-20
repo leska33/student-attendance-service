@@ -18,8 +18,12 @@ public class GroupQueryKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GroupQueryKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GroupQueryKey)) {
+            return false;
+        }
         GroupQueryKey that = (GroupQueryKey) o;
         return page == that.page &&
                 size == that.size &&

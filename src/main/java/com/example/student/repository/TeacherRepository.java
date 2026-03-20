@@ -21,7 +21,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Query(value = "SELECT t.* FROM teachers t " +
             "JOIN disciplines d ON t.id = d.teacher_id " +
             "WHERE d.name = :disciplineName",
-            countQuery = "SELECT COUNT(*) FROM teachers t JOIN disciplines d ON t.id = d.teacher_id WHERE d.name = :disciplineName",
+            countQuery = "SELECT COUNT(*) FROM teachers t JOIN disciplines d ON " +
+                    "t.id = d.teacher_id WHERE d.name = :disciplineName",
             nativeQuery = true)
     Page<Teacher> findByDisciplineNameNative(String disciplineName, Pageable pageable);
 }

@@ -22,8 +22,12 @@ public class DisciplineQueryKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DisciplineQueryKey)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DisciplineQueryKey)) {
+            return false;
+        }
         DisciplineQueryKey that = (DisciplineQueryKey) o;
         return page == that.page &&
                 size == that.size &&

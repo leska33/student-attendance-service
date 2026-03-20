@@ -24,7 +24,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query(value = "SELECT g.* FROM groups g " +
             "JOIN students s ON g.id = s.group_id " +
             "WHERE s.last_name = :studentLastName",
-            countQuery = "SELECT COUNT(*) FROM groups g JOIN students s ON g.id = s.group_id WHERE s.last_name = :studentLastName",
+            countQuery = "SELECT COUNT(*) FROM groups g JOIN students s ON " +
+                    "g.id = s.group_id WHERE s.last_name = :studentLastName",
             nativeQuery = true)
     Page<Group> findByStudentLastNameNative(String studentLastName, Pageable pageable);
 }

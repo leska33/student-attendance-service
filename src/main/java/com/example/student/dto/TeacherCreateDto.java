@@ -1,5 +1,6 @@
 package com.example.student.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,8 +8,11 @@ import lombok.Setter;
 @Setter
 public class TeacherCreateDto {
 
+    @NotBlank(message = "Имя обязательно")
     private String firstName;
-    private String lastName;
-    private String middleName;
 
+    @NotBlank(message = "Фамилия обязательна")
+    private String lastName;
+
+    private String middleName;
 }
