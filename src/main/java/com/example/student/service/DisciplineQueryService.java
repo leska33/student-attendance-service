@@ -27,7 +27,8 @@ public class DisciplineQueryService {
         this.repository = repository;
     }
 
-    public List<DisciplineResponseDto> getDisciplinesByTeacherJPQL(String firstName, String middleName, String lastName, int page, int size) {
+    public List<DisciplineResponseDto> getDisciplinesByTeacherJPQL(String firstName, String middleName,
+                                                                   String lastName, int page, int size) {
         DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
@@ -48,7 +49,8 @@ public class DisciplineQueryService {
         return result;
     }
 
-    public List<DisciplineResponseDto> getDisciplinesByTeacherNative(String firstName, String middleName, String lastName, int page, int size) {
+    public List<DisciplineResponseDto> getDisciplinesByTeacherNative(String firstName, String middleName,
+                                                                     String lastName, int page, int size) {
         DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
