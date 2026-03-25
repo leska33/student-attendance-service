@@ -30,9 +30,11 @@ public class GroupQueryService {
         );
 
         if (cache.containsKey(key)) {
+            System.out.println("GROUP_JPQL: FROM CACHE - lastName=" + lastName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("GROUP_JPQL: FROM DATABASE - lastName=" + lastName + ", page=" + page);
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
                 .map(GroupMapper::toDto)
@@ -50,9 +52,11 @@ public class GroupQueryService {
         );
 
         if (cache.containsKey(key)) {
+            System.out.println("GROUP_NATIVE: FROM CACHE - lastName=" + lastName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("GROUP_NATIVE: FROM DATABASE - lastName=" + lastName + ", page=" + page);
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameNative(lastName, PageRequest.of(page, size))
                 .map(GroupMapper::toDto)
@@ -64,6 +68,8 @@ public class GroupQueryService {
 
     @Transactional
     public void invalidateCache() {
+        System.out.println("GROUP: CACHE INVALIDATED - size before=" + cache.size());
         cache.clear();
+        System.out.println("GROUP: CACHE INVALIDATED - size after=" + cache.size());
     }
 }

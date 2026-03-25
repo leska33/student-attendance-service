@@ -28,9 +28,13 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
+            System.out.println("GRADE_JPQL: FROM CACHE - studentLastName=" + studentLastName + ", " +
+                    "disciplineName=" + disciplineName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("GRADE_JPQL: FROM DATABASE - studentLastName=" + studentLastName + ", " +
+                "disciplineName=" + disciplineName + ", page=" + page);
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
                 .stream()
@@ -48,9 +52,13 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
+            System.out.println("GRADE_NATIVE: FROM CACHE - studentLastName=" + studentLastName + ", " +
+                    "disciplineName=" + disciplineName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("GRADE_NATIVE: FROM DATABASE - studentLastName=" + studentLastName + ", " +
+                "disciplineName=" + disciplineName + ", page=" + page);
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
                 .stream()
@@ -64,6 +72,8 @@ public class GradeQueryService {
 
     @Transactional
     public void invalidateCache() {
+        System.out.println("GRADE: CACHE INVALIDATED - size before=" + cache.size());
         cache.clear();
+        System.out.println("GRADE: CACHE INVALIDATED - size after=" + cache.size());
     }
 }

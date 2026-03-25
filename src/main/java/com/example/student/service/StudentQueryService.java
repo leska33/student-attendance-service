@@ -30,9 +30,11 @@ public class StudentQueryService {
         );
 
         if (cache.containsKey(key)) {
+            System.out.println("STUDENT_JPQL: FROM CACHE - disciplineName=" + disciplineName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("STUDENT_JPQL: FROM DATABASE - disciplineName=" + disciplineName + ", page=" + page);
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
                 .map(StudentMapper::toDto)
@@ -50,9 +52,11 @@ public class StudentQueryService {
         );
 
         if (cache.containsKey(key)) {
+            System.out.println("STUDENT_NATIVE: FROM CACHE - disciplineName=" + disciplineName + ", page=" + page);
             return cache.get(key);
         }
 
+        System.out.println("STUDENT_NATIVE: FROM DATABASE - disciplineName=" + disciplineName + ", page=" + page);
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))
                 .map(StudentMapper::toDto)
@@ -64,6 +68,8 @@ public class StudentQueryService {
 
     @Transactional
     public void invalidateCache() {
+        System.out.println("STUDENT: CACHE INVALIDATED - size before=" + cache.size());
         cache.clear();
+        System.out.println("STUDENT: CACHE INVALIDATED - size after=" + cache.size());
     }
 }
