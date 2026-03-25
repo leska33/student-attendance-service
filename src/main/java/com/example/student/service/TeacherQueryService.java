@@ -18,7 +18,6 @@ import java.util.Map;
 public class TeacherQueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeacherQueryService.class);
-    private static final String PAGE_LOG = ", page=";
 
     private final TeacherRepository repository;
     private final Map<TeacherQueryKey, List<TeacherResponseDto>> cache = new HashMap<>();
@@ -31,11 +30,11 @@ public class TeacherQueryService {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("TEACHER_JPQL: FROM CACHE - discipline=%s, page=%d", disciplineName, page));
+            LOGGER.info("TEACHER_JPQL: FROM CACHE - discipline={}, page={}", disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("TEACHER_JPQL: FROM DATABASE - discipline=%s, page=%d", disciplineName, page));
+        LOGGER.info("TEACHER_JPQL: FROM DATABASE - discipline={}, page={}", disciplineName, page);
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -50,11 +49,11 @@ public class TeacherQueryService {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("TEACHER_NATIVE: FROM CACHE - discipline=%s, page=%d", disciplineName, page));
+            LOGGER.info("TEACHER_NATIVE: FROM CACHE - discipline={}, page={}", disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("TEACHER_NATIVE: FROM DATABASE - discipline=%s, page=%d", disciplineName, page));
+        LOGGER.info("TEACHER_NATIVE: FROM DATABASE - discipline={}, page={}", disciplineName, page);
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))

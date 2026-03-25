@@ -18,7 +18,6 @@ import java.util.Map;
 public class StudentQueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StudentQueryService.class);
-    private static final String PAGE_LOG = ", page=";
 
     private final StudentRepository repository;
     private final Map<StudentQueryKey, List<StudentResponseDto>> cache = new HashMap<>();
@@ -31,11 +30,11 @@ public class StudentQueryService {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("STUDENT_JPQL: FROM CACHE - discipline=%s, page=%d", disciplineName, page));
+            LOGGER.info("STUDENT_JPQL: FROM CACHE - discipline={}, page={}", disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("STUDENT_JPQL: FROM DATABASE - discipline=%s, page=%d", disciplineName, page));
+        LOGGER.info("STUDENT_JPQL: FROM DATABASE - discipline={}, page={}", disciplineName, page);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -50,11 +49,11 @@ public class StudentQueryService {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("STUDENT_NATIVE: FROM CACHE - discipline=%s, page=%d", disciplineName, page));
+            LOGGER.info("STUDENT_NATIVE: FROM CACHE - discipline={}, page={}", disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("STUDENT_NATIVE: FROM DATABASE - discipline=%s, page=%d", disciplineName, page));
+        LOGGER.info("STUDENT_NATIVE: FROM DATABASE - discipline={}, page={}", disciplineName, page);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))

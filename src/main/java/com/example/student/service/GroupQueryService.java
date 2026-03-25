@@ -18,7 +18,6 @@ import java.util.Map;
 public class GroupQueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupQueryService.class);
-    private static final String PAGE_LOG = ", page=";
 
     private final GroupRepository repository;
     private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new HashMap<>();
@@ -31,11 +30,11 @@ public class GroupQueryService {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("GROUP_JPQL: FROM CACHE - lastName=%s, page=%d", lastName, page));
+            LOGGER.info("GROUP_JPQL: FROM CACHE - lastName={}, page={}", lastName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("GROUP_JPQL: FROM DATABASE - lastName=%s, page=%d", lastName, page));
+        LOGGER.info("GROUP_JPQL: FROM DATABASE - lastName={}, page={}", lastName, page);
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
@@ -50,11 +49,11 @@ public class GroupQueryService {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("GROUP_NATIVE: FROM CACHE - lastName=%s, page=%d", lastName, page));
+            LOGGER.info("GROUP_NATIVE: FROM CACHE - lastName={}, page={}", lastName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("GROUP_NATIVE: FROM DATABASE - lastName=%s, page=%d", lastName, page));
+        LOGGER.info("GROUP_NATIVE: FROM DATABASE - lastName={}, page={}", lastName, page);
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameNative(lastName, PageRequest.of(page, size))

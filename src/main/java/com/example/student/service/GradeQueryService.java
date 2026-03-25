@@ -18,7 +18,6 @@ import java.util.Map;
 public class GradeQueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GradeQueryService.class);
-    private static final String PAGE_LOG = ", page=";
 
     private final GradeRepository repository;
     private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new HashMap<>();
@@ -32,13 +31,13 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("GRADE_JPQL: FROM CACHE - studentLastName=%s, discipline=%s, page=%d",
-                    studentLastName, disciplineName, page));
+            LOGGER.info("GRADE_JPQL: FROM CACHE - studentLastName={}, discipline={}, page={}",
+                    studentLastName, disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("GRADE_JPQL: FROM DATABASE - studentLastName=%s, discipline=%s, page=%d",
-                studentLastName, disciplineName, page));
+        LOGGER.info("GRADE_JPQL: FROM DATABASE - studentLastName={}, discipline={}, page={}",
+                studentLastName, disciplineName, page);
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
@@ -56,13 +55,13 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info(String.format("GRADE_NATIVE: FROM CACHE - studentLastName=%s, discipline=%s, page=%d",
-                    studentLastName, disciplineName, page));
+            LOGGER.info("GRADE_NATIVE: FROM CACHE - studentLastName={}, discipline={}, page={}",
+                    studentLastName, disciplineName, page);
             return cache.get(key);
         }
 
-        LOGGER.info(String.format("GRADE_NATIVE: FROM DATABASE - studentLastName=%s, discipline=%s, page=%d",
-                studentLastName, disciplineName, page));
+        LOGGER.info("GRADE_NATIVE: FROM DATABASE - studentLastName={}, discipline={}, page={}",
+                studentLastName, disciplineName, page);
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
