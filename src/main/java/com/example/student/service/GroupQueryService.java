@@ -2,6 +2,7 @@ package com.example.student.service;
 
 import com.example.student.cache.GroupQueryKey;
 import com.example.student.dto.GroupResponseDto;
+import com.example.student.entity.Group;
 import com.example.student.mapper.GroupMapper;
 import com.example.student.repository.GroupRepository;
 import org.slf4j.Logger;
@@ -68,5 +69,18 @@ public class GroupQueryService {
     public void invalidateCache() {
         LOGGER.info("GROUP CACHE CLEARED");
         cache.clear();
+    }
+
+    @Transactional
+    public Group saveOrUpdate(Group group) {
+        Group saved = repository.save(group);
+        invalidateCache();
+        return saved;
+    }
+
+    @Transactional
+    public void delete(Group group) {
+        repository.delete(group);
+        invalidateCache();
     }
 }

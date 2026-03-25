@@ -2,6 +2,7 @@ package com.example.student.service;
 
 import com.example.student.cache.GradeQueryKey;
 import com.example.student.dto.GradeResponseDto;
+import com.example.student.entity.Grade;
 import com.example.student.mapper.GradeMapper;
 import com.example.student.repository.GradeRepository;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ public class GradeQueryService {
         this.repository = repository;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(String studentLastName, String disciplineName, int page, int size) {
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(String studentLastName,
+                                                                      String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
@@ -47,7 +49,8 @@ public class GradeQueryService {
         return result;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(String studentLastName, String disciplineName, int page, int size) {
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(String studentLastName,
+                                                                        String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
@@ -72,5 +75,18 @@ public class GradeQueryService {
     public void invalidateCache() {
         LOGGER.info("GRADE CACHE CLEARED");
         cache.clear();
+    }
+
+    @Transactional
+    public Grade saveOrUpdate(Grade grade) {
+        Grade saved = repository.save(grade);
+        invalidateCache();
+        return saved;
+    }
+
+    @Transactional
+    public void delete(Grade grade) {
+        repository.delete(grade);
+        invalidateCache();
     }
 }

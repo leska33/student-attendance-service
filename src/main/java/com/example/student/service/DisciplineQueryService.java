@@ -2,6 +2,7 @@ package com.example.student.service;
 
 import com.example.student.cache.DisciplineQueryKey;
 import com.example.student.dto.DisciplineResponseDto;
+import com.example.student.entity.Discipline;
 import com.example.student.mapper.DisciplineMapper;
 import com.example.student.repository.DisciplineRepository;
 import org.slf4j.Logger;
@@ -26,7 +27,8 @@ public class DisciplineQueryService {
         this.repository = repository;
     }
 
-    public List<DisciplineResponseDto> getDisciplinesByTeacherJPQL(String firstName, String middleName, String lastName, int page, int size) {
+    public List<DisciplineResponseDto> getDisciplinesByTeacherJPQL(String firstName, String middleName,
+                                                                   String lastName, int page, int size) {
         DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
@@ -45,7 +47,8 @@ public class DisciplineQueryService {
         return result;
     }
 
-    public List<DisciplineResponseDto> getDisciplinesByTeacherNative(String firstName, String middleName, String lastName, int page, int size) {
+    public List<DisciplineResponseDto> getDisciplinesByTeacherNative(String firstName, String middleName,
+                                                                     String lastName, int page, int size) {
         DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
@@ -68,5 +71,18 @@ public class DisciplineQueryService {
     public void invalidateCache() {
         LOGGER.info("DISCIPLINE CACHE CLEARED");
         cache.clear();
+    }
+
+    @Transactional
+    public Discipline saveOrUpdate(Discipline discipline) {
+        Discipline saved = repository.save(discipline);
+        invalidateCache();
+        return saved;
+    }
+
+    @Transactional
+    public void delete(Discipline discipline) {
+        repository.delete(discipline);
+        invalidateCache();
     }
 }

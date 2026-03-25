@@ -2,6 +2,7 @@ package com.example.student.service;
 
 import com.example.student.cache.StudentQueryKey;
 import com.example.student.dto.StudentResponseDto;
+import com.example.student.entity.Student;
 import com.example.student.mapper.StudentMapper;
 import com.example.student.repository.StudentRepository;
 import org.slf4j.Logger;
@@ -68,5 +69,18 @@ public class StudentQueryService {
     public void invalidateCache() {
         LOGGER.info("STUDENT CACHE CLEARED");
         cache.clear();
+    }
+
+    @Transactional
+    public Student saveOrUpdate(Student student) {
+        Student saved = repository.save(student);
+        invalidateCache();
+        return saved;
+    }
+
+    @Transactional
+    public void delete(Student student) {
+        repository.delete(student);
+        invalidateCache();
     }
 }
