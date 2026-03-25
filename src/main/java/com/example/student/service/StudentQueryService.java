@@ -18,7 +18,6 @@ import java.util.Map;
 public class StudentQueryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StudentQueryService.class);
-    private static final int MAX_LOG_LENGTH = 100;
 
     private final StudentRepository repository;
     private final Map<StudentQueryKey, List<StudentResponseDto>> cache = new HashMap<>();
@@ -27,23 +26,15 @@ public class StudentQueryService {
         this.repository = repository;
     }
 
-    private String safeLog(Object obj) {
-        String s = String.valueOf(obj).replaceAll("[\\r\\n]", "_");
-        if (s.length() > MAX_LOG_LENGTH) {
-            s = s.substring(0, MAX_LOG_LENGTH) + "...";
-        }
-        return s;
-    }
-
     public List<StudentResponseDto> getStudentsByDisciplineJPQL(String disciplineName, int page, int size) {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("STUDENT_JPQL: FROM CACHE - key={}, page={}", safeLog(key.hashCode()), page);
+            LOGGER.info("STUDENT_JPQL: FROM CACHE - page={}, size={}", page, size);
             return cache.get(key);
         }
 
-        LOGGER.info("STUDENT_JPQL: FROM DATABASE - key={}, page={}", safeLog(key.hashCode()), page);
+        LOGGER.info("STUDENT_JPQL: FROM DATABASE - page={}, size={}", page, size);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -58,11 +49,11 @@ public class StudentQueryService {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("STUDENT_NATIVE: FROM CACHE - key={}, page={}", safeLog(key.hashCode()), page);
+            LOGGER.info("STUDENT_NATIVE: FROM CACHE - page={}, size={}", page, size);
             return cache.get(key);
         }
 
-        LOGGER.info("STUDENT_NATIVE: FROM DATABASE - key={}, page={}", safeLog(key.hashCode()), page);
+        LOGGER.info("STUDENT_NATIVE: FROM DATABASE - page={}, size={}", page, size);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))
