@@ -13,29 +13,29 @@ import java.util.List;
 @RequestMapping("/grades/filter")
 public class GradeQueryController {
 
-    private final GradeQueryService gradeQueryService;
+    private final GradeQueryService service;
 
-    public GradeQueryController(GradeQueryService gradeQueryService) {
-        this.gradeQueryService = gradeQueryService;
+    public GradeQueryController(GradeQueryService service) {
+        this.service = service;
     }
 
     @GetMapping("/jpql")
     public List<GradeResponseDto> getByStudentAndDisciplineJPQL(
-            @RequestParam String student,
-            @RequestParam String discipline,
+            @RequestParam String studentLastName,
+            @RequestParam String disciplineName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return gradeQueryService.getGradesByStudentAndDisciplineJPQL(student, discipline, page, size);
+        return service.getGradesByStudentAndDisciplineJPQL(studentLastName, disciplineName, page, size);
     }
 
     @GetMapping("/native")
     public List<GradeResponseDto> getByStudentAndDisciplineNative(
-            @RequestParam String student,
-            @RequestParam String discipline,
+            @RequestParam String studentLastName,
+            @RequestParam String disciplineName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return gradeQueryService.getGradesByStudentAndDisciplineNative(student, discipline, page, size);
+        return service.getGradesByStudentAndDisciplineNative(studentLastName, disciplineName, page, size);
     }
 }

@@ -13,10 +13,10 @@ import java.util.List;
 @RequestMapping("/groups/filter")
 public class GroupQueryController {
 
-    private final GroupQueryService groupQueryService;
+    private final GroupQueryService service;
 
-    public GroupQueryController(GroupQueryService groupQueryService) {
-        this.groupQueryService = groupQueryService;
+    public GroupQueryController(GroupQueryService service) {
+        this.service = service;
     }
 
     @GetMapping("/jpql")
@@ -24,8 +24,7 @@ public class GroupQueryController {
             @RequestParam String lastName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
-        return groupQueryService.getGroupsByStudentLastNameJPQL(lastName, page, size);
+        return service.getGroupsByStudentLastNameJPQL(lastName, page, size);
     }
 
     @GetMapping("/native")
@@ -34,6 +33,6 @@ public class GroupQueryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return groupQueryService.getGroupsByStudentLastNameNative(lastName, page, size);
+        return service.getGroupsByStudentLastNameNative(lastName, page, size);
     }
 }

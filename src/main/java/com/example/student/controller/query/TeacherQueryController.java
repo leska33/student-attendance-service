@@ -13,27 +13,27 @@ import java.util.List;
 @RequestMapping("/teachers/filter")
 public class TeacherQueryController {
 
-    private final TeacherQueryService teacherQueryService;
+    private final TeacherQueryService service;
 
-    public TeacherQueryController(TeacherQueryService teacherQueryService) {
-        this.teacherQueryService = teacherQueryService;
+    public TeacherQueryController(TeacherQueryService service) {
+        this.service = service;
     }
 
     @GetMapping("/jpql")
     public List<TeacherResponseDto> getByDisciplineJPQL(
-            @RequestParam String discipline,
+            @RequestParam String disciplineName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return teacherQueryService.getTeachersByDisciplineJPQL(discipline, page, size);
+        return service.getTeachersByDisciplineJPQL(disciplineName, page, size);
     }
 
     @GetMapping("/native")
     public List<TeacherResponseDto> getByDisciplineNative(
-            @RequestParam String discipline,
+            @RequestParam String disciplineName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        return teacherQueryService.getTeachersByDisciplineNative(discipline, page, size);
+        return service.getTeachersByDisciplineNative(disciplineName, page, size);
     }
 }
