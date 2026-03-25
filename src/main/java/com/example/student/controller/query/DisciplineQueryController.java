@@ -2,8 +2,6 @@ package com.example.student.controller.query;
 
 import com.example.student.dto.DisciplineResponseDto;
 import com.example.student.service.DisciplineQueryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/disciplines/filter")
 public class DisciplineQueryController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DisciplineQueryController.class);
 
     private final DisciplineQueryService service;
 
@@ -31,9 +27,6 @@ public class DisciplineQueryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        int safeHash = (firstName + middleName + lastName).hashCode();
-        LOGGER.info("DISCIPLINE_JPQL request - key={}, page={}, size={}", safeHash, page, size);
-
         return service.getDisciplinesByTeacherJPQL(firstName, middleName, lastName, page, size);
     }
 
@@ -44,9 +37,6 @@ public class DisciplineQueryController {
             @RequestParam String lastName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
-        int safeHash = (firstName + middleName + lastName).hashCode();
-        LOGGER.info("DISCIPLINE_NATIVE request - key={}, page={}, size={}", safeHash, page, size);
 
         return service.getDisciplinesByTeacherNative(firstName, middleName, lastName, page, size);
     }

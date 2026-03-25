@@ -26,8 +26,9 @@ public class GradeQueryService {
         this.repository = repository;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(String studentLastName,
-                                                                      String disciplineName, int page, int size) {
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(
+            String studentLastName, String disciplineName, int page, int size) {
+
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
@@ -48,8 +49,9 @@ public class GradeQueryService {
         return result;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(String studentLastName,
-                                                                        String disciplineName, int page, int size) {
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(
+            String studentLastName, String disciplineName, int page, int size) {
+
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
