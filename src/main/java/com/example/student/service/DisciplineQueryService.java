@@ -30,18 +30,14 @@ public class DisciplineQueryService {
             String firstName, String middleName, String lastName,
             int page, int size) {
 
-        DisciplineQueryKey key = new DisciplineQueryKey(
-                firstName, middleName, lastName, page, size, "JPQL"
-        );
+        DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("DISCIPLINE_JPQL: FROM CACHE - firstName={}, lastName={}, page={}",
-                    firstName, lastName, page);
+            LOGGER.info("DISCIPLINE_JPQL: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("DISCIPLINE_JPQL: FROM DATABASE - firstName={}, lastName={}, page={}",
-                firstName, lastName, page);
+        LOGGER.info("DISCIPLINE_JPQL: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<DisciplineResponseDto> result = repository
                 .findByTeacherFullNameJPQL(firstName, middleName, lastName, PageRequest.of(page, size))
@@ -56,18 +52,14 @@ public class DisciplineQueryService {
             String firstName, String middleName, String lastName,
             int page, int size) {
 
-        DisciplineQueryKey key = new DisciplineQueryKey(
-                firstName, middleName, lastName, page, size, "NATIVE"
-        );
+        DisciplineQueryKey key = new DisciplineQueryKey(firstName, middleName, lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("DISCIPLINE_NATIVE: FROM CACHE - firstName={}, lastName={}, page={}",
-                    firstName, lastName, page);
+            LOGGER.info("DISCIPLINE_NATIVE: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("DISCIPLINE_NATIVE: FROM DATABASE - firstName={}, lastName={}, page={}",
-                firstName, lastName, page);
+        LOGGER.info("DISCIPLINE_NATIVE: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<DisciplineResponseDto> result = repository
                 .findByTeacherFullNameNative(firstName, middleName, lastName, PageRequest.of(page, size))

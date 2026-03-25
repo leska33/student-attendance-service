@@ -30,11 +30,11 @@ public class StudentQueryService {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("STUDENT_JPQL: FROM CACHE - discipline={}, page={}", disciplineName, page);
+            LOGGER.info("STUDENT_JPQL: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("STUDENT_JPQL: FROM DATABASE - discipline={}, page={}", disciplineName, page);
+        LOGGER.info("STUDENT_JPQL: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -49,11 +49,11 @@ public class StudentQueryService {
         StudentQueryKey key = new StudentQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("STUDENT_NATIVE: FROM CACHE - discipline={}, page={}", disciplineName, page);
+            LOGGER.info("STUDENT_NATIVE: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("STUDENT_NATIVE: FROM DATABASE - discipline={}, page={}", disciplineName, page);
+        LOGGER.info("STUDENT_NATIVE: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<StudentResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))

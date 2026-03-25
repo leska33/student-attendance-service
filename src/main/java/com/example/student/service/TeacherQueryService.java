@@ -30,11 +30,11 @@ public class TeacherQueryService {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("TEACHER_JPQL: FROM CACHE - discipline={}, page={}", disciplineName, page);
+            LOGGER.info("TEACHER_JPQL: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("TEACHER_JPQL: FROM DATABASE - discipline={}, page={}", disciplineName, page);
+        LOGGER.info("TEACHER_JPQL: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -49,11 +49,11 @@ public class TeacherQueryService {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("TEACHER_NATIVE: FROM CACHE - discipline={}, page={}", disciplineName, page);
+            LOGGER.info("TEACHER_NATIVE: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("TEACHER_NATIVE: FROM DATABASE - discipline={}, page={}", disciplineName, page);
+        LOGGER.info("TEACHER_NATIVE: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))

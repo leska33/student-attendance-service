@@ -30,11 +30,11 @@ public class GroupQueryService {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GROUP_JPQL: FROM CACHE - lastName={}, page={}", lastName, page);
+            LOGGER.info("GROUP_JPQL: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("GROUP_JPQL: FROM DATABASE - lastName={}, page={}", lastName, page);
+        LOGGER.info("GROUP_JPQL: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
@@ -49,11 +49,11 @@ public class GroupQueryService {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GROUP_NATIVE: FROM CACHE - lastName={}, page={}", lastName, page);
+            LOGGER.info("GROUP_NATIVE: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("GROUP_NATIVE: FROM DATABASE - lastName={}, page={}", lastName, page);
+        LOGGER.info("GROUP_NATIVE: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameNative(lastName, PageRequest.of(page, size))

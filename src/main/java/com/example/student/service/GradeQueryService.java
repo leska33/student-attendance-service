@@ -31,13 +31,11 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_JPQL: FROM CACHE - studentLastName={}, discipline={}, page={}",
-                    studentLastName, disciplineName, page);
+            LOGGER.info("GRADE_JPQL: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("GRADE_JPQL: FROM DATABASE - studentLastName={}, discipline={}, page={}",
-                studentLastName, disciplineName, page);
+        LOGGER.info("GRADE_JPQL: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
@@ -55,13 +53,11 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_NATIVE: FROM CACHE - studentLastName={}, discipline={}, page={}",
-                    studentLastName, disciplineName, page);
+            LOGGER.info("GRADE_NATIVE: FROM CACHE - key={}, page={}", key.hashCode(), page);
             return cache.get(key);
         }
 
-        LOGGER.info("GRADE_NATIVE: FROM DATABASE - studentLastName={}, discipline={}, page={}",
-                studentLastName, disciplineName, page);
+        LOGGER.info("GRADE_NATIVE: FROM DATABASE - key={}, page={}", key.hashCode(), page);
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
