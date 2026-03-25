@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TeacherQueryService {
@@ -21,7 +21,7 @@ public class TeacherQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TeacherQueryService.class);
 
     private final TeacherRepository repository;
-    private final Map<TeacherQueryKey, List<TeacherResponseDto>> cache = new HashMap<>();
+    private final Map<TeacherQueryKey, List<TeacherResponseDto>> cache = new ConcurrentHashMap<>();
 
     public TeacherQueryService(TeacherRepository repository) {
         this.repository = repository;
@@ -30,12 +30,13 @@ public class TeacherQueryService {
     public List<TeacherResponseDto> getTeachersByDisciplineJPQL(String disciplineName, int page, int size) {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "JPQL");
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("TEACHER_JPQL: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<TeacherResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("TEACHER_JPQL: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("TEACHER_JPQL: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("TEACHER_JPQL: FROM DATABASE");
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
@@ -49,12 +50,13 @@ public class TeacherQueryService {
     public List<TeacherResponseDto> getTeachersByDisciplineNative(String disciplineName, int page, int size) {
         TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "NATIVE");
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("TEACHER_NATIVE: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<TeacherResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("TEACHER_NATIVE: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("TEACHER_NATIVE: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("TEACHER_NATIVE: FROM DATABASE");
 
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))
@@ -65,7 +67,6 @@ public class TeacherQueryService {
         return result;
     }
 
-    @Transactional
     public void invalidateCache() {
         LOGGER.info("TEACHER CACHE CLEARED");
         cache.clear();

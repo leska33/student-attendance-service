@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GroupQueryService {
@@ -21,7 +21,7 @@ public class GroupQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupQueryService.class);
 
     private final GroupRepository repository;
-    private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new HashMap<>();
+    private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new ConcurrentHashMap<>();
 
     public GroupQueryService(GroupRepository repository) {
         this.repository = repository;
@@ -30,12 +30,13 @@ public class GroupQueryService {
     public List<GroupResponseDto> getGroupsByStudentLastNameJPQL(String lastName, int page, int size) {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "JPQL");
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("GROUP_JPQL: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<GroupResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("GROUP_JPQL: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("GROUP_JPQL: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("GROUP_JPQL: FROM DATABASE");
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
@@ -49,12 +50,13 @@ public class GroupQueryService {
     public List<GroupResponseDto> getGroupsByStudentLastNameNative(String lastName, int page, int size) {
         GroupQueryKey key = new GroupQueryKey(lastName, page, size, "NATIVE");
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("GROUP_NATIVE: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<GroupResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("GROUP_NATIVE: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("GROUP_NATIVE: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("GROUP_NATIVE: FROM DATABASE");
 
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameNative(lastName, PageRequest.of(page, size))
@@ -65,7 +67,6 @@ public class GroupQueryService {
         return result;
     }
 
-    @Transactional
     public void invalidateCache() {
         LOGGER.info("GROUP CACHE CLEARED");
         cache.clear();

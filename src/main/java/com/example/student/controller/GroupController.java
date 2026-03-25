@@ -2,8 +2,8 @@ package com.example.student.controller;
 
 import com.example.student.dto.GroupCreateDto;
 import com.example.student.dto.GroupResponseDto;
-import com.example.student.service.GroupQueryService;
 import com.example.student.service.GroupService;
+import com.example.student.service.GroupQueryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

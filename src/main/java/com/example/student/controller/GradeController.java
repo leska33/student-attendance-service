@@ -2,8 +2,8 @@ package com.example.student.controller;
 
 import com.example.student.dto.GradeCreateDto;
 import com.example.student.dto.GradeResponseDto;
-import com.example.student.service.GradeQueryService;
 import com.example.student.service.GradeService;
+import com.example.student.service.GradeQueryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

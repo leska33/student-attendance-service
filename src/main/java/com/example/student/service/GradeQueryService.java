@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GradeQueryService {
@@ -21,7 +21,7 @@ public class GradeQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GradeQueryService.class);
 
     private final GradeRepository repository;
-    private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new HashMap<>();
+    private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new ConcurrentHashMap<>();
 
     public GradeQueryService(GradeRepository repository) {
         this.repository = repository;
@@ -31,12 +31,13 @@ public class GradeQueryService {
                                                                       String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_JPQL: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<GradeResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("GRADE_JPQL: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("GRADE_JPQL: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("GRADE_JPQL: FROM DATABASE");
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
@@ -53,12 +54,13 @@ public class GradeQueryService {
                                                                         String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
-        if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_NATIVE: FROM CACHE - page={}, size={}", page, size);
-            return cache.get(key);
+        List<GradeResponseDto> cached = cache.get(key);
+        if (cached != null) {
+            LOGGER.info("GRADE_NATIVE: FROM CACHE");
+            return cached;
         }
 
-        LOGGER.info("GRADE_NATIVE: FROM DATABASE - page={}, size={}", page, size);
+        LOGGER.info("GRADE_NATIVE: FROM DATABASE");
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
@@ -71,7 +73,6 @@ public class GradeQueryService {
         return result;
     }
 
-    @Transactional
     public void invalidateCache() {
         LOGGER.info("GRADE CACHE CLEARED");
         cache.clear();
