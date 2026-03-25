@@ -4,6 +4,8 @@ import com.example.student.cache.DisciplineQueryKey;
 import com.example.student.dto.DisciplineResponseDto;
 import com.example.student.mapper.DisciplineMapper;
 import com.example.student.repository.DisciplineRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,9 @@ import java.util.Map;
 
 @Service
 public class DisciplineQueryService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DisciplineQueryService.class);
+    private static final String PAGE_LOG = ", page=";
 
     private final DisciplineRepository repository;
     private final Map<DisciplineQueryKey, List<DisciplineResponseDto>> cache = new HashMap<>();
@@ -31,13 +36,14 @@ public class DisciplineQueryService {
         );
 
         if (cache.containsKey(key)) {
-            System.out.println("DISCIPLINE_JPQL: FROM CACHE - firstName=" + firstName + ", " +
-                    "lastName=" + lastName + ", page=" + page);
+            LOGGER.info("DISCIPLINE_JPQL: FROM CACHE - firstName={}, lastName={}{}",
+                    firstName, lastName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("DISCIPLINE_JPQL: FROM DATABASE - firstName=" + firstName + ", " +
-                "lastName=" + lastName + ", page=" + page);
+        LOGGER.info("DISCIPLINE_JPQL: FROM DATABASE - firstName={}, lastName={}{}",
+                firstName, lastName, PAGE_LOG + page);
+
         List<DisciplineResponseDto> result = repository
                 .findByTeacherFullNameJPQL(firstName, middleName, lastName, PageRequest.of(page, size))
                 .map(DisciplineMapper::toDto)
@@ -56,13 +62,14 @@ public class DisciplineQueryService {
         );
 
         if (cache.containsKey(key)) {
-            System.out.println("DISCIPLINE_NATIVE: FROM CACHE - firstName=" + firstName + ", " +
-                    "lastName=" + lastName + ", page=" + page);
+            LOGGER.info("DISCIPLINE_NATIVE: FROM CACHE - firstName={}, lastName={}{}",
+                    firstName, lastName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("DISCIPLINE_NATIVE: FROM DATABASE - firstName=" + firstName + ", " +
-                "lastName=" + lastName + ", page=" + page);
+        LOGGER.info("DISCIPLINE_NATIVE: FROM DATABASE - firstName={}, lastName={}{}",
+                firstName, lastName, PAGE_LOG + page);
+
         List<DisciplineResponseDto> result = repository
                 .findByTeacherFullNameNative(firstName, middleName, lastName, PageRequest.of(page, size))
                 .map(DisciplineMapper::toDto)
@@ -74,8 +81,7 @@ public class DisciplineQueryService {
 
     @Transactional
     public void invalidateCache() {
-        System.out.println("DISCIPLINE: CACHE INVALIDATED - size before=" + cache.size());
+        LOGGER.info("DISCIPLINE CACHE CLEARED");
         cache.clear();
-        System.out.println("DISCIPLINE: CACHE INVALIDATED - size after=" + cache.size());
     }
 }

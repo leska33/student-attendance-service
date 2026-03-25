@@ -4,6 +4,8 @@ import com.example.student.cache.TeacherQueryKey;
 import com.example.student.dto.TeacherResponseDto;
 import com.example.student.mapper.TeacherMapper;
 import com.example.student.repository.TeacherRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.Map;
 @Service
 public class TeacherQueryService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeacherQueryService.class);
+    private static final String PAGE_LOG = ", page=";
+
     private final TeacherRepository repository;
     private final Map<TeacherQueryKey, List<TeacherResponseDto>> cache = new HashMap<>();
 
@@ -25,16 +30,15 @@ public class TeacherQueryService {
     public List<TeacherResponseDto> getTeachersByDisciplineJPQL(
             String disciplineName, int page, int size) {
 
-        TeacherQueryKey key = new TeacherQueryKey(
-                disciplineName, page, size, "JPQL"
-        );
+        TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            System.out.println("TEACHER_JPQL: FROM CACHE - disciplineName=" + disciplineName + ", page=" + page);
+            LOGGER.info("TEACHER_JPQL: FROM CACHE - discipline={}{}", disciplineName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("TEACHER_JPQL: FROM DATABASE - disciplineName=" + disciplineName + ", page=" + page);
+        LOGGER.info("TEACHER_JPQL: FROM DATABASE - discipline={}{}", disciplineName, PAGE_LOG + page);
+
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
                 .map(TeacherMapper::toDto)
@@ -47,16 +51,15 @@ public class TeacherQueryService {
     public List<TeacherResponseDto> getTeachersByDisciplineNative(
             String disciplineName, int page, int size) {
 
-        TeacherQueryKey key = new TeacherQueryKey(
-                disciplineName, page, size, "NATIVE"
-        );
+        TeacherQueryKey key = new TeacherQueryKey(disciplineName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            System.out.println("TEACHER_NATIVE: FROM CACHE - disciplineName=" + disciplineName + ", page=" + page);
+            LOGGER.info("TEACHER_NATIVE: FROM CACHE - discipline={}{}", disciplineName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("TEACHER_NATIVE: FROM DATABASE - disciplineName=" + disciplineName + ", page=" + page);
+        LOGGER.info("TEACHER_NATIVE: FROM DATABASE - discipline={}{}", disciplineName, PAGE_LOG + page);
+
         List<TeacherResponseDto> result = repository
                 .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))
                 .map(TeacherMapper::toDto)
@@ -68,8 +71,7 @@ public class TeacherQueryService {
 
     @Transactional
     public void invalidateCache() {
-        System.out.println("TEACHER: CACHE INVALIDATED - size before=" + cache.size());
+        LOGGER.info("TEACHER CACHE CLEARED");
         cache.clear();
-        System.out.println("TEACHER: CACHE INVALIDATED - size after=" + cache.size());
     }
 }

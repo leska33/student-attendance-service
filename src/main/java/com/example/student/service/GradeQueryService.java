@@ -4,6 +4,8 @@ import com.example.student.cache.GradeQueryKey;
 import com.example.student.dto.GradeResponseDto;
 import com.example.student.mapper.GradeMapper;
 import com.example.student.repository.GradeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,9 @@ import java.util.Map;
 
 @Service
 public class GradeQueryService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GradeQueryService.class);
+    private static final String PAGE_LOG = ", page=";
 
     private final GradeRepository repository;
     private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new HashMap<>();
@@ -28,13 +33,14 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            System.out.println("GRADE_JPQL: FROM CACHE - studentLastName=" + studentLastName + ", " +
-                    "disciplineName=" + disciplineName + ", page=" + page);
+            LOGGER.info("GRADE_JPQL: FROM CACHE - studentLastName={}, discipline={}{}",
+                    studentLastName, disciplineName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("GRADE_JPQL: FROM DATABASE - studentLastName=" + studentLastName + ", " +
-                "disciplineName=" + disciplineName + ", page=" + page);
+        LOGGER.info("GRADE_JPQL: FROM DATABASE - studentLastName={}, discipline={}{}",
+                studentLastName, disciplineName, PAGE_LOG + page);
+
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
                 .stream()
@@ -52,13 +58,14 @@ public class GradeQueryService {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            System.out.println("GRADE_NATIVE: FROM CACHE - studentLastName=" + studentLastName + ", " +
-                    "disciplineName=" + disciplineName + ", page=" + page);
+            LOGGER.info("GRADE_NATIVE: FROM CACHE - studentLastName={}, discipline={}{}",
+                    studentLastName, disciplineName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("GRADE_NATIVE: FROM DATABASE - studentLastName=" + studentLastName + ", " +
-                "disciplineName=" + disciplineName + ", page=" + page);
+        LOGGER.info("GRADE_NATIVE: FROM DATABASE - studentLastName={}, discipline={}{}",
+                studentLastName, disciplineName, PAGE_LOG + page);
+
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
                 .stream()
@@ -72,8 +79,7 @@ public class GradeQueryService {
 
     @Transactional
     public void invalidateCache() {
-        System.out.println("GRADE: CACHE INVALIDATED - size before=" + cache.size());
+        LOGGER.info("GRADE CACHE CLEARED");
         cache.clear();
-        System.out.println("GRADE: CACHE INVALIDATED - size after=" + cache.size());
     }
 }

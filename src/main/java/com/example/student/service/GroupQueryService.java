@@ -4,6 +4,8 @@ import com.example.student.cache.GroupQueryKey;
 import com.example.student.dto.GroupResponseDto;
 import com.example.student.mapper.GroupMapper;
 import com.example.student.repository.GroupRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ import java.util.Map;
 @Service
 public class GroupQueryService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroupQueryService.class);
+    private static final String PAGE_LOG = ", page=";
+
     private final GroupRepository repository;
     private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new HashMap<>();
 
@@ -25,16 +30,15 @@ public class GroupQueryService {
     public List<GroupResponseDto> getGroupsByStudentLastNameJPQL(
             String lastName, int page, int size) {
 
-        GroupQueryKey key = new GroupQueryKey(
-                lastName, page, size, "JPQL"
-        );
+        GroupQueryKey key = new GroupQueryKey(lastName, page, size, "JPQL");
 
         if (cache.containsKey(key)) {
-            System.out.println("GROUP_JPQL: FROM CACHE - lastName=" + lastName + ", page=" + page);
+            LOGGER.info("GROUP_JPQL: FROM CACHE - lastName={}{}", lastName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("GROUP_JPQL: FROM DATABASE - lastName=" + lastName + ", page=" + page);
+        LOGGER.info("GROUP_JPQL: FROM DATABASE - lastName={}{}", lastName, PAGE_LOG + page);
+
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
                 .map(GroupMapper::toDto)
@@ -47,16 +51,15 @@ public class GroupQueryService {
     public List<GroupResponseDto> getGroupsByStudentLastNameNative(
             String lastName, int page, int size) {
 
-        GroupQueryKey key = new GroupQueryKey(
-                lastName, page, size, "NATIVE"
-        );
+        GroupQueryKey key = new GroupQueryKey(lastName, page, size, "NATIVE");
 
         if (cache.containsKey(key)) {
-            System.out.println("GROUP_NATIVE: FROM CACHE - lastName=" + lastName + ", page=" + page);
+            LOGGER.info("GROUP_NATIVE: FROM CACHE - lastName={}{}", lastName, PAGE_LOG + page);
             return cache.get(key);
         }
 
-        System.out.println("GROUP_NATIVE: FROM DATABASE - lastName=" + lastName + ", page=" + page);
+        LOGGER.info("GROUP_NATIVE: FROM DATABASE - lastName={}{}", lastName, PAGE_LOG + page);
+
         List<GroupResponseDto> result = repository
                 .findByStudentLastNameNative(lastName, PageRequest.of(page, size))
                 .map(GroupMapper::toDto)
@@ -68,8 +71,7 @@ public class GroupQueryService {
 
     @Transactional
     public void invalidateCache() {
-        System.out.println("GROUP: CACHE INVALIDATED - size before=" + cache.size());
+        LOGGER.info("GROUP CACHE CLEARED");
         cache.clear();
-        System.out.println("GROUP: CACHE INVALIDATED - size after=" + cache.size());
     }
 }
