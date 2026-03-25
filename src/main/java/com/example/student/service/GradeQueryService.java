@@ -27,19 +27,17 @@ public class GradeQueryService {
         this.repository = repository;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(
-            String studentLastName, String disciplineName, int page, int size) {
-
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineJPQL(String studentLastName, String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_JPQL: FROM CACHE - studentLastName={}, discipline={}{}",
-                    studentLastName, disciplineName, PAGE_LOG + page);
+            LOGGER.info(String.format("GRADE_JPQL: FROM CACHE - studentLastName=%s, discipline=%s, page=%d",
+                    studentLastName, disciplineName, page));
             return cache.get(key);
         }
 
-        LOGGER.info("GRADE_JPQL: FROM DATABASE - studentLastName={}, discipline={}{}",
-                studentLastName, disciplineName, PAGE_LOG + page);
+        LOGGER.info(String.format("GRADE_JPQL: FROM DATABASE - studentLastName=%s, discipline=%s, page=%d",
+                studentLastName, disciplineName, page));
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
@@ -52,19 +50,17 @@ public class GradeQueryService {
         return result;
     }
 
-    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(
-            String studentLastName, String disciplineName, int page, int size) {
-
+    public List<GradeResponseDto> getGradesByStudentAndDisciplineNative(String studentLastName, String disciplineName, int page, int size) {
         GradeQueryKey key = new GradeQueryKey(studentLastName, disciplineName, page, size);
 
         if (cache.containsKey(key)) {
-            LOGGER.info("GRADE_NATIVE: FROM CACHE - studentLastName={}, discipline={}{}",
-                    studentLastName, disciplineName, PAGE_LOG + page);
+            LOGGER.info(String.format("GRADE_NATIVE: FROM CACHE - studentLastName=%s, discipline=%s, page=%d",
+                    studentLastName, disciplineName, page));
             return cache.get(key);
         }
 
-        LOGGER.info("GRADE_NATIVE: FROM DATABASE - studentLastName={}, discipline={}{}",
-                studentLastName, disciplineName, PAGE_LOG + page);
+        LOGGER.info(String.format("GRADE_NATIVE: FROM DATABASE - studentLastName=%s, discipline=%s, page=%d",
+                studentLastName, disciplineName, page));
 
         List<GradeResponseDto> result = repository
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
