@@ -4,6 +4,7 @@ import com.example.student.dto.StudentCreateDto;
 import com.example.student.dto.StudentResponseDto;
 import com.example.student.service.StudentQueryService;
 import com.example.student.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentResponseDto> createStudent(@RequestBody StudentCreateDto dto) {
+    public ResponseEntity<StudentResponseDto> createStudent(@Valid @RequestBody StudentCreateDto dto) {
         StudentResponseDto response = studentService.createStudent(dto);
         queryService.invalidateCache();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

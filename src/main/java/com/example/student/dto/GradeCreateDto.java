@@ -11,7 +11,7 @@ import lombok.Setter;
 public class GradeCreateDto {
 
     @NotNull(message = "Оценка обязательна")
-    @Min(value = 0, message = "Минимальная оценка 1")
+    @Min(value = 0, message = "Минимальная оценка 0")
     @Max(value = 10, message = "Максимальная оценка 10")
     private Integer value;
 

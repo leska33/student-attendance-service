@@ -16,9 +16,10 @@ public interface DisciplineRepository extends JpaRepository<Discipline, Long> {
     @Query("select d from Discipline d")
     List<Discipline> findAllWithRelations();
 
-    @Query("""
-            select d from Discipline d
-            join d.teacher t
+    @Query(value = """
+            select distinct d from Discipline d
+            join fetch d.teacher t
+            left join fetch d.students s
             where t.firstName = :firstName
             and t.middleName = :middleName
             and t.lastName = :lastName
@@ -30,20 +31,19 @@ public interface DisciplineRepository extends JpaRepository<Discipline, Long> {
             Pageable pageable
     );
 
-    @Query(value = """
-            SELECT d.* FROM disciplines d
-            JOIN teachers t ON d.teacher_id = t.id
-            WHERE t.first_name = :firstName
-            AND t.middle_name = :middleName
-            AND t.last_name = :lastName
-            """,
-            countQuery = """
-            SELECT COUNT(*) FROM disciplines d
-            JOIN teachers t ON d.teacher_id = t.id
-            WHERE t.first_name = :firstName
-            AND t.middle_name = :middleName
-            AND t.last_name = :lastName
-            """,
+    @SuppressWarnings("checkstyle:Indentation")
+    @Query(value = "SELECT d.* FROM disciplines d\n" +
+                   "JOIN teachers t ON d.teacher_id = t.id\n" +
+                   "LEFT JOIN student_discipline sd ON d.id = sd.discipline_id\n" +
+                   "LEFT JOIN students s ON sd.student_id = s.id\n" +
+                   "WHERE t.first_name = :firstName\n" +
+                   "AND t.middle_name = :middleName\n" +
+                   "AND t.last_name = :lastName\n",
+            countQuery = "SELECT COUNT(*) FROM disciplines d\n" +
+                         "JOIN teachers t ON d.teacher_id = t.id\n" +
+                         "WHERE t.first_name = :firstName\n" +
+                         "AND t.middle_name = :middleName\n" +
+                         "AND t.last_name = :lastName\n",
             nativeQuery = true)
     Page<Discipline> findByTeacherFullNameNative(
             @Param("firstName") String firstName,

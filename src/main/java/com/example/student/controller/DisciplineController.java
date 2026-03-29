@@ -4,6 +4,7 @@ import com.example.student.dto.DisciplineCreateDto;
 import com.example.student.dto.DisciplineResponseDto;
 import com.example.student.service.DisciplineQueryService;
 import com.example.student.service.DisciplineService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class DisciplineController {
     }
 
     @PostMapping
-    public ResponseEntity<DisciplineResponseDto> createDiscipline(@RequestBody DisciplineCreateDto dto) {
+    public ResponseEntity<DisciplineResponseDto> createDiscipline(@Valid @RequestBody DisciplineCreateDto dto) {
         DisciplineResponseDto response = disciplineService.createDiscipline(dto);
         queryService.invalidateCache();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

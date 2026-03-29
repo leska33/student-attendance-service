@@ -4,6 +4,7 @@ import com.example.student.dto.GradeCreateDto;
 import com.example.student.dto.GradeResponseDto;
 import com.example.student.service.GradeService;
 import com.example.student.service.GradeQueryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class GradeController {
     }
 
     @PostMapping
-    public ResponseEntity<GradeResponseDto> createGrade(@RequestBody GradeCreateDto dto) {
+    public ResponseEntity<GradeResponseDto> createGrade(@Valid @RequestBody GradeCreateDto dto) {
         GradeResponseDto response = gradeService.createGrade(dto);
         queryService.invalidateCache();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

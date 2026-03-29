@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GroupQueryService {
@@ -21,7 +21,7 @@ public class GroupQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupQueryService.class);
 
     private final GroupRepository repository;
-    private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new ConcurrentHashMap<>();
+    private final Map<GroupQueryKey, List<GroupResponseDto>> cache = new HashMap<>();
 
     public GroupQueryService(GroupRepository repository) {
         this.repository = repository;

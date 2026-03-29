@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GradeQueryService {
@@ -21,7 +21,7 @@ public class GradeQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GradeQueryService.class);
 
     private final GradeRepository repository;
-    private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new ConcurrentHashMap<>();
+    private final Map<GradeQueryKey, List<GradeResponseDto>> cache = new HashMap<>();
 
     public GradeQueryService(GradeRepository repository) {
         this.repository = repository;

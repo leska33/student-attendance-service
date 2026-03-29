@@ -11,9 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class DisciplineQueryService {
@@ -21,7 +21,7 @@ public class DisciplineQueryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisciplineQueryService.class);
 
     private final DisciplineRepository repository;
-    private final Map<DisciplineQueryKey, List<DisciplineResponseDto>> cache = new ConcurrentHashMap<>();
+    private final Map<DisciplineQueryKey, List<DisciplineResponseDto>> cache = new HashMap<>();
 
     public DisciplineQueryService(DisciplineRepository repository) {
         this.repository = repository;

@@ -4,6 +4,7 @@ import com.example.student.dto.GroupCreateDto;
 import com.example.student.dto.GroupResponseDto;
 import com.example.student.service.GroupService;
 import com.example.student.service.GroupQueryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto dto) {
+    public ResponseEntity<GroupResponseDto> createGroup(@Valid @RequestBody GroupCreateDto dto) {
         GroupResponseDto response = groupService.createGroup(dto);
         queryService.invalidateCache();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

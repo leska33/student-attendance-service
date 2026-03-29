@@ -15,14 +15,25 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     @Query("select t from Teacher t")
     List<Teacher> findAllWithDisciplines();
 
-    @Query("select t from Teacher t join t.disciplines d where d.name = :disciplineName")
+    @Query(value = """
+                select distinct t from Teacher t
+                join fetch t.disciplines d
+                where d.name = :disciplineName
+            """)
     Page<Teacher> findByDisciplineNameJPQL(String disciplineName, Pageable pageable);
 
-    @Query(value = "SELECT t.* FROM teachers t " +
-            "JOIN disciplines d ON t.id = d.teacher_id " +
-            "WHERE d.name = :disciplineName",
-            countQuery = "SELECT COUNT(*) FROM teachers t JOIN disciplines d ON " +
-                    "t.id = d.teacher_id WHERE d.name = :disciplineName",
+    @Query(value = """
+        SELECT DISTINCT t.*
+        FROM teachers t
+        JOIN disciplines d ON t.id = d.teacher_id
+        WHERE d.name = :disciplineName
+        """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM teachers t
+        JOIN disciplines d ON t.id = d.teacher_id
+        WHERE d.name = :disciplineName
+        """,
             nativeQuery = true)
     Page<Teacher> findByDisciplineNameNative(String disciplineName, Pageable pageable);
 }
