@@ -1,17 +1,34 @@
 package com.example.student.exception.handler;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
 public class ErrorResponse {
 
-    private String message;
-    private String error;
-    private int status;
-    private String imageUrl;
     private LocalDateTime timestamp;
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+    public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.path = path;
+    }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    public int getStatus() {
+        return status;
+    }
+    public String getError() {
+        return error;
+    }
+    public String getMessage() {
+        return message;
+    }
+    public String getPath() {
+        return path;
+    }
 }

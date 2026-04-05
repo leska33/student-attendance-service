@@ -1,5 +1,6 @@
 package com.example.student.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -8,16 +9,20 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "DTO для создания оценки")
 public class GradeCreateDto {
 
-    @NotNull(message = "Оценка обязательна")
-    @Min(value = 0, message = "Минимальная оценка 0")
-    @Max(value = 10, message = "Максимальная оценка 10")
+    @Schema(description = "Оценка", example = "8")
+    @NotNull
+    @Min(0)
+    @Max(10)
     private Integer value;
 
-    @NotNull(message = "studentId обязателен")
+    @Schema(description = "ID студента", example = "1")
+    @NotNull
     private Long studentId;
 
-    @NotNull(message = "disciplineId обязателен")
+    @Schema(description = "ID дисциплины", example = "1")
+    @NotNull
     private Long disciplineId;
 }
