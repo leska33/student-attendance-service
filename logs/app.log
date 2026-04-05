@@ -1,0 +1,134 @@
+2026-04-05 16:33:38 [main] INFO  c.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 39336 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-05 16:33:38 [main] DEBUG c.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-05 16:33:38 [main] INFO  c.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-05 16:33:39 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-05 16:33:39 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-05 16:33:39 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 66 ms. Found 5 JPA repository interfaces.
+2026-04-05 16:33:40 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-05 16:33:40 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-05 16:33:40 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-05 16:33:40 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-05 16:33:40 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1971 ms
+2026-04-05 16:33:40 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-05 16:33:41 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7f5e6833
+2026-04-05 16:33:41 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-05 16:33:41 [main] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-05 16:33:41 [main] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-05 16:33:41 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-05 16:33:41 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-05 16:33:41 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-05 16:33:42 [main] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-05 16:33:43 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 16:33:43 [main] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-05 16:33:44 [main] WARN  o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-05 16:33:45 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-05 16:33:45 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-05 16:33:45 [main] INFO  c.example.student.StudentApplication - Started StudentApplication in 7.536 seconds (process running for 8.234)
+2026-04-05 16:33:45 [main] WARN  o.s.c.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-05 16:33:45 [main] WARN  o.s.c.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-05 16:33:52 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-05 16:33:52 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-05 16:33:52 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2026-04-05 16:33:53 [http-nio-8080-exec-9] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 831 ms
+2026-04-05 16:34:56 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        d1_0.id,
+        d1_0.name,
+        d1_0.teacher_id 
+    from
+        disciplines d1_0 
+    where
+        d1_0.id=?
+2026-04-05 16:34:56 [http-nio-8080-exec-6] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [1]
+2026-04-05 16:34:56 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.first_name,
+        t1_0.last_name,
+        t1_0.middle_name 
+    from
+        teachers t1_0 
+    where
+        t1_0.id=?
+2026-04-05 16:34:56 [http-nio-8080-exec-6] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [1]
+2026-04-05 16:34:56 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.discipline_id,
+        s1_1.id,
+        s1_1.first_name,
+        s1_1.group_id,
+        s1_1.last_name,
+        s1_1.middle_name 
+    from
+        student_discipline s1_0 
+    join
+        students s1_1 
+            on s1_1.id=s1_0.student_id 
+    where
+        s1_0.discipline_id=?
+2026-04-05 16:34:56 [http-nio-8080-exec-6] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [1]
+2026-04-05 16:34:56 [http-nio-8080-exec-6] INFO  c.e.student.aop.ExecutionTimeAspect - Method DisciplineService.getDisciplineById(..) executed in 153 ms
+2026-04-05 16:36:15 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        d1_0.id,
+        d1_0.name,
+        s1_0.discipline_id,
+        s1_1.id,
+        s1_1.first_name,
+        s1_1.group_id,
+        s1_1.last_name,
+        s1_1.middle_name,
+        t1_0.id,
+        t1_0.first_name,
+        t1_0.last_name,
+        t1_0.middle_name 
+    from
+        disciplines d1_0 
+    left join
+        student_discipline s1_0 
+            on d1_0.id=s1_0.discipline_id 
+    left join
+        students s1_1 
+            on s1_1.id=s1_0.student_id 
+    left join
+        teachers t1_0 
+            on t1_0.id=d1_0.teacher_id
+2026-04-05 16:36:15 [http-nio-8080-exec-7] INFO  c.e.student.aop.ExecutionTimeAspect - Method DisciplineService.getAllDisciplinesDtoOptimized() executed in 149 ms
+2026-04-05 16:37:14 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        t1_0.id,
+        t1_0.first_name,
+        t1_0.last_name,
+        t1_0.middle_name 
+    from
+        teachers t1_0 
+    where
+        t1_0.id=?
+2026-04-05 16:37:14 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [1]
+2026-04-05 16:37:14 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        disciplines
+        (name, teacher_id) 
+    values
+        (?, ?)
+2026-04-05 16:37:14 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Астрономия]
+2026-04-05 16:37:14 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:BIGINT) <- [1]
+2026-04-05 16:37:14 [http-nio-8080-exec-8] INFO  c.e.student.aop.ExecutionTimeAspect - Method DisciplineService.createDiscipline(..) executed in 53 ms
+2026-04-05 16:37:14 [http-nio-8080-exec-8] INFO  c.e.s.service.DisciplineQueryService - DISCIPLINE CACHE CLEARED
+2026-04-05 16:38:01 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-05 16:38:01 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-05 16:38:01 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-05 16:38:01 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-05 16:38:01 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
