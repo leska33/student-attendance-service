@@ -56,8 +56,7 @@ public class StudentService {
 
     @LogExecutionTime
     public StudentResponseDto getStudentById(Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+        Student student = findStudentOrThrow(id);
         return StudentMapper.toDto(student);
     }
 
@@ -66,16 +65,7 @@ public class StudentService {
     public StudentResponseDto createStudent(StudentCreateDto dto) {
         Student student = new Student();
 
-        student.setFirstName(dto.getFirstName());
-        student.setLastName(dto.getLastName());
-        student.setMiddleName(dto.getMiddleName());
-
-        Group group = groupRepository.findById(dto.getGroupId())
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-        student.setGroup(group);
-
-        List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
-        student.setDisciplines(disciplines);
+        mapStudent(student, dto);
 
         return StudentMapper.toDto(studentRepository.save(student));
     }
@@ -83,19 +73,9 @@ public class StudentService {
     @Transactional
     @LogExecutionTime
     public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+        Student student = findStudentOrThrow(id);
 
-        student.setFirstName(dto.getFirstName());
-        student.setLastName(dto.getLastName());
-        student.setMiddleName(dto.getMiddleName());
-
-        Group group = groupRepository.findById(dto.getGroupId())
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-        student.setGroup(group);
-
-        List<Discipline> disciplines = disciplineRepository.findAllById(dto.getDisciplineIds());
-        student.setDisciplines(disciplines);
+        mapStudent(student, dto);
 
         return StudentMapper.toDto(studentRepository.save(student));
     }
@@ -103,8 +83,7 @@ public class StudentService {
     @Transactional
     @LogExecutionTime
     public void deleteStudent(Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+        Student student = findStudentOrThrow(id);
 
         gradeRepository.deleteAllByStudent(student);
 
@@ -127,9 +106,7 @@ public class StudentService {
     @LogExecutionTime
     public void saveWithoutTransaction(StudentCreateDto dto) {
         Student student = new Student();
-        student.setFirstName(dto.getFirstName());
-        student.setLastName(dto.getLastName());
-        student.setMiddleName(dto.getMiddleName());
+        mapBasicFields(student, dto);
 
         studentRepository.save(student);
 
@@ -140,12 +117,38 @@ public class StudentService {
     @LogExecutionTime
     public void saveWithTransaction(StudentCreateDto dto) {
         Student student = new Student();
-        student.setFirstName(dto.getFirstName());
-        student.setLastName(dto.getLastName());
-        student.setMiddleName(dto.getMiddleName());
+        mapBasicFields(student, dto);
 
         studentRepository.save(student);
 
         throw new ResourceNotFoundException("Ошибка — транзакция откатится");
+    }
+
+    private Student findStudentOrThrow(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+    }
+
+    private void mapStudent(Student student, StudentCreateDto dto) {
+        mapBasicFields(student, dto);
+        setGroup(student, dto.getGroupId());
+        setDisciplines(student, dto.getDisciplineIds());
+    }
+
+    private void mapBasicFields(Student student, StudentCreateDto dto) {
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setMiddleName(dto.getMiddleName());
+    }
+
+    private void setGroup(Student student, Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+        student.setGroup(group);
+    }
+
+    private void setDisciplines(Student student, List<Long> disciplineIds) {
+        List<Discipline> disciplines = disciplineRepository.findAllById(disciplineIds);
+        student.setDisciplines(disciplines);
     }
 }
