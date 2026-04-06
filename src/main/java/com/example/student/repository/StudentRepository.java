@@ -65,4 +65,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         """,
             nativeQuery = true)
     Page<Student> findByGroupNumberNative(String groupNumber, Pageable pageable);
+    boolean existsByFirstNameAndLastNameAndMiddleName(
+            String firstName,
+            String lastName,
+            String middleName
+    );
 }

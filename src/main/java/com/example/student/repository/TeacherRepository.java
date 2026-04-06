@@ -36,4 +36,9 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
         """,
             nativeQuery = true)
     Page<Teacher> findByDisciplineNameNative(String disciplineName, Pageable pageable);
+    boolean existsByFirstNameAndLastNameAndMiddleName(
+            String firstName,
+            String lastName,
+            String middleName
+    );
 }

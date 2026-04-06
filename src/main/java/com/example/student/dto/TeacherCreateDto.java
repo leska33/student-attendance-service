@@ -12,15 +12,27 @@ import lombok.Setter;
 public class TeacherCreateDto {
 
     @Schema(description = "Имя", example = "Анна")
-    @NotBlank
+    @NotBlank(message = "Имя обязательно")
     @Size(min = 2, max = 50)
+    @jakarta.validation.constraints.Pattern(
+            regexp = "^[А-Яа-яA-Za-z]+$",
+            message = "Имя должно содержать только буквы"
+    )
     private String firstName;
 
     @Schema(description = "Фамилия", example = "Ковальчук")
-    @NotBlank
+    @NotBlank(message = "Фамилия обязательна")
     @Size(min = 2, max = 50)
+    @jakarta.validation.constraints.Pattern(
+            regexp = "^[А-Яа-яA-Za-z]+$",
+            message = "Фамилия должна содержать только буквы"
+    )
     private String lastName;
 
     @Schema(description = "Отчество", example = "Михайловна")
+    @jakarta.validation.constraints.Pattern(
+            regexp = "^[А-Яа-яA-Za-z]*$",
+            message = "Отчество должно содержать только буквы"
+    )
     private String middleName;
 }

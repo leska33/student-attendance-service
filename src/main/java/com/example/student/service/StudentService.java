@@ -6,6 +6,7 @@ import com.example.student.dto.StudentResponseDto;
 import com.example.student.entity.Discipline;
 import com.example.student.entity.Group;
 import com.example.student.entity.Student;
+import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.StudentMapper;
 import com.example.student.repository.DisciplineRepository;
@@ -22,6 +23,7 @@ public class StudentService {
 
     private static final String STUDENT_NOT_FOUND = "Student not found";
     private static final String GROUP_NOT_FOUND = "Group not found";
+    private static final String STUDENT_ALREADY_EXISTS = "Student already exists";
 
     private final StudentRepository studentRepository;
     private final GroupRepository groupRepository;
@@ -63,8 +65,15 @@ public class StudentService {
     @Transactional
     @LogExecutionTime
     public StudentResponseDto createStudent(StudentCreateDto dto) {
-        Student student = new Student();
+        if (studentRepository.existsByFirstNameAndLastNameAndMiddleName(
+                dto.getFirstName(),
+                dto.getLastName(),
+                dto.getMiddleName()
+        )) {
+            throw new AlreadyExistsException(STUDENT_ALREADY_EXISTS);
+        }
 
+        Student student = new Student();
         mapStudent(student, dto);
 
         return StudentMapper.toDto(studentRepository.save(student));

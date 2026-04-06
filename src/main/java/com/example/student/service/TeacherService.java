@@ -5,6 +5,7 @@ import com.example.student.dto.TeacherCreateDto;
 import com.example.student.dto.TeacherResponseDto;
 import com.example.student.entity.Discipline;
 import com.example.student.entity.Teacher;
+import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.mapper.TeacherMapper;
 import com.example.student.repository.TeacherRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 public class TeacherService {
 
     private static final String TEACHER_NOT_FOUND = "Teacher not found";
+    private static final String TEACHER_ALREADY_EXISTS = "Teacher already exists";
 
     private final TeacherRepository teacherRepository;
 
@@ -50,11 +52,16 @@ public class TeacherService {
     @Transactional
     @LogExecutionTime
     public TeacherResponseDto createTeacher(TeacherCreateDto dto) {
-        Teacher teacher = new Teacher();
+        if (teacherRepository.existsByFirstNameAndLastNameAndMiddleName(
+                dto.getFirstName(),
+                dto.getLastName(),
+                dto.getMiddleName()
+        )) {
+            throw new AlreadyExistsException(TEACHER_ALREADY_EXISTS);
+        }
 
-        teacher.setFirstName(dto.getFirstName());
-        teacher.setLastName(dto.getLastName());
-        teacher.setMiddleName(dto.getMiddleName());
+        Teacher teacher = new Teacher();
+        mapTeacher(teacher, dto);
 
         return TeacherMapper.toDto(teacherRepository.save(teacher));
     }
@@ -64,10 +71,7 @@ public class TeacherService {
     public TeacherResponseDto updateTeacher(Long id, TeacherCreateDto dto) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
-
-        teacher.setFirstName(dto.getFirstName());
-        teacher.setLastName(dto.getLastName());
-        teacher.setMiddleName(dto.getMiddleName());
+        mapTeacher(teacher, dto);
 
         return TeacherMapper.toDto(teacherRepository.save(teacher));
     }
@@ -86,5 +90,11 @@ public class TeacherService {
         }
 
         teacherRepository.delete(teacher);
+    }
+
+    private void mapTeacher(Teacher teacher, TeacherCreateDto dto) {
+        teacher.setFirstName(dto.getFirstName());
+        teacher.setLastName(dto.getLastName());
+        teacher.setMiddleName(dto.getMiddleName());
     }
 }
