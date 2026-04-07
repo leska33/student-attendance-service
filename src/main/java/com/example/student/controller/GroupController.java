@@ -85,4 +85,13 @@ public class GroupController {
     public ResponseEntity<List<GroupResponseDto>> getGroupsLazy() {
         return ResponseEntity.ok(groupService.getAllGroupsDtoLazy());
     }
+    @PostMapping("/bulk")
+    public List<GroupResponseDto> bulk(@RequestBody List<GroupCreateDto> dtos) {
+        return groupService.createGroupsBulk(dtos);
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    public List<GroupResponseDto> bulkNoTx(@RequestBody List<GroupCreateDto> dtos) {
+        return groupService.createGroupsBulkWithoutTransaction(dtos);
+    }
 }

@@ -86,4 +86,18 @@ public class StudentController {
     public ResponseEntity<List<StudentResponseDto>> getStudentsLazy() {
         return ResponseEntity.ok(studentService.getAllStudentsDtoLazy());
     }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<StudentResponseDto>> createBulk(
+            @RequestBody List<StudentCreateDto> dtos) {
+
+        return ResponseEntity.ok(studentService.createStudentsBulk(dtos));
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    public ResponseEntity<List<StudentResponseDto>> createBulkNoTransaction(
+            @RequestBody List<StudentCreateDto> dtos) {
+
+        return ResponseEntity.ok(studentService.createStudentsBulkWithoutTransaction(dtos));
+    }
 }

@@ -75,6 +75,46 @@ public class GradeService {
     }
 
     @Transactional
+    public List<GradeResponseDto> createGradesBulk(List<GradeCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+
+                    Student student = studentRepository.findById(dto.getStudentId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+
+                    Discipline discipline = disciplineRepository.findById(dto.getDisciplineId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
+
+                    Grade grade = new Grade();
+                    grade.setValue(dto.getValue());
+                    grade.setStudent(student);
+                    grade.setDiscipline(discipline);
+
+                    return gradeRepository.save(grade);
+                })
+                .map(GradeMapper::toDto)
+                .toList();
+    }
+    public List<GradeResponseDto> createGradesBulkWithoutTransaction(List<GradeCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+
+                    if (dto.getValue() < 0) {
+                        throw new RuntimeException("Ошибка оценки");
+                    }
+
+                    Grade grade = new Grade();
+                    grade.setValue(dto.getValue());
+
+                    return gradeRepository.save(grade);
+                })
+                .map(GradeMapper::toDto)
+                .toList();
+    }
+
+    @Transactional
     @LogExecutionTime
     public GradeResponseDto updateGrade(Long id, GradeCreateDto dto) {
         Grade grade = gradeRepository.findById(id)

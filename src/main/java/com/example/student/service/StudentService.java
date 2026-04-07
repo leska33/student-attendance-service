@@ -80,6 +80,45 @@ public class StudentService {
     }
 
     @Transactional
+    public List<StudentResponseDto> createStudentsBulk(List<StudentCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    if (studentRepository.existsByFirstNameAndLastNameAndMiddleName(
+                            dto.getFirstName(),
+                            dto.getLastName(),
+                            dto.getMiddleName()
+                    )) {
+                        throw new AlreadyExistsException(STUDENT_ALREADY_EXISTS);
+                    }
+
+                    Student student = new Student();
+                    mapStudent(student, dto);
+
+                    return studentRepository.save(student);
+                })
+                .map(StudentMapper::toDto)
+                .toList();
+    }
+
+    public List<StudentResponseDto> createStudentsBulkWithoutTransaction(List<StudentCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    Student student = new Student();
+                    mapStudent(student, dto);
+
+                    if ("ERROR".equals(dto.getFirstName())) {
+                        throw new RuntimeException("Ошибка в середине bulk-операции");
+                    }
+
+                    return studentRepository.save(student);
+                })
+                .map(StudentMapper::toDto)
+                .toList();
+    }
+
+    @Transactional
     @LogExecutionTime
     public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
         Student student = findStudentOrThrow(id);

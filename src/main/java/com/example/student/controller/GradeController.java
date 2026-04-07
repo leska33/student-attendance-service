@@ -83,4 +83,13 @@ public class GradeController {
     public ResponseEntity<List<GradeResponseDto>> getGradesLazy() {
         return ResponseEntity.ok(gradeService.getAllGradesDtoLazy());
     }
+    @PostMapping("/bulk")
+    public List<GradeResponseDto> bulk(@RequestBody List<GradeCreateDto> dtos) {
+        return gradeService.createGradesBulk(dtos);
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    public List<GradeResponseDto> bulkNoTx(@RequestBody List<GradeCreateDto> dtos) {
+        return gradeService.createGradesBulkWithoutTransaction(dtos);
+    }
 }

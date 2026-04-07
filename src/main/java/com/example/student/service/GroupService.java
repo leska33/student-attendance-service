@@ -52,7 +52,35 @@ public class GroupService {
         group.setNumber(dto.getNumber());
         return GroupMapper.toDto(groupRepository.save(group));
     }
+    @Transactional
+    public List<GroupResponseDto> createGroupsBulk(List<GroupCreateDto> dtos) {
 
+        return dtos.stream()
+                .map(dto -> {
+                    Group group = new Group();
+                    group.setNumber(dto.getNumber());
+
+                    return groupRepository.save(group);
+                })
+                .map(GroupMapper::toDto)
+                .toList();
+    }
+    public List<GroupResponseDto> createGroupsBulkWithoutTransaction(List<GroupCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    if ("ERROR".equals(dto.getNumber())) {
+                        throw new RuntimeException("Ошибка");
+                    }
+
+                    Group group = new Group();
+                    group.setNumber(dto.getNumber());
+
+                    return groupRepository.save(group);
+                })
+                .map(GroupMapper::toDto)
+                .toList();
+    }
     @Transactional
     @LogExecutionTime
     public GroupResponseDto updateGroup(Long id, GroupCreateDto dto) {

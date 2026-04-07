@@ -68,6 +68,40 @@ public class DisciplineService {
 
         return DisciplineMapper.toDto(disciplineRepository.save(discipline));
     }
+    @Transactional
+    public List<DisciplineResponseDto> createDisciplinesBulk(List<DisciplineCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    Discipline discipline = new Discipline();
+                    discipline.setName(dto.getName());
+
+                    Teacher teacher = teacherRepository.findById(dto.getTeacherId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+
+                    discipline.setTeacher(teacher);
+
+                    return disciplineRepository.save(discipline);
+                })
+                .map(DisciplineMapper::toDto)
+                .toList();
+    }
+    public List<DisciplineResponseDto> createDisciplinesBulkWithoutTransaction(List<DisciplineCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    if ("ERROR".equals(dto.getName())) {
+                        throw new RuntimeException("Ошибка");
+                    }
+
+                    Discipline discipline = new Discipline();
+                    discipline.setName(dto.getName());
+
+                    return disciplineRepository.save(discipline);
+                })
+                .map(DisciplineMapper::toDto)
+                .toList();
+    }
 
     @Transactional
     @LogExecutionTime

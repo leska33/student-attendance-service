@@ -85,4 +85,13 @@ public class TeacherController {
     public ResponseEntity<List<TeacherResponseDto>> getTeachersLazy() {
         return ResponseEntity.ok(teacherService.getAllTeachersDtoLazy());
     }
+    @PostMapping("/bulk")
+    public List<TeacherResponseDto> bulk(@RequestBody List<TeacherCreateDto> dtos) {
+        return teacherService.createTeachersBulk(dtos);
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    public List<TeacherResponseDto> bulkNoTx(@RequestBody List<TeacherCreateDto> dtos) {
+        return teacherService.createTeachersBulkWithoutTransaction(dtos);
+    }
 }

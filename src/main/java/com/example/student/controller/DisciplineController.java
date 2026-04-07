@@ -83,4 +83,13 @@ public class DisciplineController {
     public ResponseEntity<List<DisciplineResponseDto>> getDisciplinesLazy() {
         return ResponseEntity.ok(disciplineService.getAllDisciplinesDtoLazy());
     }
+    @PostMapping("/bulk")
+    public List<DisciplineResponseDto> bulk(@RequestBody List<DisciplineCreateDto> dtos) {
+        return disciplineService.createDisciplinesBulk(dtos);
+    }
+
+    @PostMapping("/bulk/no-transaction")
+    public List<DisciplineResponseDto> bulkNoTx(@RequestBody List<DisciplineCreateDto> dtos) {
+        return disciplineService.createDisciplinesBulkWithoutTransaction(dtos);
+    }
 }

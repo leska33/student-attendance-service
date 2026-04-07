@@ -67,6 +67,46 @@ public class TeacherService {
     }
 
     @Transactional
+    public List<TeacherResponseDto> createTeachersBulk(List<TeacherCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    if (teacherRepository.existsByFirstNameAndLastNameAndMiddleName(
+                            dto.getFirstName(),
+                            dto.getLastName(),
+                            dto.getMiddleName()
+                    )) {
+                        throw new AlreadyExistsException("Teacher already exists");
+                    }
+
+                    Teacher teacher = new Teacher();
+                    teacher.setFirstName(dto.getFirstName());
+                    teacher.setLastName(dto.getLastName());
+                    teacher.setMiddleName(dto.getMiddleName());
+
+                    return teacherRepository.save(teacher);
+                })
+                .map(TeacherMapper::toDto)
+                .toList();
+    }
+    public List<TeacherResponseDto> createTeachersBulkWithoutTransaction(List<TeacherCreateDto> dtos) {
+
+        return dtos.stream()
+                .map(dto -> {
+                    Teacher teacher = new Teacher();
+                    teacher.setFirstName(dto.getFirstName());
+
+                    if ("ERROR".equals(dto.getFirstName())) {
+                        throw new RuntimeException("Ошибка в bulk");
+                    }
+
+                    return teacherRepository.save(teacher);
+                })
+                .map(TeacherMapper::toDto)
+                .toList();
+    }
+
+    @Transactional
     @LogExecutionTime
     public TeacherResponseDto updateTeacher(Long id, TeacherCreateDto dto) {
         Teacher teacher = teacherRepository.findById(id)
