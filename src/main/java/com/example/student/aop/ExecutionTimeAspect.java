@@ -1,29 +1,31 @@
 package com.example.student.aop;
 
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-@Slf4j
 public class ExecutionTimeAspect {
 
-    @Around("@annotation(com.example.student.aop.LogExecutionTime)")
+    private static final String LOG_NAME = "com.example.student.service.performance";
+    private final Logger logger = LoggerFactory.getLogger(LOG_NAME);
+
+    @Around("execution(* com.example.student.service..*.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-
         long start = System.currentTimeMillis();
-
-        Object result = joinPoint.proceed();
-
-        long executionTime = System.currentTimeMillis() - start;
-
-        log.info("Method {} executed in {} ms",
-                joinPoint.getSignature().toShortString(),
-                executionTime);
-
-        return result;
+        try {
+            return joinPoint.proceed();
+        } finally {
+            if (logger.isInfoEnabled()) {
+                long executionTime = System.currentTimeMillis() - start;
+                logger.info("время выполнения: {} мс | {}",
+                        executionTime,
+                        joinPoint.getSignature().toShortString());
+            }
+        }
     }
 }
