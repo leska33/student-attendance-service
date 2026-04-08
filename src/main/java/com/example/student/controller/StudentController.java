@@ -2,6 +2,7 @@ package com.example.student.controller;
 
 import com.example.student.dto.StudentCreateDto;
 import com.example.student.dto.StudentResponseDto;
+import com.example.student.openapi.OpenApiDescriptions;
 import com.example.student.service.StudentQueryService;
 import com.example.student.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +37,8 @@ public class StudentController {
     }
 
     @Operation(summary = "Создать студента")
-    @ApiResponses({ @ApiResponse(responseCode = "201", description = "Создано"),
-                    @ApiResponse(responseCode = "400", description = "Ошибка валидации"),
+    @ApiResponses({ @ApiResponse(responseCode = "201", description = OpenApiDescriptions.CREATED_201),
+                    @ApiResponse(responseCode = "400", description = OpenApiDescriptions.VALIDATION_ERROR_400),
                     @ApiResponse(responseCode = "404", description = "Группа или дисциплины не найдены")
     })
     @PostMapping

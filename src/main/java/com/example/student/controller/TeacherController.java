@@ -2,6 +2,7 @@ package com.example.student.controller;
 
 import com.example.student.dto.TeacherCreateDto;
 import com.example.student.dto.TeacherResponseDto;
+import com.example.student.openapi.OpenApiDescriptions;
 import com.example.student.service.TeacherQueryService;
 import com.example.student.service.TeacherService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +37,8 @@ public class TeacherController {
     }
 
     @Operation(summary = "Создать преподавателя")
-    @ApiResponses({ @ApiResponse(responseCode = "201", description = "Создано"),
-                    @ApiResponse(responseCode = "400", description = "Ошибка валидации")
+    @ApiResponses({ @ApiResponse(responseCode = "201", description = OpenApiDescriptions.CREATED_201),
+                    @ApiResponse(responseCode = "400", description = OpenApiDescriptions.VALIDATION_ERROR_400)
     })
     @PostMapping
     public ResponseEntity<TeacherResponseDto> createTeacher(@Valid @RequestBody TeacherCreateDto dto) {

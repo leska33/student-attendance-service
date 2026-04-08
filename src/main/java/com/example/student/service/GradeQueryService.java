@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -44,7 +45,7 @@ public class GradeQueryService {
                 .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
                 .stream()
                 .filter(g -> Optional.ofNullable(g.getDiscipline())
-                        .map(d -> d.getName().equals(disciplineName))
+                        .map(d -> Objects.equals(d.getName(), disciplineName))
                         .orElse(false))
                 .map(GradeMapper::toDto)
                 .toList();
@@ -69,7 +70,7 @@ public class GradeQueryService {
                 .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
                 .stream()
                 .filter(g -> Optional.ofNullable(g.getDiscipline())
-                        .map(d -> d.getName().equals(disciplineName))
+                        .map(d -> Objects.equals(d.getName(), disciplineName))
                         .orElse(false))
                 .map(GradeMapper::toDto)
                 .toList();
