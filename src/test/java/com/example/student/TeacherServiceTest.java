@@ -59,8 +59,6 @@ class TeacherServiceTest {
         teacherDto.setFirstName("ERROR");
 
         assertThrows(IllegalStateException.class,
-                () -> service.createTeachersBulkWithoutTransaction(
-                        java.util.List.of(teacherDto)
-                ));
+                () -> service.createTeachersBulkWithoutTransaction(java.util.List.of(teacherDto)));
     }
 }

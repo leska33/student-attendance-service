@@ -12,7 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class TransactionIntegrationTest {
@@ -51,12 +53,11 @@ class TransactionIntegrationTest {
     }
 
     private StudentCreateDto errorDto() {
-        return normalDto("ERROR"); // ✔ исправлено
+        return normalDto("ERROR");
     }
 
     @Test
     void transactional_bulk_shouldRollbackAll() {
-
         List<StudentCreateDto> list = List.of(
                 normalDto("A"),
                 errorDto(),
@@ -71,7 +72,6 @@ class TransactionIntegrationTest {
 
     @Test
     void nonTransactional_bulk_shouldSavePartial() {
-
         List<StudentCreateDto> list = List.of(
                 normalDto("A"),
                 errorDto(),

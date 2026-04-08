@@ -51,8 +51,6 @@ class GroupServiceTest {
         dto.setNumber("ERROR");
 
         assertThrows(IllegalStateException.class,
-                () -> service.createGroupsBulkWithoutTransaction(
-                        java.util.List.of(dto)
-                ));
+                () -> service.createGroupsBulkWithoutTransaction(java.util.List.of(dto)));
     }
 }

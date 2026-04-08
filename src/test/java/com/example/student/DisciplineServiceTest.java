@@ -76,8 +76,6 @@ class DisciplineServiceTest {
         dto.setName("ERROR");
 
         assertThrows(IllegalStateException.class,
-                () -> service.createDisciplinesBulkWithoutTransaction(
-                        java.util.List.of(dto)
-                ));
+                () -> service.createDisciplinesBulkWithoutTransaction(java.util.List.of(dto)));
     }
 }

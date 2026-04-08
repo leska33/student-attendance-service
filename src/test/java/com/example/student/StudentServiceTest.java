@@ -1,7 +1,9 @@
 package com.example.student;
 
 import com.example.student.dto.StudentCreateDto;
-import com.example.student.entity.*;
+import com.example.student.entity.Discipline;
+import com.example.student.entity.Group;
+import com.example.student.entity.Student;
 import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.repository.*;

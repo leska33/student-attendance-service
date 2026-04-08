@@ -1,9 +1,13 @@
 package com.example.student;
 
 import com.example.student.dto.GradeCreateDto;
-import com.example.student.entity.*;
+import com.example.student.entity.Discipline;
+import com.example.student.entity.Grade;
+import com.example.student.entity.Student;
 import com.example.student.exception.ResourceNotFoundException;
-import com.example.student.repository.*;
+import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.GradeRepository;
+import com.example.student.repository.StudentRepository;
 import com.example.student.service.GradeService;
 import org.junit.jupiter.api.Test;
 
@@ -71,8 +75,6 @@ class GradeServiceTest {
         gradeDto.setValue(-1);
 
         assertThrows(IllegalStateException.class,
-                () -> service.createGradesBulkWithoutTransaction(
-                        java.util.List.of(gradeDto)
-                ));
+                () -> service.createGradesBulkWithoutTransaction(java.util.List.of(gradeDto)));
     }
 }
