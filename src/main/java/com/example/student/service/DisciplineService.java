@@ -67,7 +67,7 @@ public class DisciplineService {
     @Transactional
     public List<DisciplineResponseDto> createDisciplinesBulk(List<DisciplineCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkDisciplineRowValid)
+                .map(this::validateBulkDisciplineRow)
                 .map(this::createDisciplineEntity)
                 .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
@@ -76,7 +76,7 @@ public class DisciplineService {
 
     public List<DisciplineResponseDto> createDisciplinesBulkWithoutTransaction(List<DisciplineCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkDisciplineRowValid)
+                .map(this::validateBulkDisciplineRow)
                 .map(this::createDisciplineEntity)
                 .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
@@ -127,10 +127,11 @@ public class DisciplineService {
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
     }
 
-    private void assertBulkDisciplineRowValid(DisciplineCreateDto dto) {
+    private DisciplineCreateDto validateBulkDisciplineRow(DisciplineCreateDto dto) {
         if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getName())) {
             throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GENERIC);
         }
+        return dto;
     }
 
     private Discipline buildDiscipline(DisciplineCreateDto dto) {

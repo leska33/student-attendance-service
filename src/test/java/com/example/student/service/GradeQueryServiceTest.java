@@ -47,7 +47,7 @@ class GradeQueryServiceTest {
 
         assertEquals(1, first.size());
         assertEquals(first, second);
-        verify(repository, times(1)).findByStudentLastNameJPQL(eq("Ivanov"), eq(PageRequest.of(0, 5)));
+        verify(repository, times(1)).findByStudentLastNameJPQL("Ivanov", PageRequest.of(0, 5));
     }
 
     @Test
@@ -81,7 +81,7 @@ class GradeQueryServiceTest {
         service.getGradesByStudentAndDisciplineNative("Petrov", "Chem", 0, 4);
         service.getGradesByStudentAndDisciplineNative("Petrov", "Chem", 0, 4);
 
-        verify(repository, times(1)).findByStudentLastNameNative(eq("Petrov"), eq(PageRequest.of(0, 4)));
+        verify(repository, times(1)).findByStudentLastNameNative("Petrov", PageRequest.of(0, 4));
     }
 
     @Test
@@ -94,7 +94,7 @@ class GradeQueryServiceTest {
         service.invalidateCache();
         service.getGradesByStudentAndDisciplineJPQL("S", "Bio", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameJPQL(eq("S"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByStudentLastNameJPQL("S", PageRequest.of(0, 1));
     }
 
     @Test
@@ -107,7 +107,7 @@ class GradeQueryServiceTest {
         service.invalidateCache();
         service.getGradesByStudentAndDisciplineNative("N2", "Zoo", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameNative(eq("N2"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByStudentLastNameNative("N2", PageRequest.of(0, 1));
     }
 
     @Test

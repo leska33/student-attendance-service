@@ -81,7 +81,8 @@ class TeacherServiceTest {
         when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
-        assertThrows(AlreadyExistsException.class, () -> service.createTeacher(dto()));
+        TeacherCreateDto create = dto();
+        assertThrows(AlreadyExistsException.class, () -> service.createTeacher(create));
     }
 
     @Test
@@ -97,7 +98,8 @@ class TeacherServiceTest {
     void update_notFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateTeacher(1L, dto()));
+        TeacherCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateTeacher(1L, update));
     }
 
     @Test
@@ -136,7 +138,8 @@ class TeacherServiceTest {
         TeacherCreateDto bad = dto();
         bad.setFirstName(BulkOperationConstants.ERROR_SENTINEL);
 
-        assertThrows(IllegalStateException.class, () -> service.createTeachersBulk(List.of(bad)));
+        List<TeacherCreateDto> bulk = List.of(bad);
+        assertThrows(IllegalStateException.class, () -> service.createTeachersBulk(bulk));
     }
 
     @Test
@@ -144,8 +147,9 @@ class TeacherServiceTest {
         TeacherCreateDto bad = dto();
         bad.setFirstName(BulkOperationConstants.ERROR_SENTINEL);
 
+        List<TeacherCreateDto> bulk = List.of(bad);
         assertThrows(IllegalStateException.class,
-                () -> service.createTeachersBulkWithoutTransaction(List.of(bad)));
+                () -> service.createTeachersBulkWithoutTransaction(bulk));
     }
 
     @Test

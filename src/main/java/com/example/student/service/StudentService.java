@@ -74,7 +74,7 @@ public class StudentService {
     @Transactional
     public List<StudentResponseDto> createStudentsBulk(List<StudentCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkStudentRowValid)
+                .map(this::validateBulkStudentRow)
                 .map(this::createStudentEntity)
                 .map(studentRepository::save)
                 .map(StudentMapper::toDto)
@@ -83,7 +83,7 @@ public class StudentService {
 
     public List<StudentResponseDto> createStudentsBulkWithoutTransaction(List<StudentCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkStudentRowValid)
+                .map(this::validateBulkStudentRow)
                 .map(this::createStudentEntity)
                 .map(studentRepository::save)
                 .map(StudentMapper::toDto)
@@ -133,10 +133,11 @@ public class StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
     }
 
-    private void assertBulkStudentRowValid(StudentCreateDto dto) {
+    private StudentCreateDto validateBulkStudentRow(StudentCreateDto dto) {
         if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getFirstName())) {
             throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GENERIC);
         }
+        return dto;
     }
 
     private void validateStudentUniqueness(StudentCreateDto dto) {

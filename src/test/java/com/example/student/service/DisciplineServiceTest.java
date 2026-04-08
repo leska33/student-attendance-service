@@ -88,7 +88,8 @@ class DisciplineServiceTest {
     void createDiscipline_teacherNotFound() {
         when(teacherRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createDiscipline(dto()));
+        DisciplineCreateDto create = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.createDiscipline(create));
     }
 
     @Test
@@ -106,7 +107,8 @@ class DisciplineServiceTest {
     void updateDiscipline_disciplineNotFound() {
         when(disciplineRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateDiscipline(1L, dto()));
+        DisciplineCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateDiscipline(1L, update));
     }
 
     @Test
@@ -114,7 +116,8 @@ class DisciplineServiceTest {
         when(disciplineRepository.findById(1L)).thenReturn(Optional.of(new Discipline()));
         when(teacherRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateDiscipline(1L, dto()));
+        DisciplineCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateDiscipline(1L, update));
     }
 
     @Test
@@ -189,7 +192,8 @@ class DisciplineServiceTest {
         DisciplineCreateDto bad = dto();
         bad.setName(BulkOperationConstants.ERROR_SENTINEL);
 
-        assertThrows(IllegalStateException.class, () -> service.createDisciplinesBulk(List.of(bad)));
+        List<DisciplineCreateDto> bulk = List.of(bad);
+        assertThrows(IllegalStateException.class, () -> service.createDisciplinesBulk(bulk));
     }
 
     @Test
@@ -197,8 +201,9 @@ class DisciplineServiceTest {
         DisciplineCreateDto bad = dto();
         bad.setName(BulkOperationConstants.ERROR_SENTINEL);
 
+        List<DisciplineCreateDto> bulk = List.of(bad);
         assertThrows(IllegalStateException.class,
-                () -> service.createDisciplinesBulkWithoutTransaction(List.of(bad)));
+                () -> service.createDisciplinesBulkWithoutTransaction(bulk));
     }
 
     @Test

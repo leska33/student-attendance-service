@@ -65,7 +65,7 @@ public class GradeService {
     @Transactional
     public List<GradeResponseDto> createGradesBulk(List<GradeCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkGradeRowValid)
+                .map(this::validateBulkGradeRow)
                 .map(this::createGradeEntity)
                 .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
@@ -74,7 +74,7 @@ public class GradeService {
 
     public List<GradeResponseDto> createGradesBulkWithoutTransaction(List<GradeCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkGradeRowValid)
+                .map(this::validateBulkGradeRow)
                 .map(this::createGradeEntity)
                 .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
@@ -113,10 +113,11 @@ public class GradeService {
                 .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
     }
 
-    private void assertBulkGradeRowValid(GradeCreateDto dto) {
+    private GradeCreateDto validateBulkGradeRow(GradeCreateDto dto) {
         if (dto.getValue() != null && dto.getValue() < 0) {
             throw new IllegalStateException(BulkOperationConstants.MSG_INVALID_GRADE);
         }
+        return dto;
     }
 
     private Grade buildGrade(GradeCreateDto dto) {

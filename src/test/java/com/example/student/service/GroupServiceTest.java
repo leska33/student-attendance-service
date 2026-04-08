@@ -86,7 +86,8 @@ class GroupServiceTest {
     void update_notFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateGroup(1L, dto("1")));
+        GroupCreateDto update = dto("1");
+        assertThrows(ResourceNotFoundException.class, () -> service.updateGroup(1L, update));
     }
 
     @Test
@@ -148,15 +149,14 @@ class GroupServiceTest {
 
     @Test
     void createGroupsBulk_transactional_errorRow() {
-        assertThrows(IllegalStateException.class,
-                () -> service.createGroupsBulk(List.of(dto(BulkOperationConstants.ERROR_SENTINEL))));
+        List<GroupCreateDto> bulk = List.of(dto(BulkOperationConstants.ERROR_SENTINEL));
+        assertThrows(IllegalStateException.class, () -> service.createGroupsBulk(bulk));
     }
 
     @Test
     void createGroupsBulkWithoutTransaction_error() {
-        assertThrows(IllegalStateException.class,
-                () -> service.createGroupsBulkWithoutTransaction(
-                        List.of(dto(BulkOperationConstants.ERROR_SENTINEL))));
+        List<GroupCreateDto> bulk = List.of(dto(BulkOperationConstants.ERROR_SENTINEL));
+        assertThrows(IllegalStateException.class, () -> service.createGroupsBulkWithoutTransaction(bulk));
     }
 
     @Test

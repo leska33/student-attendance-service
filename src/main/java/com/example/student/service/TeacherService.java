@@ -61,7 +61,7 @@ public class TeacherService {
     @Transactional
     public List<TeacherResponseDto> createTeachersBulk(List<TeacherCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkTeacherRowValid)
+                .map(this::validateBulkTeacherRow)
                 .map(this::createTeacherEntity)
                 .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
@@ -70,7 +70,7 @@ public class TeacherService {
 
     public List<TeacherResponseDto> createTeachersBulkWithoutTransaction(List<TeacherCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkTeacherRowValid)
+                .map(this::validateBulkTeacherRow)
                 .map(this::createTeacherEntity)
                 .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
@@ -97,10 +97,11 @@ public class TeacherService {
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
     }
 
-    private void assertBulkTeacherRowValid(TeacherCreateDto dto) {
+    private TeacherCreateDto validateBulkTeacherRow(TeacherCreateDto dto) {
         if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getFirstName())) {
             throw new IllegalStateException(BulkOperationConstants.MSG_BULK_TEACHER);
         }
+        return dto;
     }
 
     private void validateTeacherUniqueness(TeacherCreateDto dto) {

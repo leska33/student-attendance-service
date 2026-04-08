@@ -31,7 +31,7 @@ class TeacherQueryServiceTest {
         service.getTeachersByDisciplineJPQL("Alg", 0, 3);
         service.getTeachersByDisciplineJPQL("Alg", 0, 3);
 
-        verify(repository, times(1)).findByDisciplineNameJPQL(eq("Alg"), eq(PageRequest.of(0, 3)));
+        verify(repository, times(1)).findByDisciplineNameJPQL("Alg", PageRequest.of(0, 3));
     }
 
     @Test
@@ -43,7 +43,7 @@ class TeacherQueryServiceTest {
         service.getTeachersByDisciplineNative("Geom", 0, 3);
         service.getTeachersByDisciplineNative("Geom", 0, 3);
 
-        verify(repository, times(1)).findByDisciplineNameNative(eq("Geom"), eq(PageRequest.of(0, 3)));
+        verify(repository, times(1)).findByDisciplineNameNative("Geom", PageRequest.of(0, 3));
     }
 
     @Test
@@ -56,7 +56,7 @@ class TeacherQueryServiceTest {
         service.invalidateCache();
         service.getTeachersByDisciplineJPQL("Q", 0, 1);
 
-        verify(repository, times(2)).findByDisciplineNameJPQL(eq("Q"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByDisciplineNameJPQL("Q", PageRequest.of(0, 1));
     }
 
     @Test
@@ -69,7 +69,7 @@ class TeacherQueryServiceTest {
         service.invalidateCache();
         service.getTeachersByDisciplineNative("Ntv", 0, 1);
 
-        verify(repository, times(2)).findByDisciplineNameNative(eq("Ntv"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByDisciplineNameNative("Ntv", PageRequest.of(0, 1));
     }
 
     @Test

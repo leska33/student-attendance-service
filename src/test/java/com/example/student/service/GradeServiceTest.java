@@ -87,7 +87,8 @@ class GradeServiceTest {
     void student_notFound() {
         when(studentRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createGrade(dto()));
+        GradeCreateDto create = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.createGrade(create));
     }
 
     @Test
@@ -95,7 +96,8 @@ class GradeServiceTest {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(new Student()));
         when(disciplineRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createGrade(dto()));
+        GradeCreateDto create = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.createGrade(create));
     }
 
     @Test
@@ -111,7 +113,8 @@ class GradeServiceTest {
     void update_notFound() {
         when(gradeRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateGrade(1L, dto()));
+        GradeCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateGrade(1L, update));
     }
 
     @Test
@@ -143,7 +146,8 @@ class GradeServiceTest {
         GradeCreateDto bad = dto();
         bad.setValue(-1);
 
-        assertThrows(IllegalStateException.class, () -> service.createGradesBulk(List.of(bad)));
+        List<GradeCreateDto> bulk = List.of(bad);
+        assertThrows(IllegalStateException.class, () -> service.createGradesBulk(bulk));
     }
 
     @Test
@@ -151,8 +155,9 @@ class GradeServiceTest {
         GradeCreateDto bad = dto();
         bad.setValue(-1);
 
+        List<GradeCreateDto> bulk = List.of(bad);
         assertThrows(IllegalStateException.class,
-                () -> service.createGradesBulkWithoutTransaction(List.of(bad)));
+                () -> service.createGradesBulkWithoutTransaction(bulk));
     }
 
     @Test

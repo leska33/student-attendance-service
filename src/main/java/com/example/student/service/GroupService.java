@@ -55,7 +55,7 @@ public class GroupService {
     @Transactional
     public List<GroupResponseDto> createGroupsBulk(List<GroupCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkGroupRowValid)
+                .map(this::validateBulkGroupRow)
                 .map(this::createGroupEntity)
                 .map(groupRepository::save)
                 .map(GroupMapper::toDto)
@@ -64,7 +64,7 @@ public class GroupService {
 
     public List<GroupResponseDto> createGroupsBulkWithoutTransaction(List<GroupCreateDto> dtos) {
         return Optional.ofNullable(dtos).orElseGet(List::of).stream()
-                .peek(this::assertBulkGroupRowValid)
+                .map(this::validateBulkGroupRow)
                 .map(this::createGroupEntity)
                 .map(groupRepository::save)
                 .map(GroupMapper::toDto)
@@ -100,10 +100,11 @@ public class GroupService {
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
     }
 
-    private void assertBulkGroupRowValid(GroupCreateDto dto) {
+    private GroupCreateDto validateBulkGroupRow(GroupCreateDto dto) {
         if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getNumber())) {
             throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GROUP);
         }
+        return dto;
     }
 
     private Group createGroupEntity(GroupCreateDto dto) {

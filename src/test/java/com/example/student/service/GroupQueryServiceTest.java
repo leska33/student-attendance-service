@@ -31,7 +31,7 @@ class GroupQueryServiceTest {
         service.getGroupsByStudentLastNameJPQL("Ivanov", 0, 4);
         service.getGroupsByStudentLastNameJPQL("Ivanov", 0, 4);
 
-        verify(repository, times(1)).findByStudentLastNameJPQL(eq("Ivanov"), eq(PageRequest.of(0, 4)));
+        verify(repository, times(1)).findByStudentLastNameJPQL("Ivanov", PageRequest.of(0, 4));
     }
 
     @Test
@@ -43,7 +43,7 @@ class GroupQueryServiceTest {
         service.getGroupsByStudentLastNameNative("Petrov", 0, 4);
         service.getGroupsByStudentLastNameNative("Petrov", 0, 4);
 
-        verify(repository, times(1)).findByStudentLastNameNative(eq("Petrov"), eq(PageRequest.of(0, 4)));
+        verify(repository, times(1)).findByStudentLastNameNative("Petrov", PageRequest.of(0, 4));
     }
 
     @Test
@@ -56,7 +56,7 @@ class GroupQueryServiceTest {
         service.invalidateCache();
         service.getGroupsByStudentLastNameJPQL("Z", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameJPQL(eq("Z"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByStudentLastNameJPQL("Z", PageRequest.of(0, 1));
     }
 
     @Test
@@ -69,7 +69,7 @@ class GroupQueryServiceTest {
         service.invalidateCache();
         service.getGroupsByStudentLastNameNative("N1", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameNative(eq("N1"), eq(PageRequest.of(0, 1)));
+        verify(repository, times(2)).findByStudentLastNameNative("N1", PageRequest.of(0, 1));
     }
 
     @Test

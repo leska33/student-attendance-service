@@ -105,7 +105,8 @@ class StudentServiceTest {
         when(studentRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
-        assertThrows(AlreadyExistsException.class, () -> service.createStudent(dto()));
+        StudentCreateDto create = dto();
+        assertThrows(AlreadyExistsException.class, () -> service.createStudent(create));
     }
 
     @Test
@@ -114,7 +115,8 @@ class StudentServiceTest {
                 .thenReturn(false);
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.createStudent(dto()));
+        StudentCreateDto create = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.createStudent(create));
     }
 
     @Test
@@ -132,7 +134,8 @@ class StudentServiceTest {
     void update_notFound() {
         when(studentRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateStudent(1L, dto()));
+        StudentCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateStudent(1L, update));
     }
 
     @Test
@@ -202,7 +205,8 @@ class StudentServiceTest {
         StudentCreateDto bad = dto();
         bad.setFirstName(BulkOperationConstants.ERROR_SENTINEL);
 
-        assertThrows(IllegalStateException.class, () -> service.createStudentsBulk(List.of(bad)));
+        List<StudentCreateDto> bulk = List.of(bad);
+        assertThrows(IllegalStateException.class, () -> service.createStudentsBulk(bulk));
     }
 
     @Test
@@ -210,8 +214,9 @@ class StudentServiceTest {
         StudentCreateDto bad = dto();
         bad.setFirstName(BulkOperationConstants.ERROR_SENTINEL);
 
+        List<StudentCreateDto> bulk = List.of(bad);
         assertThrows(IllegalStateException.class,
-                () -> service.createStudentsBulkWithoutTransaction(List.of(bad)));
+                () -> service.createStudentsBulkWithoutTransaction(bulk));
     }
 
     @Test
@@ -232,7 +237,8 @@ class StudentServiceTest {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> service.updateStudent(1L, dto()));
+        StudentCreateDto update = dto();
+        assertThrows(ResourceNotFoundException.class, () -> service.updateStudent(1L, update));
     }
 
     @Test

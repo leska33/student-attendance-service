@@ -32,7 +32,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherJPQL("A", "B", "C", 0, 2);
 
         verify(repository, times(1)).findByTeacherFullNameJPQL(
-                eq("A"), eq("B"), eq("C"), eq(PageRequest.of(0, 2)));
+                "A", "B", "C", PageRequest.of(0, 2));
     }
 
     @Test
@@ -45,7 +45,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherNative("A", "B", "C", 0, 2);
 
         verify(repository, times(1)).findByTeacherFullNameNative(
-                eq("A"), eq("B"), eq("C"), eq(PageRequest.of(0, 2)));
+                "A", "B", "C", PageRequest.of(0, 2));
     }
 
     @Test
@@ -59,7 +59,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherJPQL("X", "Y", "Z", 0, 1);
 
         verify(repository, times(2)).findByTeacherFullNameJPQL(
-                eq("X"), eq("Y"), eq("Z"), eq(PageRequest.of(0, 1)));
+                "X", "Y", "Z", PageRequest.of(0, 1));
     }
 
     @Test
@@ -73,7 +73,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherNative("N", "A", "T", 0, 1);
 
         verify(repository, times(2)).findByTeacherFullNameNative(
-                eq("N"), eq("A"), eq("T"), eq(PageRequest.of(0, 1)));
+                "N", "A", "T", PageRequest.of(0, 1));
     }
 
     @Test
