@@ -12,26 +12,38 @@ import com.example.student.repository.GroupRepository;
 import com.example.student.repository.StudentRepository;
 import com.example.student.service.StudentService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
 
-    private final StudentRepository studentRepository = mock(StudentRepository.class);
-    private final GroupRepository groupRepository = mock(GroupRepository.class);
-    private final DisciplineRepository disciplineRepository = mock(DisciplineRepository.class);
-    private final GradeRepository gradeRepository = mock(GradeRepository.class);
+    @Mock
+    StudentRepository studentRepository;
 
-    private final StudentService service =
-            new StudentService(studentRepository, groupRepository, disciplineRepository, gradeRepository);
+    @Mock
+    GroupRepository groupRepository;
+
+    @Mock
+    DisciplineRepository disciplineRepository;
+
+    @Mock
+    GradeRepository gradeRepository;
+
+    @InjectMocks
+    StudentService service;
 
     private StudentCreateDto dto() {
         StudentCreateDto dto = new StudentCreateDto();
@@ -47,6 +59,7 @@ class StudentServiceTest {
     void create_success() {
         when(studentRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(false);
+
         when(groupRepository.findById(1L)).thenReturn(Optional.of(new Group()));
         when(disciplineRepository.findAllById(any())).thenReturn(List.of(new Discipline()));
         when(studentRepository.save(any())).thenReturn(new Student());
@@ -59,20 +72,19 @@ class StudentServiceTest {
         when(studentRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
-        StudentCreateDto studentDto = dto();
         assertThrows(AlreadyExistsException.class,
-                () -> service.createStudent(studentDto));
+                () -> service.createStudent(dto()));
     }
 
     @Test
     void create_groupNotFound() {
         when(studentRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(false);
+
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        StudentCreateDto studentDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createStudent(studentDto));
+                () -> service.createStudent(dto()));
     }
 
     @Test
@@ -86,7 +98,8 @@ class StudentServiceTest {
     @Test
     void delete_success() {
         Student student = new Student();
-        student.setDisciplines(List.of());
+        student.setDisciplines(new ArrayList<>());
+
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
 
         service.deleteStudent(1L);
@@ -96,12 +109,10 @@ class StudentServiceTest {
 
     @Test
     void bulk_error() {
-        StudentCreateDto studentDto = dto();
-        studentDto.setFirstName("ERROR");
-
-        List<StudentCreateDto> list = List.of(studentDto);
+        StudentCreateDto dto = dto();
+        dto.setFirstName("ERROR");
 
         assertThrows(IllegalStateException.class,
-                () -> service.createStudentsBulkWithoutTransaction(list));
+                () -> service.createStudentsBulkWithoutTransaction(List.of(dto)));
     }
 }
