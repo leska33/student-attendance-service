@@ -10,33 +10,24 @@ import com.example.student.repository.GradeRepository;
 import com.example.student.repository.StudentRepository;
 import com.example.student.service.GradeService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class GradeServiceTest {
 
-    @Mock
-    GradeRepository gradeRepository;
+    private final GradeRepository gradeRepository = mock(GradeRepository.class);
+    private final StudentRepository studentRepository = mock(StudentRepository.class);
+    private final DisciplineRepository disciplineRepository = mock(DisciplineRepository.class);
 
-    @Mock
-    StudentRepository studentRepository;
-
-    @Mock
-    DisciplineRepository disciplineRepository;
-
-    @InjectMocks
-    GradeService service;
+    private final GradeService service =
+            new GradeService(gradeRepository, studentRepository, disciplineRepository);
 
     private GradeCreateDto dto() {
         GradeCreateDto dto = new GradeCreateDto();
@@ -59,8 +50,9 @@ class GradeServiceTest {
     void student_notFound() {
         when(studentRepository.findById(1L)).thenReturn(Optional.empty());
 
+        GradeCreateDto gradeDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createGrade(dto()));
+                () -> service.createGrade(gradeDto));
     }
 
     @Test
@@ -68,8 +60,9 @@ class GradeServiceTest {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(new Student()));
         when(disciplineRepository.findById(1L)).thenReturn(Optional.empty());
 
+        GradeCreateDto gradeDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createGrade(dto()));
+                () -> service.createGrade(gradeDto));
     }
 
     @Test
@@ -82,10 +75,12 @@ class GradeServiceTest {
 
     @Test
     void bulk_error() {
-        GradeCreateDto dto = dto();
-        dto.setValue(-1);
+        GradeCreateDto gradeDto = dto();
+        gradeDto.setValue(-1);
+
+        List<GradeCreateDto> list = java.util.List.of(gradeDto);
 
         assertThrows(IllegalStateException.class,
-                () -> service.createGradesBulkWithoutTransaction(List.of(dto)));
+                () -> service.createGradesBulkWithoutTransaction(list));
     }
 }

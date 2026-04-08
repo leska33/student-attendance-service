@@ -7,27 +7,20 @@ import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.repository.TeacherRepository;
 import com.example.student.service.TeacherService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
 
-    @Mock
-    TeacherRepository repository;
-
-    @InjectMocks
-    TeacherService service;
+    private final TeacherRepository repository = mock(TeacherRepository.class);
+    private final TeacherService service = new TeacherService(repository);
 
     private TeacherCreateDto dto() {
         TeacherCreateDto dto = new TeacherCreateDto();
@@ -41,7 +34,6 @@ class TeacherServiceTest {
     void create_success() {
         when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(false);
-
         when(repository.save(any())).thenReturn(new Teacher());
 
         assertNotNull(service.createTeacher(dto()));
@@ -52,8 +44,9 @@ class TeacherServiceTest {
         when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
+        TeacherCreateDto teacherDto = dto();
         assertThrows(AlreadyExistsException.class,
-                () -> service.createTeacher(dto()));
+                () -> service.createTeacher(teacherDto));
     }
 
     @Test
@@ -66,10 +59,12 @@ class TeacherServiceTest {
 
     @Test
     void bulk_error() {
-        TeacherCreateDto dto = dto();
-        dto.setFirstName("ERROR");
+        TeacherCreateDto teacherDto = dto();
+        teacherDto.setFirstName("ERROR");
+
+        List<TeacherCreateDto> list = java.util.List.of(teacherDto);
 
         assertThrows(IllegalStateException.class,
-                () -> service.createTeachersBulkWithoutTransaction(List.of(dto)));
+                () -> service.createTeachersBulkWithoutTransaction(list));
     }
 }
