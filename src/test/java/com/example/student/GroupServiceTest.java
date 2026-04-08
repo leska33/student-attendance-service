@@ -6,54 +6,53 @@ import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.repository.GroupRepository;
 import com.example.student.service.GroupService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class GroupServiceTest {
 
-    @Mock
-    private GroupRepository groupRepository;
-
-    @InjectMocks
-    private GroupService groupService;
+    private final GroupRepository repository = mock(GroupRepository.class);
+    private final GroupService service = new GroupService(repository);
 
     @Test
-    void createGroup_success() {
-        when(groupRepository.save(any()))
-                .thenAnswer(inv -> inv.getArgument(0));
+    void create_success() {
+        when(repository.save(any())).thenReturn(new Group());
 
-        var result = groupService.createGroup(new GroupCreateDto());
+        GroupCreateDto dto = new GroupCreateDto();
+        dto.setNumber("123");
 
-        assertNotNull(result);
-        verify(groupRepository).save(any());
+        assertNotNull(service.createGroup(dto));
     }
 
     @Test
-    void getGroupById_notFound() {
-        when(groupRepository.findById(1L))
-                .thenReturn(Optional.empty());
+    void get_notFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> groupService.getGroupById(1L));
+                () -> service.getGroupById(1L));
     }
 
     @Test
-    void deleteGroup_success() {
+    void delete_success() {
         Group group = new Group();
+        when(repository.findById(1L)).thenReturn(Optional.of(group));
 
-        when(groupRepository.findById(1L))
-                .thenReturn(Optional.of(group));
+        service.deleteGroup(1L);
 
-        groupService.deleteGroup(1L);
+        verify(repository).delete(group);
+    }
 
-        verify(groupRepository).delete(group);
+    @Test
+    void bulk_error() {
+        GroupCreateDto dto = new GroupCreateDto();
+        dto.setNumber("ERROR");
+
+        assertThrows(IllegalStateException.class,
+                () -> service.createGroupsBulkWithoutTransaction(
+                        java.util.List.of(dto)
+                ));
     }
 }

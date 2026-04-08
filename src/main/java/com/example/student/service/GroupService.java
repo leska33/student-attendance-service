@@ -40,9 +40,7 @@ public class GroupService {
 
     @LogExecutionTime
     public GroupResponseDto getGroupById(Long id) {
-        Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-        return GroupMapper.toDto(group);
+        return GroupMapper.toDto(findGroupOrThrow(id));
     }
 
     @Transactional
@@ -52,59 +50,60 @@ public class GroupService {
         group.setNumber(dto.getNumber());
         return GroupMapper.toDto(groupRepository.save(group));
     }
+
     @Transactional
     public List<GroupResponseDto> createGroupsBulk(List<GroupCreateDto> dtos) {
-
         return dtos.stream()
-                .map(dto -> {
-                    Group group = new Group();
-                    group.setNumber(dto.getNumber());
-
-                    return groupRepository.save(group);
-                })
+                .map(this::createGroupEntity)
+                .map(groupRepository::save)
                 .map(GroupMapper::toDto)
                 .toList();
     }
-    public List<GroupResponseDto> createGroupsBulkWithoutTransaction(List<GroupCreateDto> dtos) {
 
+    public List<GroupResponseDto> createGroupsBulkWithoutTransaction(List<GroupCreateDto> dtos) {
         return dtos.stream()
                 .map(dto -> {
                     if ("ERROR".equals(dto.getNumber())) {
-                        throw new RuntimeException("Ошибка");
+                        throw new IllegalStateException("Ошибка группы");
                     }
-
-                    Group group = new Group();
-                    group.setNumber(dto.getNumber());
-
-                    return groupRepository.save(group);
+                    return createGroupEntity(dto);
                 })
+                .map(groupRepository::save)
                 .map(GroupMapper::toDto)
                 .toList();
     }
+
     @Transactional
     @LogExecutionTime
     public GroupResponseDto updateGroup(Long id, GroupCreateDto dto) {
-        Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-
+        Group group = findGroupOrThrow(id);
         group.setNumber(dto.getNumber());
-
         return GroupMapper.toDto(groupRepository.save(group));
     }
 
     @Transactional
     @LogExecutionTime
     public void deleteGroup(Long id) {
-        Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+        Group group = findGroupOrThrow(id);
 
         if (group.getStudents() != null) {
-            for (Student student : group.getStudents()) {
-                student.setGroup(null);
+            for (Student s : group.getStudents()) {
+                s.setGroup(null);
             }
             group.getStudents().clear();
         }
 
         groupRepository.delete(group);
+    }
+
+    private Group findGroupOrThrow(Long id) {
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+    }
+
+    private Group createGroupEntity(GroupCreateDto dto) {
+        Group group = new Group();
+        group.setNumber(dto.getNumber());
+        return group;
     }
 }

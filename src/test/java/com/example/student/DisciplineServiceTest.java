@@ -5,62 +5,80 @@ import com.example.student.entity.Discipline;
 import com.example.student.entity.Teacher;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.GradeRepository;
 import com.example.student.repository.TeacherRepository;
 import com.example.student.service.DisciplineService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class DisciplineServiceTest {
 
-    @Mock
-    private DisciplineRepository disciplineRepository;
+    private final DisciplineRepository disciplineRepository = mock(DisciplineRepository.class);
+    private final TeacherRepository teacherRepository = mock(TeacherRepository.class);
+    private final GradeRepository gradeRepository = mock(GradeRepository.class);
 
-    @Mock
-    private TeacherRepository teacherRepository;
-
-    @InjectMocks
-    private DisciplineService disciplineService;
+    private final DisciplineService service =
+            new DisciplineService(disciplineRepository, teacherRepository, gradeRepository);
 
     @Test
     void createDiscipline_success() {
-        when(teacherRepository.findById(any()))
-                .thenReturn(Optional.of(new Teacher()));
+        DisciplineCreateDto dto = new DisciplineCreateDto();
+        dto.setName("Math");
+        dto.setTeacherId(1L);
 
-        when(disciplineRepository.save(any()))
-                .thenAnswer(inv -> inv.getArgument(0));
+        Teacher teacher = new Teacher();
+        when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
 
-        var result = disciplineService.createDiscipline(new DisciplineCreateDto());
+        Discipline saved = new Discipline();
+        saved.setName("Math");
+        when(disciplineRepository.save(any())).thenReturn(saved);
 
-        assertNotNull(result);
+        assertNotNull(service.createDiscipline(dto));
     }
 
     @Test
     void createDiscipline_teacherNotFound() {
-        when(teacherRepository.findById(any()))
-                .thenReturn(Optional.empty());
+        DisciplineCreateDto dto = new DisciplineCreateDto();
+        dto.setName("Math");
+        dto.setTeacherId(1L);
+
+        when(teacherRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> disciplineService.createDiscipline(new DisciplineCreateDto()));
+                () -> service.createDiscipline(dto));
+    }
+
+    @Test
+    void getDisciplineById_notFound() {
+        when(disciplineRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class,
+                () -> service.getDisciplineById(1L));
     }
 
     @Test
     void deleteDiscipline_success() {
         Discipline discipline = new Discipline();
+        when(disciplineRepository.findById(1L)).thenReturn(Optional.of(discipline));
 
-        when(disciplineRepository.findById(1L))
-                .thenReturn(Optional.of(discipline));
-
-        disciplineService.deleteDiscipline(1L);
+        service.deleteDiscipline(1L);
 
         verify(disciplineRepository).delete(discipline);
+    }
+
+    @Test
+    void bulkWithoutTransaction_error() {
+        DisciplineCreateDto dto = new DisciplineCreateDto();
+        dto.setName("ERROR");
+
+        assertThrows(IllegalStateException.class,
+                () -> service.createDisciplinesBulkWithoutTransaction(
+                        java.util.List.of(dto)
+                ));
     }
 }

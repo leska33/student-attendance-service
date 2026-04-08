@@ -51,65 +51,34 @@ public class GradeService {
 
     @LogExecutionTime
     public GradeResponseDto getGradeById(Long id) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
-        return GradeMapper.toDto(grade);
+        return GradeMapper.toDto(findGradeOrThrow(id));
     }
 
     @Transactional
     @LogExecutionTime
     public GradeResponseDto createGrade(GradeCreateDto dto) {
-        Grade grade = new Grade();
-        grade.setValue(dto.getValue());
-
-        Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
-
-        Discipline discipline = disciplineRepository.findById(dto.getDisciplineId())
-                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
-
-        grade.setStudent(student);
-        grade.setDiscipline(discipline);
-
+        Grade grade = buildGrade(dto);
         return GradeMapper.toDto(gradeRepository.save(grade));
     }
 
     @Transactional
     public List<GradeResponseDto> createGradesBulk(List<GradeCreateDto> dtos) {
-
         return dtos.stream()
-                .map(dto -> {
-
-                    Student student = studentRepository.findById(dto.getStudentId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-
-                    Discipline discipline = disciplineRepository.findById(dto.getDisciplineId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Discipline not found"));
-
-                    Grade grade = new Grade();
-                    grade.setValue(dto.getValue());
-                    grade.setStudent(student);
-                    grade.setDiscipline(discipline);
-
-                    return gradeRepository.save(grade);
-                })
+                .map(this::createGradeEntity)
+                .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
                 .toList();
     }
-    public List<GradeResponseDto> createGradesBulkWithoutTransaction(List<GradeCreateDto> dtos) {
 
+    public List<GradeResponseDto> createGradesBulkWithoutTransaction(List<GradeCreateDto> dtos) {
         return dtos.stream()
                 .map(dto -> {
-
                     if (dto.getValue() < 0) {
-                        throw new RuntimeException("Ошибка оценки");
+                        throw new IllegalStateException("Некорректная оценка");
                     }
-
-                    Grade grade = new Grade();
-                    grade.setValue(dto.getValue());
-
-                    return gradeRepository.save(grade);
+                    return createGradeEntity(dto);
                 })
+                .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
                 .toList();
     }
@@ -117,20 +86,41 @@ public class GradeService {
     @Transactional
     @LogExecutionTime
     public GradeResponseDto updateGrade(Long id, GradeCreateDto dto) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
-
+        Grade grade = findGradeOrThrow(id);
         grade.setValue(dto.getValue());
-
         return GradeMapper.toDto(gradeRepository.save(grade));
     }
 
     @Transactional
     @LogExecutionTime
     public void deleteGrade(Long id) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
+        gradeRepository.delete(findGradeOrThrow(id));
+    }
 
-        gradeRepository.delete(grade);
+    private Grade findGradeOrThrow(Long id) {
+        return gradeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
+    }
+
+    private Student findStudentOrThrow(Long id) {
+        return studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
+    }
+
+    private Discipline findDisciplineOrThrow(Long id) {
+        return disciplineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+    }
+
+    private Grade buildGrade(GradeCreateDto dto) {
+        Grade grade = new Grade();
+        grade.setValue(dto.getValue());
+        grade.setStudent(findStudentOrThrow(dto.getStudentId()));
+        grade.setDiscipline(findDisciplineOrThrow(dto.getDisciplineId()));
+        return grade;
+    }
+
+    private Grade createGradeEntity(GradeCreateDto dto) {
+        return buildGrade(dto);
     }
 }

@@ -1,64 +1,65 @@
 package com.example.student;
 
 import com.example.student.dto.TeacherCreateDto;
+import com.example.student.entity.Teacher;
 import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
 import com.example.student.repository.TeacherRepository;
 import com.example.student.service.TeacherService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
 
-    @Mock
-    private TeacherRepository teacherRepository;
+    private final TeacherRepository repository = mock(TeacherRepository.class);
+    private final TeacherService service = new TeacherService(repository);
 
-    @InjectMocks
-    private TeacherService teacherService;
-
-    @Test
-    void createTeacher_success() {
+    private TeacherCreateDto dto() {
         TeacherCreateDto dto = new TeacherCreateDto();
-        dto.setFirstName("Ivan");
-        dto.setLastName("Ivanov");
-
-        when(teacherRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
-                .thenReturn(false);
-
-        when(teacherRepository.save(any()))
-                .thenAnswer(inv -> inv.getArgument(0));
-
-        var result = teacherService.createTeacher(dto);
-
-        assertNotNull(result);
-        verify(teacherRepository).save(any());
+        dto.setFirstName("A");
+        dto.setLastName("B");
+        dto.setMiddleName("C");
+        return dto;
     }
 
     @Test
-    void createTeacher_shouldThrow_whenExists() {
-        when(teacherRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
+    void create_success() {
+        when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
+                .thenReturn(false);
+        when(repository.save(any())).thenReturn(new Teacher());
+
+        assertNotNull(service.createTeacher(dto()));
+    }
+
+    @Test
+    void create_duplicate() {
+        when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
         assertThrows(AlreadyExistsException.class,
-                () -> teacherService.createTeacher(new TeacherCreateDto()));
+                () -> service.createTeacher(dto()));
     }
 
     @Test
-    void getTeacherById_notFound() {
-        when(teacherRepository.findById(1L))
-                .thenReturn(Optional.empty());
+    void get_notFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class,
-                () -> teacherService.getTeacherById(1L));
+                () -> service.getTeacherById(1L));
+    }
+
+    @Test
+    void bulk_error() {
+        TeacherCreateDto dto = dto();
+        dto.setFirstName("ERROR");
+
+        assertThrows(IllegalStateException.class,
+                () -> service.createTeachersBulkWithoutTransaction(
+                        java.util.List.of(dto)
+                ));
     }
 }

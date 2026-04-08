@@ -36,69 +36,51 @@ public class DisciplineService {
 
     @LogExecutionTime
     public List<DisciplineResponseDto> getAllDisciplinesDtoLazy() {
-        return disciplineRepository.findAll().stream()
+        return disciplineRepository.findAll()
+                .stream()
                 .map(DisciplineMapper::toDto)
                 .toList();
     }
 
     @LogExecutionTime
     public List<DisciplineResponseDto> getAllDisciplinesDtoOptimized() {
-        return disciplineRepository.findAllWithRelations().stream()
+        return disciplineRepository.findAllWithRelations()
+                .stream()
                 .map(DisciplineMapper::toDto)
                 .toList();
     }
 
     @LogExecutionTime
     public DisciplineResponseDto getDisciplineById(Long id) {
-        Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+        Discipline discipline = findDisciplineOrThrow(id);
         return DisciplineMapper.toDto(discipline);
     }
 
     @Transactional
     @LogExecutionTime
     public DisciplineResponseDto createDiscipline(DisciplineCreateDto dto) {
-        Discipline discipline = new Discipline();
-        discipline.setName(dto.getName());
-
-        Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
-
-        discipline.setTeacher(teacher);
-
+        Discipline discipline = buildDiscipline(dto);
         return DisciplineMapper.toDto(disciplineRepository.save(discipline));
     }
+
     @Transactional
     public List<DisciplineResponseDto> createDisciplinesBulk(List<DisciplineCreateDto> dtos) {
-
         return dtos.stream()
-                .map(dto -> {
-                    Discipline discipline = new Discipline();
-                    discipline.setName(dto.getName());
-
-                    Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
-
-                    discipline.setTeacher(teacher);
-
-                    return disciplineRepository.save(discipline);
-                })
+                .map(this::createDisciplineEntity)
+                .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
                 .toList();
     }
-    public List<DisciplineResponseDto> createDisciplinesBulkWithoutTransaction(List<DisciplineCreateDto> dtos) {
 
+    public List<DisciplineResponseDto> createDisciplinesBulkWithoutTransaction(List<DisciplineCreateDto> dtos) {
         return dtos.stream()
                 .map(dto -> {
                     if ("ERROR".equals(dto.getName())) {
-                        throw new RuntimeException("Ошибка");
+                        throw new IllegalStateException("Ошибка в bulk операции");
                     }
-
-                    Discipline discipline = new Discipline();
-                    discipline.setName(dto.getName());
-
-                    return disciplineRepository.save(discipline);
+                    return createDisciplineEntity(dto);
                 })
+                .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
                 .toList();
     }
@@ -106,15 +88,10 @@ public class DisciplineService {
     @Transactional
     @LogExecutionTime
     public DisciplineResponseDto updateDiscipline(Long id, DisciplineCreateDto dto) {
-        Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+        Discipline discipline = findDisciplineOrThrow(id);
 
         discipline.setName(dto.getName());
-
-        Teacher teacher = teacherRepository.findById(dto.getTeacherId())
-                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
-
-        discipline.setTeacher(teacher);
+        discipline.setTeacher(findTeacherOrThrow(dto.getTeacherId()));
 
         return DisciplineMapper.toDto(disciplineRepository.save(discipline));
     }
@@ -122,8 +99,7 @@ public class DisciplineService {
     @Transactional
     @LogExecutionTime
     public void deleteDiscipline(Long id) {
-        Discipline discipline = disciplineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+        Discipline discipline = findDisciplineOrThrow(id);
 
         gradeRepository.deleteAllByDiscipline(discipline);
 
@@ -139,5 +115,26 @@ public class DisciplineService {
         }
 
         disciplineRepository.delete(discipline);
+    }
+
+    private Discipline findDisciplineOrThrow(Long id) {
+        return disciplineRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+    }
+
+    private Teacher findTeacherOrThrow(Long id) {
+        return teacherRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+    }
+
+    private Discipline buildDiscipline(DisciplineCreateDto dto) {
+        Discipline discipline = new Discipline();
+        discipline.setName(dto.getName());
+        discipline.setTeacher(findTeacherOrThrow(dto.getTeacherId()));
+        return discipline;
+    }
+
+    private Discipline createDisciplineEntity(DisciplineCreateDto dto) {
+        return buildDiscipline(dto);
     }
 }

@@ -58,62 +58,36 @@ public class StudentService {
 
     @LogExecutionTime
     public StudentResponseDto getStudentById(Long id) {
-        Student student = findStudentOrThrow(id);
-        return StudentMapper.toDto(student);
+        return StudentMapper.toDto(findStudentOrThrow(id));
     }
 
     @Transactional
     @LogExecutionTime
     public StudentResponseDto createStudent(StudentCreateDto dto) {
-        if (studentRepository.existsByFirstNameAndLastNameAndMiddleName(
-                dto.getFirstName(),
-                dto.getLastName(),
-                dto.getMiddleName()
-        )) {
-            throw new AlreadyExistsException(STUDENT_ALREADY_EXISTS);
-        }
+        validateStudentUniqueness(dto);
 
-        Student student = new Student();
-        mapStudent(student, dto);
-
+        Student student = buildStudent(dto);
         return StudentMapper.toDto(studentRepository.save(student));
     }
 
     @Transactional
     public List<StudentResponseDto> createStudentsBulk(List<StudentCreateDto> dtos) {
-
         return dtos.stream()
-                .map(dto -> {
-                    if (studentRepository.existsByFirstNameAndLastNameAndMiddleName(
-                            dto.getFirstName(),
-                            dto.getLastName(),
-                            dto.getMiddleName()
-                    )) {
-                        throw new AlreadyExistsException(STUDENT_ALREADY_EXISTS);
-                    }
-
-                    Student student = new Student();
-                    mapStudent(student, dto);
-
-                    return studentRepository.save(student);
-                })
+                .map(this::createStudentEntity)
+                .map(studentRepository::save)
                 .map(StudentMapper::toDto)
                 .toList();
     }
 
     public List<StudentResponseDto> createStudentsBulkWithoutTransaction(List<StudentCreateDto> dtos) {
-
         return dtos.stream()
                 .map(dto -> {
-                    Student student = new Student();
-                    mapStudent(student, dto);
-
                     if ("ERROR".equals(dto.getFirstName())) {
-                        throw new RuntimeException("Ошибка в середине bulk-операции");
+                        throw new IllegalStateException("Ошибка в bulk операции");
                     }
-
-                    return studentRepository.save(student);
+                    return createStudentEntity(dto);
                 })
+                .map(studentRepository::save)
                 .map(StudentMapper::toDto)
                 .toList();
     }
@@ -122,9 +96,7 @@ public class StudentService {
     @LogExecutionTime
     public StudentResponseDto updateStudent(Long id, StudentCreateDto dto) {
         Student student = findStudentOrThrow(id);
-
         mapStudent(student, dto);
-
         return StudentMapper.toDto(studentRepository.save(student));
     }
 
@@ -136,8 +108,8 @@ public class StudentService {
         gradeRepository.deleteAllByStudent(student);
 
         if (student.getDisciplines() != null) {
-            for (Discipline discipline : student.getDisciplines()) {
-                discipline.getStudents().remove(student);
+            for (Discipline d : student.getDisciplines()) {
+                d.getStudents().remove(student);
             }
             student.getDisciplines().clear();
         }
@@ -151,52 +123,42 @@ public class StudentService {
         studentRepository.delete(student);
     }
 
-    @LogExecutionTime
-    public void saveWithoutTransaction(StudentCreateDto dto) {
-        Student student = new Student();
-        mapBasicFields(student, dto);
-
-        studentRepository.save(student);
-
-        throw new ResourceNotFoundException("Ошибка после сохранения — данные частично сохранены");
-    }
-
-    @Transactional
-    @LogExecutionTime
-    public void saveWithTransaction(StudentCreateDto dto) {
-        Student student = new Student();
-        mapBasicFields(student, dto);
-
-        studentRepository.save(student);
-
-        throw new ResourceNotFoundException("Ошибка — транзакция откатится");
-    }
-
     private Student findStudentOrThrow(Long id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
     }
 
-    private void mapStudent(Student student, StudentCreateDto dto) {
-        mapBasicFields(student, dto);
-        setGroup(student, dto.getGroupId());
-        setDisciplines(student, dto.getDisciplineIds());
+    private Group findGroupOrThrow(Long id) {
+        return groupRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
     }
 
-    private void mapBasicFields(Student student, StudentCreateDto dto) {
+    private void validateStudentUniqueness(StudentCreateDto dto) {
+        if (studentRepository.existsByFirstNameAndLastNameAndMiddleName(
+                dto.getFirstName(),
+                dto.getLastName(),
+                dto.getMiddleName()
+        )) {
+            throw new AlreadyExistsException(STUDENT_ALREADY_EXISTS);
+        }
+    }
+
+    private Student buildStudent(StudentCreateDto dto) {
+        Student student = new Student();
+        mapStudent(student, dto);
+        return student;
+    }
+
+    private Student createStudentEntity(StudentCreateDto dto) {
+        validateStudentUniqueness(dto);
+        return buildStudent(dto);
+    }
+
+    private void mapStudent(Student student, StudentCreateDto dto) {
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setMiddleName(dto.getMiddleName());
-    }
-
-    private void setGroup(Student student, Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
-        student.setGroup(group);
-    }
-
-    private void setDisciplines(Student student, List<Long> disciplineIds) {
-        List<Discipline> disciplines = disciplineRepository.findAllById(disciplineIds);
-        student.setDisciplines(disciplines);
+        student.setGroup(findGroupOrThrow(dto.getGroupId()));
+        student.setDisciplines(disciplineRepository.findAllById(dto.getDisciplineIds()));
     }
 }

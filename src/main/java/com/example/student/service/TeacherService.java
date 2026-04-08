@@ -3,7 +3,6 @@ package com.example.student.service;
 import com.example.student.aop.LogExecutionTime;
 import com.example.student.dto.TeacherCreateDto;
 import com.example.student.dto.TeacherResponseDto;
-import com.example.student.entity.Discipline;
 import com.example.student.entity.Teacher;
 import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
@@ -44,21 +43,13 @@ public class TeacherService {
 
     @LogExecutionTime
     public TeacherResponseDto getTeacherById(Long id) {
-        Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
-        return TeacherMapper.toDto(teacher);
+        return TeacherMapper.toDto(findTeacherOrThrow(id));
     }
 
     @Transactional
     @LogExecutionTime
     public TeacherResponseDto createTeacher(TeacherCreateDto dto) {
-        if (teacherRepository.existsByFirstNameAndLastNameAndMiddleName(
-                dto.getFirstName(),
-                dto.getLastName(),
-                dto.getMiddleName()
-        )) {
-            throw new AlreadyExistsException(TEACHER_ALREADY_EXISTS);
-        }
+        validateTeacherUniqueness(dto);
 
         Teacher teacher = new Teacher();
         mapTeacher(teacher, dto);
@@ -68,40 +59,22 @@ public class TeacherService {
 
     @Transactional
     public List<TeacherResponseDto> createTeachersBulk(List<TeacherCreateDto> dtos) {
-
         return dtos.stream()
-                .map(dto -> {
-                    if (teacherRepository.existsByFirstNameAndLastNameAndMiddleName(
-                            dto.getFirstName(),
-                            dto.getLastName(),
-                            dto.getMiddleName()
-                    )) {
-                        throw new AlreadyExistsException("Teacher already exists");
-                    }
-
-                    Teacher teacher = new Teacher();
-                    teacher.setFirstName(dto.getFirstName());
-                    teacher.setLastName(dto.getLastName());
-                    teacher.setMiddleName(dto.getMiddleName());
-
-                    return teacherRepository.save(teacher);
-                })
+                .map(this::createTeacherEntity)
+                .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
                 .toList();
     }
-    public List<TeacherResponseDto> createTeachersBulkWithoutTransaction(List<TeacherCreateDto> dtos) {
 
+    public List<TeacherResponseDto> createTeachersBulkWithoutTransaction(List<TeacherCreateDto> dtos) {
         return dtos.stream()
                 .map(dto -> {
-                    Teacher teacher = new Teacher();
-                    teacher.setFirstName(dto.getFirstName());
-
                     if ("ERROR".equals(dto.getFirstName())) {
-                        throw new RuntimeException("Ошибка в bulk");
+                        throw new IllegalStateException("Ошибка преподавателя");
                     }
-
-                    return teacherRepository.save(teacher);
+                    return createTeacherEntity(dto);
                 })
+                .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
                 .toList();
     }
@@ -109,27 +82,37 @@ public class TeacherService {
     @Transactional
     @LogExecutionTime
     public TeacherResponseDto updateTeacher(Long id, TeacherCreateDto dto) {
-        Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+        Teacher teacher = findTeacherOrThrow(id);
         mapTeacher(teacher, dto);
-
         return TeacherMapper.toDto(teacherRepository.save(teacher));
     }
 
     @Transactional
     @LogExecutionTime
     public void deleteTeacher(Long id) {
-        Teacher teacher = teacherRepository.findById(id)
+        teacherRepository.delete(findTeacherOrThrow(id));
+    }
+
+    private Teacher findTeacherOrThrow(Long id) {
+        return teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+    }
 
-        if (teacher.getDisciplines() != null) {
-            for (Discipline discipline : teacher.getDisciplines()) {
-                discipline.setTeacher(null);
-            }
-            teacher.getDisciplines().clear();
+    private void validateTeacherUniqueness(TeacherCreateDto dto) {
+        if (teacherRepository.existsByFirstNameAndLastNameAndMiddleName(
+                dto.getFirstName(),
+                dto.getLastName(),
+                dto.getMiddleName()
+        )) {
+            throw new AlreadyExistsException(TEACHER_ALREADY_EXISTS);
         }
+    }
 
-        teacherRepository.delete(teacher);
+    private Teacher createTeacherEntity(TeacherCreateDto dto) {
+        validateTeacherUniqueness(dto);
+        Teacher teacher = new Teacher();
+        mapTeacher(teacher, dto);
+        return teacher;
     }
 
     private void mapTeacher(Teacher teacher, TeacherCreateDto dto) {
