@@ -134,8 +134,8 @@ public class StudentService {
     }
 
     private void assertBulkStudentRowValid(StudentCreateDto dto) {
-        if ("ERROR".equals(dto.getFirstName())) {
-            throw new IllegalStateException("Ошибка в bulk операции");
+        if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getFirstName())) {
+            throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GENERIC);
         }
     }
 

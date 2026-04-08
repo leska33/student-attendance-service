@@ -101,8 +101,8 @@ public class GroupService {
     }
 
     private void assertBulkGroupRowValid(GroupCreateDto dto) {
-        if ("ERROR".equals(dto.getNumber())) {
-            throw new IllegalStateException("Ошибка группы");
+        if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getNumber())) {
+            throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GROUP);
         }
     }
 

@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecutionTimeAspect {
 
-    private static final String LOG_NAME = "com.example.student.service.performance";
-    private final Logger logger = LoggerFactory.getLogger(LOG_NAME);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionTimeAspect.class);
 
     @Around("execution(* com.example.student.service..*.*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -20,9 +19,9 @@ public class ExecutionTimeAspect {
         try {
             return joinPoint.proceed();
         } finally {
-            if (logger.isInfoEnabled()) {
+            if (LOGGER.isInfoEnabled()) {
                 long executionTime = System.currentTimeMillis() - start;
-                logger.info("время выполнения: {} мс | {}",
+                LOGGER.info("время выполнения: {} мс | {}",
                         executionTime,
                         joinPoint.getSignature().toShortString());
             }

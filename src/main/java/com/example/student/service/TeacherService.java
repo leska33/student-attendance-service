@@ -98,8 +98,8 @@ public class TeacherService {
     }
 
     private void assertBulkTeacherRowValid(TeacherCreateDto dto) {
-        if ("ERROR".equals(dto.getFirstName())) {
-            throw new IllegalStateException("Ошибка преподавателя");
+        if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getFirstName())) {
+            throw new IllegalStateException(BulkOperationConstants.MSG_BULK_TEACHER);
         }
     }
 

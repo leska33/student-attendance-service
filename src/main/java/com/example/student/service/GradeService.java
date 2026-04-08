@@ -115,7 +115,7 @@ public class GradeService {
 
     private void assertBulkGradeRowValid(GradeCreateDto dto) {
         if (dto.getValue() != null && dto.getValue() < 0) {
-            throw new IllegalStateException("Некорректная оценка");
+            throw new IllegalStateException(BulkOperationConstants.MSG_INVALID_GRADE);
         }
     }
 

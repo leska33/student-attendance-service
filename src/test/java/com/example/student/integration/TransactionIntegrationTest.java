@@ -4,6 +4,7 @@ import com.example.student.dto.StudentCreateDto;
 import com.example.student.entity.Group;
 import com.example.student.repository.GroupRepository;
 import com.example.student.repository.StudentRepository;
+import com.example.student.service.BulkOperationConstants;
 import com.example.student.service.StudentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Сравнение bulk-создания студентов с транзакцией ({@code createStudentsBulk}) и без неё
- * ({@code createStudentsBulkWithoutTransaction}): при ошибке на второй записи (имя {@code ERROR})
+ * ({@code createStudentsBulkWithoutTransaction}): при ошибке на второй записи (сентинел {@link BulkOperationConstants#ERROR_SENTINEL})
  * в транзакционном варианте счётчик студентов остаётся 0 (откат), без транзакции — первая запись
  * уже закоммичена, поэтому {@code count() > 0}.
  */
@@ -61,7 +62,7 @@ class TransactionIntegrationTest {
     }
 
     private StudentCreateDto errorDto() {
-        return normalDto("ERROR");
+        return normalDto(BulkOperationConstants.ERROR_SENTINEL);
     }
 
     @Test

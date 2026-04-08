@@ -128,8 +128,8 @@ public class DisciplineService {
     }
 
     private void assertBulkDisciplineRowValid(DisciplineCreateDto dto) {
-        if ("ERROR".equals(dto.getName())) {
-            throw new IllegalStateException("Ошибка в bulk операции");
+        if (BulkOperationConstants.ERROR_SENTINEL.equals(dto.getName())) {
+            throw new IllegalStateException(BulkOperationConstants.MSG_BULK_GENERIC);
         }
     }
 

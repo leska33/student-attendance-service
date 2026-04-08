@@ -21,14 +21,13 @@
             <totalSizeCap>1GB</totalSizeCap>
             <cleanHistoryOnStart>false</cleanHistoryOnStart>
         </rollingPolicy>
-        <createMissingDirectories>true</createMissingDirectories>
     </appender>
 
     <logger name="com.example.student" level="DEBUG"/>
     <logger name="org.springframework.web" level="INFO"/>
     <logger name="org.hibernate.SQL" level="DEBUG"/>
 
-    <logger name="com.example.student.service.performance" level="INFO"/>
+    <logger name="com.example.student.aop.ExecutionTimeAspect" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
