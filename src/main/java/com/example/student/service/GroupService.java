@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -53,7 +54,8 @@ public class GroupService {
 
     @Transactional
     public List<GroupResponseDto> createGroupsBulk(List<GroupCreateDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkGroupRowValid)
                 .map(this::createGroupEntity)
                 .map(groupRepository::save)
                 .map(GroupMapper::toDto)
@@ -61,13 +63,9 @@ public class GroupService {
     }
 
     public List<GroupResponseDto> createGroupsBulkWithoutTransaction(List<GroupCreateDto> dtos) {
-        return dtos.stream()
-                .map(dto -> {
-                    if ("ERROR".equals(dto.getNumber())) {
-                        throw new IllegalStateException("Ошибка группы");
-                    }
-                    return createGroupEntity(dto);
-                })
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkGroupRowValid)
+                .map(this::createGroupEntity)
                 .map(groupRepository::save)
                 .map(GroupMapper::toDto)
                 .toList();
@@ -97,8 +95,15 @@ public class GroupService {
     }
 
     private Group findGroupOrThrow(Long id) {
-        return groupRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(groupRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+    }
+
+    private void assertBulkGroupRowValid(GroupCreateDto dto) {
+        if ("ERROR".equals(dto.getNumber())) {
+            throw new IllegalStateException("Ошибка группы");
+        }
     }
 
     private Group createGroupEntity(GroupCreateDto dto) {

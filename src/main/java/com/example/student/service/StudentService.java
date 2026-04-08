@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -72,7 +73,8 @@ public class StudentService {
 
     @Transactional
     public List<StudentResponseDto> createStudentsBulk(List<StudentCreateDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkStudentRowValid)
                 .map(this::createStudentEntity)
                 .map(studentRepository::save)
                 .map(StudentMapper::toDto)
@@ -80,13 +82,9 @@ public class StudentService {
     }
 
     public List<StudentResponseDto> createStudentsBulkWithoutTransaction(List<StudentCreateDto> dtos) {
-        return dtos.stream()
-                .map(dto -> {
-                    if ("ERROR".equals(dto.getFirstName())) {
-                        throw new IllegalStateException("Ошибка в bulk операции");
-                    }
-                    return createStudentEntity(dto);
-                })
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkStudentRowValid)
+                .map(this::createStudentEntity)
                 .map(studentRepository::save)
                 .map(StudentMapper::toDto)
                 .toList();
@@ -124,13 +122,21 @@ public class StudentService {
     }
 
     private Student findStudentOrThrow(Long id) {
-        return studentRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(studentRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
     }
 
     private Group findGroupOrThrow(Long id) {
-        return groupRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(groupRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(GROUP_NOT_FOUND));
+    }
+
+    private void assertBulkStudentRowValid(StudentCreateDto dto) {
+        if ("ERROR".equals(dto.getFirstName())) {
+            throw new IllegalStateException("Ошибка в bulk операции");
+        }
     }
 
     private void validateStudentUniqueness(StudentCreateDto dto) {

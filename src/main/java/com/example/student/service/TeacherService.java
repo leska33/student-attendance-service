@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TeacherService {
@@ -59,7 +60,8 @@ public class TeacherService {
 
     @Transactional
     public List<TeacherResponseDto> createTeachersBulk(List<TeacherCreateDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkTeacherRowValid)
                 .map(this::createTeacherEntity)
                 .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
@@ -67,13 +69,9 @@ public class TeacherService {
     }
 
     public List<TeacherResponseDto> createTeachersBulkWithoutTransaction(List<TeacherCreateDto> dtos) {
-        return dtos.stream()
-                .map(dto -> {
-                    if ("ERROR".equals(dto.getFirstName())) {
-                        throw new IllegalStateException("Ошибка преподавателя");
-                    }
-                    return createTeacherEntity(dto);
-                })
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkTeacherRowValid)
+                .map(this::createTeacherEntity)
                 .map(teacherRepository::save)
                 .map(TeacherMapper::toDto)
                 .toList();
@@ -94,8 +92,15 @@ public class TeacherService {
     }
 
     private Teacher findTeacherOrThrow(Long id) {
-        return teacherRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(teacherRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+    }
+
+    private void assertBulkTeacherRowValid(TeacherCreateDto dto) {
+        if ("ERROR".equals(dto.getFirstName())) {
+            throw new IllegalStateException("Ошибка преподавателя");
+        }
     }
 
     private void validateTeacherUniqueness(TeacherCreateDto dto) {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GradeService {
@@ -63,7 +64,8 @@ public class GradeService {
 
     @Transactional
     public List<GradeResponseDto> createGradesBulk(List<GradeCreateDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkGradeRowValid)
                 .map(this::createGradeEntity)
                 .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
@@ -71,13 +73,9 @@ public class GradeService {
     }
 
     public List<GradeResponseDto> createGradesBulkWithoutTransaction(List<GradeCreateDto> dtos) {
-        return dtos.stream()
-                .map(dto -> {
-                    if (dto.getValue() < 0) {
-                        throw new IllegalStateException("Некорректная оценка");
-                    }
-                    return createGradeEntity(dto);
-                })
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkGradeRowValid)
+                .map(this::createGradeEntity)
                 .map(gradeRepository::save)
                 .map(GradeMapper::toDto)
                 .toList();
@@ -98,18 +96,27 @@ public class GradeService {
     }
 
     private Grade findGradeOrThrow(Long id) {
-        return gradeRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(gradeRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(GRADE_NOT_FOUND));
     }
 
     private Student findStudentOrThrow(Long id) {
-        return studentRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(studentRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(STUDENT_NOT_FOUND));
     }
 
     private Discipline findDisciplineOrThrow(Long id) {
-        return disciplineRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(disciplineRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
+    }
+
+    private void assertBulkGradeRowValid(GradeCreateDto dto) {
+        if (dto.getValue() != null && dto.getValue() < 0) {
+            throw new IllegalStateException("Некорректная оценка");
+        }
     }
 
     private Grade buildGrade(GradeCreateDto dto) {

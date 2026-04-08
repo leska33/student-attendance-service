@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DisciplineService {
@@ -65,7 +66,8 @@ public class DisciplineService {
 
     @Transactional
     public List<DisciplineResponseDto> createDisciplinesBulk(List<DisciplineCreateDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkDisciplineRowValid)
                 .map(this::createDisciplineEntity)
                 .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
@@ -73,13 +75,9 @@ public class DisciplineService {
     }
 
     public List<DisciplineResponseDto> createDisciplinesBulkWithoutTransaction(List<DisciplineCreateDto> dtos) {
-        return dtos.stream()
-                .map(dto -> {
-                    if ("ERROR".equals(dto.getName())) {
-                        throw new IllegalStateException("Ошибка в bulk операции");
-                    }
-                    return createDisciplineEntity(dto);
-                })
+        return Optional.ofNullable(dtos).orElseGet(List::of).stream()
+                .peek(this::assertBulkDisciplineRowValid)
+                .map(this::createDisciplineEntity)
                 .map(disciplineRepository::save)
                 .map(DisciplineMapper::toDto)
                 .toList();
@@ -118,13 +116,21 @@ public class DisciplineService {
     }
 
     private Discipline findDisciplineOrThrow(Long id) {
-        return disciplineRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(disciplineRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(DISCIPLINE_NOT_FOUND));
     }
 
     private Teacher findTeacherOrThrow(Long id) {
-        return teacherRepository.findById(id)
+        return Optional.ofNullable(id)
+                .flatMap(teacherRepository::findById)
                 .orElseThrow(() -> new ResourceNotFoundException(TEACHER_NOT_FOUND));
+    }
+
+    private void assertBulkDisciplineRowValid(DisciplineCreateDto dto) {
+        if ("ERROR".equals(dto.getName())) {
+            throw new IllegalStateException("Ошибка в bulk операции");
+        }
     }
 
     private Discipline buildDiscipline(DisciplineCreateDto dto) {

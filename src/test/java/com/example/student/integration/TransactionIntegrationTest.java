@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -16,7 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Сравнение bulk-создания студентов с транзакцией ({@code createStudentsBulk}) и без неё
+ * ({@code createStudentsBulkWithoutTransaction}): при ошибке на второй записи (имя {@code ERROR})
+ * в транзакционном варианте счётчик студентов остаётся 0 (откат), без транзакции — первая запись
+ * уже закоммичена, поэтому {@code count() > 0}.
+ */
 @SpringBootTest
+@ActiveProfiles("test")
 class TransactionIntegrationTest {
 
     @Autowired
