@@ -10,10 +10,15 @@ import com.example.student.repository.TeacherRepository;
 import com.example.student.service.DisciplineService;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class DisciplineServiceTest {
 
@@ -75,7 +80,9 @@ class DisciplineServiceTest {
         DisciplineCreateDto dto = new DisciplineCreateDto();
         dto.setName("ERROR");
 
+        List<DisciplineCreateDto> list = java.util.List.of(dto);
+
         assertThrows(IllegalStateException.class,
-                () -> service.createDisciplinesBulkWithoutTransaction(java.util.List.of(dto)));
+                () -> service.createDisciplinesBulkWithoutTransaction(list));
     }
 }

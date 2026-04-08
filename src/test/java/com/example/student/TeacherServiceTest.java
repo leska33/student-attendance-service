@@ -8,10 +8,14 @@ import com.example.student.repository.TeacherRepository;
 import com.example.student.service.TeacherService;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TeacherServiceTest {
 
@@ -58,7 +62,9 @@ class TeacherServiceTest {
         TeacherCreateDto teacherDto = dto();
         teacherDto.setFirstName("ERROR");
 
+        List<TeacherCreateDto> list = java.util.List.of(teacherDto);
+
         assertThrows(IllegalStateException.class,
-                () -> service.createTeachersBulkWithoutTransaction(java.util.List.of(teacherDto)));
+                () -> service.createTeachersBulkWithoutTransaction(list));
     }
 }

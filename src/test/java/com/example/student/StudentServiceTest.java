@@ -6,15 +6,22 @@ import com.example.student.entity.Group;
 import com.example.student.entity.Student;
 import com.example.student.exception.AlreadyExistsException;
 import com.example.student.exception.ResourceNotFoundException;
-import com.example.student.repository.*;
+import com.example.student.repository.DisciplineRepository;
+import com.example.student.repository.GradeRepository;
+import com.example.student.repository.GroupRepository;
+import com.example.student.repository.StudentRepository;
 import com.example.student.service.StudentService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class StudentServiceTest {
 
@@ -92,7 +99,9 @@ class StudentServiceTest {
         StudentCreateDto studentDto = dto();
         studentDto.setFirstName("ERROR");
 
+        List<StudentCreateDto> list = List.of(studentDto);
+
         assertThrows(IllegalStateException.class,
-                () -> service.createStudentsBulkWithoutTransaction(List.of(studentDto)));
+                () -> service.createStudentsBulkWithoutTransaction(list));
     }
 }
