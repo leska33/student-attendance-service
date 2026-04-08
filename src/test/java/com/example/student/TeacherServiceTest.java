@@ -40,8 +40,9 @@ class TeacherServiceTest {
         when(repository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
+        TeacherCreateDto teacherDto = dto();
         assertThrows(AlreadyExistsException.class,
-                () -> service.createTeacher(dto()));
+                () -> service.createTeacher(teacherDto));
     }
 
     @Test
@@ -54,12 +55,12 @@ class TeacherServiceTest {
 
     @Test
     void bulk_error() {
-        TeacherCreateDto dto = dto();
-        dto.setFirstName("ERROR");
+        TeacherCreateDto teacherDto = dto();
+        teacherDto.setFirstName("ERROR");
 
         assertThrows(IllegalStateException.class,
                 () -> service.createTeachersBulkWithoutTransaction(
-                        java.util.List.of(dto)
+                        java.util.List.of(teacherDto)
                 ));
     }
 }

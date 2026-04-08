@@ -9,7 +9,6 @@ import com.example.student.repository.GradeRepository;
 import com.example.student.repository.TeacherRepository;
 import com.example.student.service.DisciplineService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Optional;
 

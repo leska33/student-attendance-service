@@ -51,8 +51,7 @@ class TransactionIntegrationTest {
     }
 
     private StudentCreateDto errorDto() {
-        StudentCreateDto dto = normalDto("ERROR");
-        return dto;
+        return normalDto("ERROR"); // ✔ исправлено
     }
 
     @Test
@@ -60,15 +59,14 @@ class TransactionIntegrationTest {
 
         List<StudentCreateDto> list = List.of(
                 normalDto("A"),
-                errorDto(), // вызовет exception
+                errorDto(),
                 normalDto("B")
         );
 
         assertThrows(IllegalStateException.class,
                 () -> studentService.createStudentsBulk(list));
 
-        assertEquals(0, studentRepository.count(),
-                "Откат");
+        assertEquals(0, studentRepository.count());
     }
 
     @Test
@@ -83,7 +81,6 @@ class TransactionIntegrationTest {
         assertThrows(IllegalStateException.class,
                 () -> studentService.createStudentsBulkWithoutTransaction(list));
 
-        assertTrue(studentRepository.count() > 0,
-                "Часть данных сохранится без транзакции");
+        assertTrue(studentRepository.count() > 0);
     }
 }

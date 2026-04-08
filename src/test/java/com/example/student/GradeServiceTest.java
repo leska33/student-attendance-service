@@ -42,8 +42,9 @@ class GradeServiceTest {
     void student_notFound() {
         when(studentRepository.findById(1L)).thenReturn(Optional.empty());
 
+        GradeCreateDto gradeDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createGrade(dto()));
+                () -> service.createGrade(gradeDto));
     }
 
     @Test
@@ -51,8 +52,9 @@ class GradeServiceTest {
         when(studentRepository.findById(1L)).thenReturn(Optional.of(new Student()));
         when(disciplineRepository.findById(1L)).thenReturn(Optional.empty());
 
+        GradeCreateDto gradeDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createGrade(dto()));
+                () -> service.createGrade(gradeDto));
     }
 
     @Test
@@ -65,12 +67,12 @@ class GradeServiceTest {
 
     @Test
     void bulk_error() {
-        GradeCreateDto dto = dto();
-        dto.setValue(-1);
+        GradeCreateDto gradeDto = dto();
+        gradeDto.setValue(-1);
 
         assertThrows(IllegalStateException.class,
                 () -> service.createGradesBulkWithoutTransaction(
-                        java.util.List.of(dto)
+                        java.util.List.of(gradeDto)
                 ));
     }
 }

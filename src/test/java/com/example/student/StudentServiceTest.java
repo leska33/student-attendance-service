@@ -50,8 +50,9 @@ class StudentServiceTest {
         when(studentRepository.existsByFirstNameAndLastNameAndMiddleName(any(), any(), any()))
                 .thenReturn(true);
 
+        StudentCreateDto studentDto = dto();
         assertThrows(AlreadyExistsException.class,
-                () -> service.createStudent(dto()));
+                () -> service.createStudent(studentDto));
     }
 
     @Test
@@ -60,8 +61,9 @@ class StudentServiceTest {
                 .thenReturn(false);
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
+        StudentCreateDto studentDto = dto();
         assertThrows(ResourceNotFoundException.class,
-                () -> service.createStudent(dto()));
+                () -> service.createStudent(studentDto));
     }
 
     @Test
@@ -85,10 +87,10 @@ class StudentServiceTest {
 
     @Test
     void bulk_error() {
-        StudentCreateDto dto = dto();
-        dto.setFirstName("ERROR");
+        StudentCreateDto studentDto = dto();
+        studentDto.setFirstName("ERROR");
 
         assertThrows(IllegalStateException.class,
-                () -> service.createStudentsBulkWithoutTransaction(List.of(dto)));
+                () -> service.createStudentsBulkWithoutTransaction(List.of(studentDto)));
     }
 }
