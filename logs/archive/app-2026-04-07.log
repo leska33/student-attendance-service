@@ -1,0 +1,315 @@
+2026-04-07 14:06:39 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 27656 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 14:06:39 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 14:06:39 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 14:06:39 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 14:06:40 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 14:06:40 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 5 JPA repository interfaces.
+2026-04-07 14:06:40 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 14:06:40 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 14:06:40 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 14:06:40 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 14:06:40 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1358 ms
+2026-04-07 14:06:41 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 14:06:41 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@984de01
+2026-04-07 14:06:41 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 14:06:41 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 14:06:41 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 14:06:41 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 14:06:41 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 14:06:41 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 14:06:42 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 14:06:42 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 14:06:42 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 14:06:43 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 14:06:43 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 14:06:43 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 14:06:43 com.example.student.StudentApplication - Started StudentApplication in 4.843 seconds (process running for 5.226)
+2026-04-07 14:06:43 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 14:06:43 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 14:07:06 o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-07 14:07:06 o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-07 14:07:06 o.s.web.servlet.DispatcherServlet - Completed initialization in 6 ms
+2026-04-07 14:07:06 org.hibernate.SQL - 
+    select
+        t1_0.id 
+    from
+        teachers t1_0 
+    where
+        t1_0.first_name=? 
+        and t1_0.last_name=? 
+        and t1_0.middle_name=? 
+    fetch
+        first ? rows only
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Иванsx]
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [Иванов]
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [Иванович]
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (4:INTEGER) <- [1]
+2026-04-07 14:07:06 org.hibernate.SQL - 
+    insert 
+    into
+        teachers
+        (first_name, last_name, middle_name) 
+    values
+        (?, ?, ?)
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Иванsx]
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [Иванов]
+2026-04-07 14:07:06 org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [Иванович]
+2026-04-07 14:07:06 com.example.student.service.performance - время выполнения: 182 мс | TeacherService.createTeacher(..)
+2026-04-07 14:07:06 c.e.student.service.TeacherQueryService - TEACHER CACHE CLEARED
+2026-04-07 14:07:06 com.example.student.service.performance - время выполнения: 0 мс | TeacherQueryService.invalidateCache()
+2026-04-07 14:08:09 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 14:08:09 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 14:08:09 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 14:08:09 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 14:08:09 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-07 15:07:41 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 38676 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 15:07:41 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 15:07:41 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 15:07:41 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 15:07:42 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 15:07:42 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 67 ms. Found 5 JPA repository interfaces.
+2026-04-07 15:07:42 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 15:07:42 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 15:07:42 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 15:07:42 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 15:07:42 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1764 ms
+2026-04-07 15:07:43 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 15:07:43 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e46891d
+2026-04-07 15:07:43 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 15:07:43 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 15:07:43 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 15:07:43 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 15:07:43 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 15:07:44 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 15:07:44 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 15:07:45 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 15:07:45 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 15:07:46 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 15:07:47 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 15:07:47 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 15:07:47 com.example.student.StudentApplication - Started StudentApplication in 6.634 seconds (process running for 7.184)
+2026-04-07 15:07:47 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 15:07:47 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 15:08:54 o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-04-07 15:08:54 o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-04-07 15:08:54 o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-04-07 15:08:55 o.springdoc.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 750 ms
+2026-04-07 15:38:00 c.e.s.e.handler.GlobalExceptionHandler - Validation error: firstName: Поле должно содержать только буквы, firstName: размер должен находиться в диапазоне от 2 до 50
+2026-04-07 15:38:23 org.hibernate.SQL - 
+    select
+        t1_0.id,
+        d1_0.teacher_id,
+        d1_0.id,
+        d1_0.name,
+        t1_0.first_name,
+        t1_0.last_name,
+        t1_0.middle_name 
+    from
+        teachers t1_0 
+    left join
+        disciplines d1_0 
+            on t1_0.id=d1_0.teacher_id
+2026-04-07 15:38:23 com.example.student.service.performance - время выполнения: 201 мс | TeacherService.getAllTeachersDtoOptimized()
+2026-04-07 15:39:49 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 15:39:49 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 15:39:49 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 15:39:49 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 15:39:49 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-07 20:54:51 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 1904 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 20:54:51 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 20:54:51 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 20:54:51 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 20:54:51 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 20:54:51 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 53 ms. Found 5 JPA repository interfaces.
+2026-04-07 20:54:52 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 20:54:52 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 20:54:52 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 20:54:52 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 20:54:52 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1422 ms
+2026-04-07 20:54:52 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 20:54:52 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c674d58
+2026-04-07 20:54:52 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 20:54:52 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 20:54:52 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 20:54:53 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 20:54:53 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 20:54:53 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 20:54:54 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 20:54:54 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 20:54:54 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 20:54:55 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 20:54:55 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 20:54:55 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 20:54:55 com.example.student.StudentApplication - Started StudentApplication in 5.198 seconds (process running for 5.646)
+2026-04-07 20:54:55 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 20:54:55 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 20:55:21 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 20:55:21 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 20:55:21 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 20:55:21 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 20:55:21 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-07 20:55:24 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 47000 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 20:55:24 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 20:55:24 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 20:55:24 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 20:55:24 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 20:55:24 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 49 ms. Found 5 JPA repository interfaces.
+2026-04-07 20:55:25 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 20:55:25 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 20:55:25 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 20:55:25 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 20:55:25 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1320 ms
+2026-04-07 20:55:25 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 20:55:25 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c674d58
+2026-04-07 20:55:25 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 20:55:25 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 20:55:26 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 20:55:26 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 20:55:26 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 20:55:26 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 20:55:27 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 20:55:27 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 20:55:27 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 20:55:28 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 20:55:28 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 20:55:28 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 20:55:28 com.example.student.StudentApplication - Started StudentApplication in 4.688 seconds (process running for 5.047)
+2026-04-07 20:55:28 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 20:55:28 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 20:55:36 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 20:55:36 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 20:55:36 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 20:55:36 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 20:55:36 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-07 21:07:45 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 36096 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 21:07:45 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 21:07:45 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 21:07:46 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 21:07:46 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 21:07:46 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 5 JPA repository interfaces.
+2026-04-07 21:07:47 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 21:07:47 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 21:07:47 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 21:07:47 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 21:07:47 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1364 ms
+2026-04-07 21:07:47 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 21:07:47 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c674d58
+2026-04-07 21:07:47 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 21:07:47 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 21:07:47 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 21:07:48 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 21:07:48 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 21:07:48 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 21:07:49 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 21:07:49 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 21:07:49 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 21:07:49 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 21:07:50 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 21:07:50 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 21:07:50 com.example.student.StudentApplication - Started StudentApplication in 4.845 seconds (process running for 5.202)
+2026-04-07 21:07:50 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 21:07:50 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 21:08:02 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 21:08:02 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 21:08:02 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 21:08:02 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 21:08:02 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-07 21:08:05 com.example.student.StudentApplication - Starting StudentApplication using Java 25.0.2 with PID 36632 (C:\Users\aless\IdeaProjects\student\target\classes started by aless in C:\Users\aless\IdeaProjects\student)
+2026-04-07 21:08:05 com.example.student.StudentApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-04-07 21:08:05 com.example.student.StudentApplication - No active profile set, falling back to 1 default profile: "default"
+2026-04-07 21:08:05 o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-04-07 21:08:06 o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-07 21:08:06 o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 51 ms. Found 5 JPA repository interfaces.
+2026-04-07 21:08:06 o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-04-07 21:08:06 o.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-04-07 21:08:06 o.apache.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-07 21:08:06 org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-04-07 21:08:06 o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1289 ms
+2026-04-07 21:08:06 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-04-07 21:08:06 com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2c674d58
+2026-04-07 21:08:06 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-04-07 21:08:06 org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-07 21:08:06 org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-04-07 21:08:07 o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-07 21:08:07 org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-07 21:08:07 org.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/studentdb]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: studentdb/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-07 21:08:07 org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-07 21:08:08 o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 21:08:08 o.s.d.j.r.query.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-07 21:08:08 o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-07 21:08:09 o.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-04-07 21:08:09 o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-04-07 21:08:09 com.example.student.StudentApplication - Started StudentApplication in 4.456 seconds (process running for 4.823)
+2026-04-07 21:08:09 o.s.core.events.SpringDocAppInitializer - SpringDoc /v3/api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-04-07 21:08:09 o.s.core.events.SpringDocAppInitializer - SpringDoc /swagger-ui.html endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-04-07 21:08:11 o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-07 21:08:11 o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-07 21:08:11 o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-07 21:08:11 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-07 21:08:11 com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
