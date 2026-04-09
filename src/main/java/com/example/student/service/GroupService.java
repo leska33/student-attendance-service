@@ -11,6 +11,7 @@ import com.example.student.repository.GroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,7 @@ public class GroupService {
     public List<GroupResponseDto> getAllGroupsDtoLazy() {
         return groupRepository.findAll().stream()
                 .map(GroupMapper::toDto)
+                .sorted(Comparator.comparing(GroupResponseDto::getId))
                 .toList();
     }
 
@@ -36,6 +38,7 @@ public class GroupService {
     public List<GroupResponseDto> getAllGroupsDtoOptimized() {
         return groupRepository.findAllWithStudents().stream()
                 .map(GroupMapper::toDto)
+                .sorted(Comparator.comparing(GroupResponseDto::getId))
                 .toList();
     }
 

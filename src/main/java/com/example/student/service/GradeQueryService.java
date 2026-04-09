@@ -8,6 +8,7 @@ import com.example.student.repository.GradeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +43,7 @@ public class GradeQueryService {
         LOGGER.info("GRADE_JPQL: FROM DATABASE");
 
         List<GradeResponseDto> result = repository
-                .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size))
+                .findByStudentLastNameJPQL(studentLastName, PageRequest.of(page, size, Sort.by("id")))
                 .stream()
                 .filter(g -> Optional.ofNullable(g.getDiscipline())
                         .map(d -> Objects.equals(d.getName(), disciplineName))
@@ -67,7 +68,7 @@ public class GradeQueryService {
         LOGGER.info("GRADE_NATIVE: FROM DATABASE");
 
         List<GradeResponseDto> result = repository
-                .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size))
+                .findByStudentLastNameNative(studentLastName, PageRequest.of(page, size, Sort.by("id")))
                 .stream()
                 .filter(g -> Optional.ofNullable(g.getDiscipline())
                         .map(d -> Objects.equals(d.getName(), disciplineName))

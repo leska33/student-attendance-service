@@ -16,6 +16,7 @@ import com.example.student.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,7 @@ public class StudentService {
         return studentRepository.findAll()
                 .stream()
                 .map(StudentMapper::toDto)
+                .sorted(Comparator.comparing(StudentResponseDto::getId))
                 .toList();
     }
 
@@ -54,6 +56,7 @@ public class StudentService {
         return studentRepository.findAllWithRelations()
                 .stream()
                 .map(StudentMapper::toDto)
+                .sorted(Comparator.comparing(StudentResponseDto::getId))
                 .toList();
     }
 

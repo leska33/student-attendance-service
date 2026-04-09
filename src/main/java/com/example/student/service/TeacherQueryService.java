@@ -8,6 +8,7 @@ import com.example.student.repository.TeacherRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,7 @@ public class TeacherQueryService {
         LOGGER.info("TEACHER_JPQL: FROM DATABASE");
 
         List<TeacherResponseDto> result = repository
-                .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size))
+                .findByDisciplineNameJPQL(disciplineName, PageRequest.of(page, size, Sort.by("id")))
                 .map(TeacherMapper::toDto)
                 .toList();
 
@@ -59,7 +60,7 @@ public class TeacherQueryService {
         LOGGER.info("TEACHER_NATIVE: FROM DATABASE");
 
         List<TeacherResponseDto> result = repository
-                .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size))
+                .findByDisciplineNameNative(disciplineName, PageRequest.of(page, size, Sort.by("id")))
                 .map(TeacherMapper::toDto)
                 .toList();
 

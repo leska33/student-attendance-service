@@ -14,6 +14,7 @@ import com.example.student.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,7 @@ public class GradeService {
     public List<GradeResponseDto> getAllGradesDtoLazy() {
         return gradeRepository.findAll().stream()
                 .map(GradeMapper::toDto)
+                .sorted(Comparator.comparing(GradeResponseDto::getId))
                 .toList();
     }
 
@@ -47,6 +49,7 @@ public class GradeService {
     public List<GradeResponseDto> getAllGradesDtoOptimized() {
         return gradeRepository.findAllWithRelations().stream()
                 .map(GradeMapper::toDto)
+                .sorted(Comparator.comparing(GradeResponseDto::getId))
                 .toList();
     }
 

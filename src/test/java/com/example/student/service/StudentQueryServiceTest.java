@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ class StudentQueryServiceTest {
         service.getStudentsByDisciplineJPQL("Math", 0, 5);
         service.getStudentsByDisciplineJPQL("Math", 0, 5);
 
-        verify(repository, times(1)).findByDisciplineNameJPQL("Math", PageRequest.of(0, 5));
+        verify(repository, times(1)).findByDisciplineNameJPQL("Math", PageRequest.of(0, 5, Sort.by("id")));
     }
 
     @Test
@@ -47,7 +48,7 @@ class StudentQueryServiceTest {
         service.getStudentsByDisciplineNative("Physics", 1, 3);
         service.getStudentsByDisciplineNative("Physics", 1, 3);
 
-        verify(repository, times(1)).findByDisciplineNameNative("Physics", PageRequest.of(1, 3));
+        verify(repository, times(1)).findByDisciplineNameNative("Physics", PageRequest.of(1, 3, Sort.by("id")));
     }
 
     @Test
@@ -62,7 +63,7 @@ class StudentQueryServiceTest {
         service.invalidateCache();
         service.getStudentsByDisciplineJPQL("X", 0, 2);
 
-        verify(repository, times(2)).findByDisciplineNameJPQL("X", PageRequest.of(0, 2));
+        verify(repository, times(2)).findByDisciplineNameJPQL("X", PageRequest.of(0, 2, Sort.by("id")));
     }
 
     @Test
@@ -77,7 +78,7 @@ class StudentQueryServiceTest {
         service.invalidateCache();
         service.getStudentsByDisciplineNative("Nat", 0, 2);
 
-        verify(repository, times(2)).findByDisciplineNameNative("Nat", PageRequest.of(0, 2));
+        verify(repository, times(2)).findByDisciplineNameNative("Nat", PageRequest.of(0, 2, Sort.by("id")));
     }
 
     @Test

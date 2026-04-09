@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ class GroupQueryServiceTest {
         service.getGroupsByStudentLastNameJPQL("Ivanov", 0, 4);
         service.getGroupsByStudentLastNameJPQL("Ivanov", 0, 4);
 
-        verify(repository, times(1)).findByStudentLastNameJPQL("Ivanov", PageRequest.of(0, 4));
+        verify(repository, times(1)).findByStudentLastNameJPQL("Ivanov", PageRequest.of(0, 4, Sort.by("id")));
     }
 
     @Test
@@ -43,7 +44,7 @@ class GroupQueryServiceTest {
         service.getGroupsByStudentLastNameNative("Petrov", 0, 4);
         service.getGroupsByStudentLastNameNative("Petrov", 0, 4);
 
-        verify(repository, times(1)).findByStudentLastNameNative("Petrov", PageRequest.of(0, 4));
+        verify(repository, times(1)).findByStudentLastNameNative("Petrov", PageRequest.of(0, 4, Sort.by("id")));
     }
 
     @Test
@@ -56,7 +57,7 @@ class GroupQueryServiceTest {
         service.invalidateCache();
         service.getGroupsByStudentLastNameJPQL("Z", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameJPQL("Z", PageRequest.of(0, 1));
+        verify(repository, times(2)).findByStudentLastNameJPQL("Z", PageRequest.of(0, 1, Sort.by("id")));
     }
 
     @Test
@@ -69,7 +70,7 @@ class GroupQueryServiceTest {
         service.invalidateCache();
         service.getGroupsByStudentLastNameNative("N1", 0, 1);
 
-        verify(repository, times(2)).findByStudentLastNameNative("N1", PageRequest.of(0, 1));
+        verify(repository, times(2)).findByStudentLastNameNative("N1", PageRequest.of(0, 1, Sort.by("id")));
     }
 
     @Test

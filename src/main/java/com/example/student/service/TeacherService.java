@@ -11,6 +11,7 @@ import com.example.student.repository.TeacherRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class TeacherService {
         return teacherRepository.findAll()
                 .stream()
                 .map(TeacherMapper::toDto)
+                .sorted(Comparator.comparing(TeacherResponseDto::getId))
                 .toList();
     }
 
@@ -39,6 +41,7 @@ public class TeacherService {
         return teacherRepository.findAllWithDisciplines()
                 .stream()
                 .map(TeacherMapper::toDto)
+                .sorted(Comparator.comparing(TeacherResponseDto::getId))
                 .toList();
     }
 

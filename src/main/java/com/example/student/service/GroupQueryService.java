@@ -8,6 +8,7 @@ import com.example.student.repository.GroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +40,7 @@ public class GroupQueryService {
         LOGGER.info("GROUP_JPQL: FROM DATABASE");
 
         List<GroupResponseDto> result = repository
-                .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size))
+                .findByStudentLastNameJPQL(lastName, PageRequest.of(page, size, Sort.by("id")))
                 .map(GroupMapper::toDto)
                 .toList();
 
@@ -59,7 +60,7 @@ public class GroupQueryService {
         LOGGER.info("GROUP_NATIVE: FROM DATABASE");
 
         List<GroupResponseDto> result = repository
-                .findByStudentLastNameNative(lastName, PageRequest.of(page, size))
+                .findByStudentLastNameNative(lastName, PageRequest.of(page, size, Sort.by("id")))
                 .map(GroupMapper::toDto)
                 .toList();
 

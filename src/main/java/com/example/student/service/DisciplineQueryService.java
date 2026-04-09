@@ -8,6 +8,7 @@ import com.example.student.repository.DisciplineRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +41,7 @@ public class DisciplineQueryService {
         LOGGER.info("DISCIPLINE_JPQL: FROM DATABASE");
 
         List<DisciplineResponseDto> result = repository
-                .findByTeacherFullNameJPQL(firstName, middleName, lastName, PageRequest.of(page, size))
+                .findByTeacherFullNameJPQL(firstName, middleName, lastName, PageRequest.of(page, size, Sort.by("id")))
                 .map(DisciplineMapper::toDto)
                 .toList();
 
@@ -61,7 +62,7 @@ public class DisciplineQueryService {
         LOGGER.info("DISCIPLINE_NATIVE: FROM DATABASE");
 
         List<DisciplineResponseDto> result = repository
-                .findByTeacherFullNameNative(firstName, middleName, lastName, PageRequest.of(page, size))
+                .findByTeacherFullNameNative(firstName, middleName, lastName, PageRequest.of(page, size, Sort.by("id")))
                 .map(DisciplineMapper::toDto)
                 .toList();
 

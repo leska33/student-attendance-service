@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherJPQL("A", "B", "C", 0, 2);
 
         verify(repository, times(1)).findByTeacherFullNameJPQL(
-                "A", "B", "C", PageRequest.of(0, 2));
+                "A", "B", "C", PageRequest.of(0, 2, Sort.by("id")));
     }
 
     @Test
@@ -45,7 +46,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherNative("A", "B", "C", 0, 2);
 
         verify(repository, times(1)).findByTeacherFullNameNative(
-                "A", "B", "C", PageRequest.of(0, 2));
+                "A", "B", "C", PageRequest.of(0, 2, Sort.by("id")));
     }
 
     @Test
@@ -59,7 +60,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherJPQL("X", "Y", "Z", 0, 1);
 
         verify(repository, times(2)).findByTeacherFullNameJPQL(
-                "X", "Y", "Z", PageRequest.of(0, 1));
+                "X", "Y", "Z", PageRequest.of(0, 1, Sort.by("id")));
     }
 
     @Test
@@ -73,7 +74,7 @@ class DisciplineQueryServiceTest {
         service.getDisciplinesByTeacherNative("N", "A", "T", 0, 1);
 
         verify(repository, times(2)).findByTeacherFullNameNative(
-                "N", "A", "T", PageRequest.of(0, 1));
+                "N", "A", "T", PageRequest.of(0, 1, Sort.by("id")));
     }
 
     @Test
