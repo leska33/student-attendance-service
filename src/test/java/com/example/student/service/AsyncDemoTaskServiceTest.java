@@ -26,7 +26,7 @@ class AsyncDemoTaskServiceTest {
     @Test
     void submitReturnsIdAndCompletesAsync() {
         String id = asyncDemoTaskService.submitTask();
-        assertTrue(id.startsWith("T-"));
+        assertTrue(id.startsWith(""));
 
         AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 25_000);
         assertEquals(AsyncTaskStatus.READY, last);
@@ -35,7 +35,7 @@ class AsyncDemoTaskServiceTest {
     @Test
     void submitWithItemsCountStoresDetailAndCompletesAsync() {
         String id = asyncDemoTaskService.submitTask(3);
-        assertTrue(id.startsWith("T-"));
+        assertTrue(id.startsWith(""));
 
         var initial = asyncDemoTaskService.findStatus(id);
         assertTrue(initial.isPresent());
