@@ -33,7 +33,7 @@ class AsyncDemoTaskServiceTest {
     }
 
     @Test
-    void runAsyncWithUnknownTaskIdCompletesWithoutError() throws Exception {
+    void runAsyncWithUnknownTaskIdCompletesWithoutError() {
         CompletableFuture<Void> future = asyncDemoTaskService.runAsync("missing-id");
         assertDoesNotThrow(() -> future.get(3, TimeUnit.SECONDS));
         assertTrue(future.isDone());
@@ -80,8 +80,7 @@ class AsyncDemoTaskServiceTest {
     }
 
     private static AsyncTaskStatus pollUntilTerminalOrTimeout(
-            AsyncDemoTaskService service, String taskId, long timeoutMs)
-            throws Exception {
+            AsyncDemoTaskService service, String taskId, long timeoutMs) {
         long deadline = System.currentTimeMillis() + timeoutMs;
         AsyncTaskStatus status = AsyncTaskStatus.RECEIVED;
         while (System.currentTimeMillis() < deadline) {
