@@ -28,14 +28,14 @@ public class AsyncDemoTaskService {
     }
 
     public String submitTask() {
-        String taskId = "" + idSequence.incrementAndGet();
+        String taskId = "T-" + idSequence.incrementAndGet();
         tasks.put(taskId, new TaskState(AsyncTaskStatus.RECEIVED, "Задача получена"));
         self.runAsync(taskId);
         return taskId;
     }
 
     public String submitTask(int itemsCount) {
-        String taskId = "" + idSequence.incrementAndGet();
+        String taskId = "T-" + idSequence.incrementAndGet();
         tasks.put(taskId, new TaskState(AsyncTaskStatus.RECEIVED, "Получено элементов: " + itemsCount));
         self.runAsync(taskId);
         return taskId;
@@ -58,7 +58,7 @@ public class AsyncDemoTaskService {
             Thread.sleep(READY_DELAY_MS);
             state.status = AsyncTaskStatus.READY;
             state.detail = "Задача готова";
-        } catch (InterruptedException e) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
             state.status = AsyncTaskStatus.FAILED;
             state.detail = "Прервано";

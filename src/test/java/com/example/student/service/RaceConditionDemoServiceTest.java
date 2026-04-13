@@ -51,6 +51,6 @@ class RaceConditionDemoServiceTest {
                         InvocationTargetException.class,
                         () -> waitAll.invoke(null, List.of(failed)));
         assertInstanceOf(IllegalStateException.class, ite.getCause());
-        assertTrue(ite.getCause().getMessage().contains("Ошибка при ожидании"));
+        assertTrue(ite.getCause().getMessage().contains("Ошибка при выполнении"));
     }
 }

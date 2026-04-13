@@ -10,8 +10,10 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -33,7 +35,8 @@ class AsyncDemoTaskServiceTest {
     @Test
     void runAsyncWithUnknownTaskIdCompletesWithoutError() throws Exception {
         CompletableFuture<Void> future = asyncDemoTaskService.runAsync("missing-id");
-        future.get(3, TimeUnit.SECONDS);
+        assertDoesNotThrow(() -> future.get(3, TimeUnit.SECONDS));
+        assertTrue(future.isDone());
     }
 
     @Test
@@ -61,11 +64,12 @@ class AsyncDemoTaskServiceTest {
                         () -> {
                             try {
                                 svc.runAsync(taskId).join();
-                            } catch (Exception ignored) {
+                            } catch (Exception _) {
+                                // future завершается сразу после установки статуса FAILED
                             }
                         });
         worker.start();
-        Thread.sleep(50L);
+        waitUntilStatusChangesFromReceived(svc, taskId, 1_000L);
         worker.interrupt();
         worker.join(10_000L);
 
@@ -89,8 +93,20 @@ class AsyncDemoTaskServiceTest {
             if (status == AsyncTaskStatus.READY || status == AsyncTaskStatus.FAILED) {
                 return status;
             }
-            Thread.sleep(50);
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(25));
         }
         throw new AssertionError("Timeout, last status: " + status);
+    }
+
+    private static void waitUntilStatusChangesFromReceived(
+            AsyncDemoTaskService service, String taskId, long timeoutMs) {
+        long deadline = System.currentTimeMillis() + timeoutMs;
+        while (System.currentTimeMillis() < deadline) {
+            var status = service.findStatus(taskId).map(s -> s.status()).orElse(AsyncTaskStatus.FAILED);
+            if (status != AsyncTaskStatus.RECEIVED) {
+                return;
+            }
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(10));
+        }
     }
 }

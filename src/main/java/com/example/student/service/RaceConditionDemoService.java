@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -137,8 +138,11 @@ public class RaceConditionDemoService {
         for (Future<?> future : futures) {
             try {
                 future.get();
-            } catch (Exception e) {
-                throw new IllegalStateException("Ошибка при ожидании задач демо гонки", e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Поток был прерван при ожидании задач демо гонки", e);
+            } catch (ExecutionException e) {
+                throw new IllegalStateException("Ошибка при выполнении задач демо гонки", e);
             }
         }
     }
