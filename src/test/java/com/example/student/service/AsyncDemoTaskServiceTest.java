@@ -24,9 +24,22 @@ class AsyncDemoTaskServiceTest {
     private AsyncDemoTaskService asyncDemoTaskService;
 
     @Test
-    void submitReturnsIdAndCompletesAsync() throws Exception {
+    void submitReturnsIdAndCompletesAsync() {
         String id = asyncDemoTaskService.submitTask();
-        assertTrue(id.startsWith(""));
+        assertTrue(id.startsWith("T-"));
+
+        AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 25_000);
+        assertEquals(AsyncTaskStatus.READY, last);
+    }
+
+    @Test
+    void submitWithItemsCountStoresDetailAndCompletesAsync() {
+        String id = asyncDemoTaskService.submitTask(3);
+        assertTrue(id.startsWith("T-"));
+
+        var initial = asyncDemoTaskService.findStatus(id);
+        assertTrue(initial.isPresent());
+        assertTrue(initial.get().detail() != null && !initial.get().detail().isBlank());
 
         AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 25_000);
         assertEquals(AsyncTaskStatus.READY, last);
