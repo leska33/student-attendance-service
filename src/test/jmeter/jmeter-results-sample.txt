@@ -1,0 +1,27 @@
+Пример отчёта JMeter (заполните после прогона у себя на машине)
+===============================================================
+
+Как запустить CLI (после установки JMeter, приложение должно быть запущено на localhost:8080):
+
+  jmeter -n -t src/test/jmeter/load-ping.jmx -l target/jmeter-log.jtl -e -o target/jmeter-report
+
+Или в GUI: File → Open → load-ping.jmx → добавьте Listener «Summary Report» / «Aggregate Report» → Run.
+
+Параметры плана load-ping.jmx (можно изменить в GUI):
+  - 20 потоков (users)
+  - ramp-up 5 секунд
+  - 50 итераций на поток → всего 1000 запросов к GET /api/load/ping
+
+Пример фрагмента Summary Report (иллюстративные числа, зависят от CPU/сети):
+
+  Label           # Samples  Average  Min  Max  Error%  Throughput
+  GET /api/load/ping   1000     12 ms    2   89    0.0%    450/sec
+
+Что приложить к отчёту по заданию:
+  1) скрин Summary Report или HTML-дашборд из target/jmeter-report/index.html
+  2) фактические Error % и Throughput из вашего прогона
+
+Дополнительно для демонстрации атомарного счётчика под нагрузкой:
+  - перед тестом: POST http://localhost:8080/api/concurrency/counter/reset
+  - замените в копии JMX путь на POST /api/concurrency/counter/increment (или добавьте второй HTTP Request)
+  - после теста: GET /api/concurrency/counter — value должно совпасть с числом запросов
