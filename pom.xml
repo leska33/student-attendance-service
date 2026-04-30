@@ -18,6 +18,8 @@
         <lombok.version>1.18.40</lombok.version>
         <checkstyle.version>3.3.0</checkstyle.version>
         <springdoc.version>3.0.2</springdoc.version>
+        <!-- Align with springdoc-openapi parent; explicit dep fixes compile when springdoc POM resolution fails -->
+        <swagger-api.version>2.2.43</swagger-api.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -69,6 +71,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core-jakarta</artifactId>
+            <version>${swagger-api.version}</version>
         </dependency>
 
         <dependency>

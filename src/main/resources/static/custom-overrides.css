@@ -1,0 +1,66 @@
+.avatar-plus {
+  right: -10px !important;
+  bottom: -10px !important;
+  width: 42px !important;
+  height: 42px !important;
+  font-size: 28px !important;
+  transform: none !important;
+}
+
+.feed-card {
+  position: relative;
+}
+
+.feed-card .row {
+  min-height: 62px;
+  margin-bottom: 14px;
+  padding-right: 72px;
+}
+
+.feed-card .row .btn-main {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  padding: 0;
+  font-size: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(125, 63, 89, 0.3);
+}
+
+.feed-card .row .btn-main::before {
+  content: "+";
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.notes-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(260px, 1fr));
+  gap: 16px !important;
+  margin-top: 12px !important;
+}
+
+.note-bubble {
+  border-radius: 6px !important;
+  min-height: 260px !important;
+  padding: 14px 14px 10px !important;
+  box-shadow: 0 8px 14px rgba(117, 66, 87, 0.15) !important;
+}
+
+.note-bubble::after {
+  content: none !important;
+}
+
+@media (max-width: 860px) {
+  .notes-list {
+    grid-template-columns: 1fr;
+  }
+}

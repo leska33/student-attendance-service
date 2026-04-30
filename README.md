@@ -68,3 +68,24 @@ DTO позволяет:
 - Выполнить mvn clean install
 - Запустить класс StudentApplication
 - Перейти по адресу: http://localhost:8080/students
+
+# Запуск backend + frontend (React + Vite):
+- Backend (Spring Boot):
+  - из корня проекта выполнить `mvn spring-boot:run`
+  - backend поднимется на `http://localhost:8080`
+- Frontend в dev-режиме (Vite):
+  - перейти в папку `frontend`
+  - выполнить `npm install` (первый раз)
+  - выполнить `npm run dev`
+  - открыть адрес из консоли Vite (обычно `http://localhost:5173`)
+- Production-сборка frontend в Spring static:
+  - в папке `frontend` выполнить `npm run build`
+  - Vite соберет файлы в `src/main/resources/static`
+  - после этого открыть `http://localhost:8080`
+
+# Как отправить ссылку другим людям
+- Быстрый способ (публичная ссылка через туннель):
+  - запустить backend: `mvn spring-boot:run`
+  - в новом терминале выполнить: `npx localtunnel --port 8080`
+  - появится публичный URL вида `https://xxxx.loca.lt`
+  - отправьте этот URL другим, и они смогут открыть сайт **EduFlow**

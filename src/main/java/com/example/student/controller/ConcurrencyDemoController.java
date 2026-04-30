@@ -37,7 +37,8 @@ public class ConcurrencyDemoController {
     @Operation(summary = "Демонстрация асинхронной бизнес-операции через @Async")
     @ApiResponse(responseCode = "202", description = "Задача принята в обработку")
     @PostMapping("/async")
-    public ResponseEntity<Map<String, String>> submitStudentsAsync(@Valid @RequestBody List<StudentCreateDto> students) {
+    public ResponseEntity<Map<String, String>> submitStudentsAsync(@Valid @RequestBody
+                                                                       List<StudentCreateDto> students) {
         String taskId = asyncDemoTaskService.submitTask(students.size());
         return ResponseEntity.accepted().body(Map.of("taskId", taskId));
     }
@@ -51,13 +52,15 @@ public class ConcurrencyDemoController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Демонстрация race condition", description = "Демонстрация ошибки Race Condition при 60 потоках")
+    @Operation(summary = "Демонстрация race condition", description =
+            "Демонстрация ошибки Race Condition при 60 потоках")
     @GetMapping("/test_problem")
     public ResponseEntity<String> testRaceProblem() {
         return ResponseEntity.ok(raceConditionDemoService.runRaceConditionProblemDemoText());
     }
 
-    @Operation(summary = "Продемонстрировать решение Race Condition", description = "Демонстрация корректной работы с AtomicLong")
+    @Operation(summary = "Продемонстрировать решение Race Condition", description =
+            "Демонстрация корректной работы с AtomicLong")
     @GetMapping("/test_solution")
     public ResponseEntity<String> testRaceSolution() {
         return ResponseEntity.ok(raceConditionDemoService.runRaceConditionSolutionDemoText());

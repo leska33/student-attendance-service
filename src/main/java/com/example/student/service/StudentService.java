@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -168,7 +169,9 @@ public class StudentService {
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setMiddleName(dto.getMiddleName());
-        student.setGroup(findGroupOrThrow(dto.getGroupId()));
-        student.setDisciplines(disciplineRepository.findAllById(dto.getDisciplineIds()));
+        student.setGroup(dto.getGroupId() == null ? null : findGroupOrThrow(dto.getGroupId()));
+        student.setDisciplines(disciplineRepository.findAllById(
+                Optional.ofNullable(dto.getDisciplineIds()).orElseGet(Collections::emptyList)
+        ));
     }
 }
