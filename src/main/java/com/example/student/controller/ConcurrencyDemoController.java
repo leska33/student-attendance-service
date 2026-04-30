@@ -38,7 +38,7 @@ public class ConcurrencyDemoController {
     @ApiResponse(responseCode = "202", description = "Задача принята в обработку")
     @PostMapping("/async")
     public ResponseEntity<Map<String, String>> submitStudentsAsync(@Valid @RequestBody
-                                                                       List<StudentCreateDto> students) {
+                                                                        List<StudentCreateDto> students) {
         String taskId = asyncDemoTaskService.submitTask(students.size());
         return ResponseEntity.accepted().body(Map.of("taskId", taskId));
     }
