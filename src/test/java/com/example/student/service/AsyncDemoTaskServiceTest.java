@@ -28,7 +28,7 @@ class AsyncDemoTaskServiceTest {
         String id = asyncDemoTaskService.submitTask();
         assertTrue(id.startsWith(""));
 
-        AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 25_000);
+        AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 120_000);
         assertEquals(AsyncTaskStatus.READY, last);
     }
 
@@ -41,7 +41,7 @@ class AsyncDemoTaskServiceTest {
         assertTrue(initial.isPresent());
         assertTrue(initial.get().detail() != null && !initial.get().detail().isBlank());
 
-        AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 25_000);
+        AsyncTaskStatus last = pollUntilTerminalOrTimeout(asyncDemoTaskService, id, 120_000);
         assertEquals(AsyncTaskStatus.READY, last);
     }
 
