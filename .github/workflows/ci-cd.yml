@@ -44,7 +44,7 @@ jobs:
         env:
           MAVEN_OPTS: -Xmx2048m
           LANG: C.UTF-8
-        run: ./mvnw -B test -Pci
+        run: ./mvnw -B --no-transfer-progress test -Pci
 
   docker-image:
     runs-on: ubuntu-latest
