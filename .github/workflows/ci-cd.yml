@@ -9,6 +9,7 @@ on:
 env:
   JAVA_VERSION: "25"
   NODE_VERSION: "22"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-test:
@@ -36,17 +37,27 @@ jobs:
       - name: Build frontend (Vite → Spring static)
         working-directory: frontend
         run: |
-          npm ci
+          npm ci --no-audit --no-fund
           npm run build
 
       - name: Maven test
+        env:
+          MAVEN_OPTS: -Xmx2048m
+          LANG: C.UTF-8
         run: ./mvnw -B test -Pci
 
+  docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: 1
         run: docker build -t silverpear:ci .
 
   deploy:
-    needs: build-and-test
+    needs: [build-and-test, docker-image]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     steps:
