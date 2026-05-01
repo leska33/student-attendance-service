@@ -78,6 +78,8 @@ class AsyncDemoTaskServiceTest {
                             try {
                                 svc.runAsync(taskId).join();
                             } catch (Exception _) {
+                                // Ожидаемо: при interrupt потока join() может завершиться исключением;
+                                // итог проверяется через findStatus ниже.
                             }
                         });
         worker.start();

@@ -48,16 +48,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render deploy
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" -o /dev/null
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL not set, skipping deploy hook"
+            exit 0
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL" -o /dev/null
 
       - name: Health check (production)
-        if: ${{ secrets.DEPLOY_URL != '' }}
+        env:
+          DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
         run: |
+          if [ -z "$DEPLOY_URL" ]; then
+            echo "DEPLOY_URL not set, skipping health check"
+            exit 0
+          fi
           set -e
-          BASE="${{ secrets.DEPLOY_URL }}"
-          BASE="${BASE%/}"
+          BASE="${DEPLOY_URL%/}"
           for i in $(seq 1 24); do
             if curl -fsS "$BASE/actuator/health" | grep -q '"status":"UP"'; then
               echo "Health OK"
