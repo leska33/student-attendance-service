@@ -1050,6 +1050,10 @@ th { color: var(--muted); font-weight: 600; }
   gap: 14px;
 }
 
+.student-subject-cards {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .student-subject-card {
   border-left: 5px solid #7e57c2;
 }
@@ -1313,6 +1317,18 @@ th { color: var(--muted); font-weight: 600; }
   flex-shrink: 0;
 }
 
+.edu-top-avatar-wrap--admin {
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+}
+
+.edu-top-avatar-wrap--admin .edu-top-avatar--letter {
+  background: linear-gradient(135deg, #7e57c2, #ec407a);
+  color: #fff;
+  font-weight: 700;
+}
+
 .edu-top-avatar {
   width: 100%;
   height: 100%;
@@ -1545,6 +1561,11 @@ th { color: var(--muted); font-weight: 600; }
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  overflow: hidden;
 }
 
 .student-side-menu.menu {
@@ -6351,11 +6372,16 @@ th { color: var(--muted); font-weight: 600; }
   .student-app-layout {
     flex-direction: column;
   }
+  .student-subject-cards {
+    grid-template-columns: 1fr;
+  }
   .student-sidebar.edu-sidebar {
     width: 100% !important;
     min-width: 0 !important;
     border-right: none;
     border-bottom: 1px solid #e8e6f2;
+    position: static;
+    height: auto;
   }
   .student-sidebar--collapse:hover {
     width: 100% !important;
@@ -6368,6 +6394,12 @@ th { color: var(--muted); font-weight: 600; }
   }
   .edu-lesson-status {
     justify-self: start;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1400px) {
+  .student-subject-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

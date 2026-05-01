@@ -1,0 +1,70 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  JAVA_VERSION: "25"
+  NODE_VERSION: "22"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend (Vite → Spring static)
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Maven test
+        run: ./mvnw -B test -Pci
+
+      - name: Build Docker image
+        run: docker build -t silverpear:ci .
+
+  deploy:
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: |
+          curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" -o /dev/null
+
+      - name: Health check (production)
+        if: ${{ secrets.DEPLOY_URL != '' }}
+        run: |
+          set -e
+          BASE="${{ secrets.DEPLOY_URL }}"
+          BASE="${BASE%/}"
+          for i in $(seq 1 24); do
+            if curl -fsS "$BASE/actuator/health" | grep -q '"status":"UP"'; then
+              echo "Health OK"
+              exit 0
+            fi
+            echo "Attempt $i: not ready, sleep 10s"
+            sleep 10
+          done
+          echo "Health check failed"
+          exit 1

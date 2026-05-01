@@ -114,12 +114,7 @@ export function AdminStudentsSection(props) {
 
   const runMassAction = async () => {
     if (selectedNames.length === 0) return setMessage("Выберите студентов.");
-    if (massAction === "move") {
-      if (!bulkGroup) return setMessage("Выберите группу.");
-      await onBulkMoveStudents(selectedNames, bulkGroup);
-    } else if (massAction === "status") {
-      await onBulkSetStudentStatus(selectedNames, bulkStatus);
-    } else if (massAction === "delete") {
+    if (massAction === "delete") {
       await onBulkDeleteStudents(selectedNames);
     } else if (massAction === "rename") {
       if (selectedNames.length !== 1) return setMessage("Выберите одного студента для изменения ФИО.");
@@ -279,21 +274,8 @@ export function AdminStudentsSection(props) {
         <select value={massAction} onChange={(e) => setMassAction(e.target.value)}>
           <option value="">Действие</option>
           <option value="rename">Изменить ФИО</option>
-          <option value="move">Назначить группу</option>
-          <option value="status">Сменить статус</option>
           <option value="delete">Удалить</option>
         </select>
-        {massAction === "move" && (
-          <select value={bulkGroup} onChange={(e) => setBulkGroup(e.target.value)}>
-            <option value="">Группа</option>
-            {groups.map((g) => <option key={g.id} value={g.number}>{g.number}</option>)}
-          </select>
-        )}
-        {massAction === "status" && (
-          <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)}>
-            {STUDENT_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
-          </select>
-        )}
         <button className="btn-main" type="button" onClick={runMassAction}>Применить</button>
       </div>
       {isLoading ? (
@@ -449,13 +431,7 @@ export function AdminTeachersSection({
 
   const runMassAction = async () => {
     if (selectedNames.length === 0) return setMessage("Выберите преподавателей.");
-    if (massAction === "status") await onBulkSetTeacherStatus(selectedNames, bulkStatus);
-    else if (massAction === "curator") {
-      if (!curatorGroup) return setMessage("Выберите группу.");
-      if (selectedNames.length !== 1) return setMessage("Выберите одного преподавателя.");
-      onAssignCurator?.(selectedNames[0], curatorGroup);
-    }
-    else if (massAction === "delete") await onBulkDeleteTeachers(selectedNames);
+    if (massAction === "delete") await onBulkDeleteTeachers(selectedNames);
     else if (massAction === "rename") {
       if (selectedNames.length !== 1) return setMessage("Выберите одного преподавателя для изменения ФИО.");
       fillTeacherFormByName(selectedNames[0]);
@@ -532,23 +508,8 @@ export function AdminTeachersSection({
         <select value={massAction} onChange={(e) => setMassAction(e.target.value)}>
           <option value="">Действие</option>
           <option value="rename">Изменить ФИО</option>
-          <option value="curator">Назначить куратором</option>
-          <option value="status">Сменить статус</option>
           <option value="delete">Удалить</option>
         </select>
-        {massAction === "status" && (
-          <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)}>
-            <option value="Активен">Активен</option>
-            <option value="В отпуске">В отпуске</option>
-            <option value="На больничном">На больничном</option>
-          </select>
-        )}
-        {massAction === "curator" && (
-          <select value={curatorGroup} onChange={(e) => setCuratorGroup(e.target.value)}>
-            <option value="">Группа</option>
-            {groups.map((g) => <option key={g.id || g.number} value={g.number}>{g.number}</option>)}
-          </select>
-        )}
         <button className="btn-main" type="button" onClick={runMassAction}>Применить</button>
       </div>
       <table className="admin-data-table">
@@ -613,6 +574,7 @@ export function AdminGroupsSection({
   deleteGroup,
   facultiesCatalog,
   specialtiesCatalog,
+  teachers,
   students,
   UiUtils,
   studentMetaOf,
@@ -649,8 +611,10 @@ export function AdminGroupsSection({
   };
   const startNewGroup = () => {
     const faculty = facultiesCatalog[0] || "";
-    setGForm({ editTarget: "", number: "", course: "1 курс", faculty, specialty: specialtiesCatalog[faculty]?.[0] || "" });
+    setGForm({ editTarget: "", number: "", course: "1 курс", faculty, specialty: specialtiesCatalog[faculty]?.[0] || "", curator: "" });
   };
+  const teacherOptions = [...(teachers || [])]
+    .sort((a, b) => UiUtils.fullName(a).localeCompare(UiUtils.fullName(b), "ru"));
   const saveWithWarning = () => {
     if (activeGroup && activeGroup.specialty && activeGroup.specialty !== gForm.specialty) {
       const ok = window.confirm(`Изменить специальность группы ${activeGroup.number}?\n\nСтуденты группы (${activeGroup.studentsCount || 0}) получат новую специальность: ${gForm.specialty}.`);
@@ -729,6 +693,13 @@ export function AdminGroupsSection({
           <label>Специальность<select value={gForm.specialty} onChange={(e) => setGForm((p) => ({ ...p, specialty: e.target.value }))}>
             <option value="">Специальность</option>
             {activeSpecialties.map((specialty) => <option key={specialty} value={specialty}>{specialty}</option>)}
+          </select></label>
+          <label>Куратор<select value={gForm.curator || ""} onChange={(e) => setGForm((p) => ({ ...p, curator: e.target.value }))}>
+            <option value="">Не назначен</option>
+            {teacherOptions.map((teacher) => {
+              const fullName = UiUtils.fullName(teacher);
+              return <option key={teacher.id || fullName} value={fullName}>{fullName}</option>;
+            })}
           </select></label>
           <div className="row">
             <button type="button" className="btn-main" onClick={saveWithWarning}>{gForm.editTarget ? "Сохранить" : "Создать группу"}</button>

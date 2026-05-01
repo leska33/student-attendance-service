@@ -417,7 +417,7 @@ function App() {
     starosta: ""
   });
   const [tForm, setTForm] = useState({ editTarget: "", firstName: "", lastName: "", middleName: "" });
-  const [gForm, setGForm] = useState({ editTarget: "", number: "", course: "1 курс", faculty: "ФКСиС", specialty: "КИ (ВМСиС)" });
+  const [gForm, setGForm] = useState({ editTarget: "", number: "", course: "1 курс", faculty: "ФКСиС", specialty: "КИ (ВМСиС)", curator: "" });
   const [dForm, setDForm] = useState({ editTarget: "", name: "", fullName: "", teacherName: "", faculty: "ФКСиС", specialty: "КИ (ВМСиС)", course: "1 курс" });
   const loadAll = async () => {
     const [s, t, g, d, gr] = await Promise.all(
@@ -776,7 +776,8 @@ function App() {
       number: number || "",
       course: meta.course || "1 курс",
       faculty: meta.faculty || facultiesCatalog[0] || "",
-      specialty: meta.specialty || specialtiesCatalog[meta.faculty || facultiesCatalog[0]]?.[0] || ""
+      specialty: meta.specialty || specialtiesCatalog[meta.faculty || facultiesCatalog[0]]?.[0] || "",
+      curator: meta.curator || ""
     });
   };
   const fillDisciplineFormByName = (name) => {
@@ -816,7 +817,8 @@ function App() {
         ...(next[number] || {}),
         course: gForm.course,
         faculty: gForm.faculty,
-        specialty: gForm.specialty
+        specialty: gForm.specialty,
+        curator: gForm.curator || ""
       };
       return next;
     });
@@ -838,7 +840,7 @@ function App() {
       });
     }
     await loadAll();
-    setGForm({ editTarget: "", number: "", course: "1 курс", faculty: gForm.faculty, specialty: gForm.specialty });
+    setGForm({ editTarget: "", number: "", course: "1 курс", faculty: gForm.faculty, specialty: gForm.specialty, curator: "" });
     setMessage(id ? "Группа обновлена." : "Группа создана.");
   };
   const deleteGroup = async (number = gForm.editTarget) => {
@@ -863,7 +865,7 @@ function App() {
       return next;
     });
     await loadAll();
-    setGForm({ editTarget: "", number: "", course: "1 курс", faculty: facultiesCatalog[0] || "", specialty: specialtiesCatalog[facultiesCatalog[0]]?.[0] || "" });
+    setGForm({ editTarget: "", number: "", course: "1 курс", faculty: facultiesCatalog[0] || "", specialty: specialtiesCatalog[facultiesCatalog[0]]?.[0] || "", curator: "" });
     setMessage(`Группа ${number} удалена, студенты отвязаны от группы.`);
   };
 
@@ -2206,7 +2208,7 @@ function App() {
   }, [studentPreviewName, sortedStudents, groups]);
   const rusWeekday = useMemo(() => {
     const d = new Date();
-    return ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четвер", "Пятница", "Суббота"][d.getDay()];
+    return ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"][d.getDay()];
   }, []);
 
   const todayLessonsSorted = useMemo(
@@ -2455,24 +2457,31 @@ function App() {
     const excusedPct = trackedHours ? Math.round((excusedHours / trackedHours) * 100) : 0;
     const unexcusedPct = trackedHours ? Math.round((unexcused / trackedHours) * 100) : 0;
     const attendanceRate = allTotal === 0 ? 100 : Math.max(72, Math.min(99, 100 - Math.round(allTotal * 1.8)));
-    const subjShares = myAbsences.map((a) => {
+    const subjectMap = new Map();
+    myAbsences.forEach((a) => {
       const n = hasExcuseReason(a.reason) ? 0 : Number(a.count || 0);
       const hours = n * H;
-      return {
-        name: a.disciplineName,
-        n,
-        hours,
-        pct: allTotal ? Math.round((n / allTotal) * 100) : 0
-      };
+      if (!hours) return;
+      const name = String(a.disciplineName || "Не указан предмет").trim();
+      const prev = subjectMap.get(name) || 0;
+      subjectMap.set(name, prev + hours);
     });
+    const subjShares = Array.from(subjectMap.entries())
+      .map(([name, hours]) => ({ name, hours }))
+      .sort((a, b) => b.hours - a.hours)
+      .map((entry, idx) => ({
+        ...entry,
+        n: Math.round(entry.hours / H),
+        pct: totalHours ? Math.round((entry.hours / totalHours) * 100) : 0,
+        colorIndex: idx % 7
+      }));
     const donutTotal = allTotal || 1;
     let angle = 0;
     const segs = [];
     const colors = ["#a58bd6", "#f28ab7", "#8fcdf2", "#f4d889", "#9ed7b5", "#c9a7df", "#f0a3a3"];
-    subjShares.forEach((s, i) => {
-      if (!s.n) return;
+    subjShares.forEach((s) => {
       const deg = (s.n / donutTotal) * 360;
-      segs.push(`${colors[i % colors.length]} ${angle}deg ${angle + deg}deg`);
+      segs.push(`${colors[s.colorIndex % colors.length]} ${angle}deg ${angle + deg}deg`);
       angle += deg;
     });
     const absenceDonutBg = segs.length ? `conic-gradient(${segs.join(", ")})` : "conic-gradient(#e8e8f0 0deg 360deg)";
@@ -3037,13 +3046,13 @@ function App() {
                           </div>
                         </div>
                         <ul className="abs-donut-legend">
-                          {absenceDashboard.subjShares.filter((s) => s.n > 0).map((s, i) => (
+                          {absenceDashboard.subjShares.map((s) => (
                             <li key={s.name}>
-                              <span className={`abs-legend-dot c${i % 7}`} />
+                              <span className={`abs-legend-dot c${s.colorIndex % 7}`} />
                               {s.name} <span className="abs-legend-pct">{s.hours} ч. · {s.pct}%</span>
                             </li>
                           ))}
-                          {absenceDashboard.subjShares.every((s) => !s.n) ? <li className="sub">Нет данных</li> : null}
+                          {absenceDashboard.subjShares.length === 0 ? <li className="sub">Нет данных</li> : null}
                         </ul>
                       </div>
                     </article>
@@ -4214,7 +4223,6 @@ function App() {
                     <article className="admin-kpi-card"><span>Специальностей</span><strong>{activeStats.specialtiesCount}</strong><em>в факультете</em></article>
                     <article className="admin-kpi-card"><span>Групп</span><strong>{activeStats.groupsCount}</strong><em>всего</em></article>
                     <article className="admin-kpi-card"><span>Студентов</span><strong>{activeStats.studentsCount}</strong><em>по группам</em></article>
-                    <article className="admin-kpi-card"><span>Быстрое действие</span><strong>+</strong><em>создать группу</em></article>
                   </div>
                   <h4>Специальности</h4>
                   <div className="specialty-list">
@@ -4238,7 +4246,7 @@ function App() {
                                 <span>{stats.groupsCount} групп · {stats.studentsCount} студентов</span>
                               </div>
                               <div className="admin-row-actions">
-                                <button type="button" className="btn-ghost" onClick={() => { setGForm({ editTarget: "", number: "", course: "1 курс", faculty: activeAdminFaculty, specialty }); setAdminTab("groups"); }}>Создать группу</button>
+                                <button type="button" className="btn-ghost" onClick={() => { setGForm({ editTarget: "", number: "", course: "1 курс", faculty: activeAdminFaculty, specialty, curator: "" }); setAdminTab("groups"); }}>Создать группу</button>
                                 <button type="button" className="btn-ghost" onClick={() => setAdminTab("students")}>К студентам</button>
                                 <button type="button" className="btn-ghost" onClick={() => { setEditingSpecialty(specialty); setSpecialtyDraft(specialty); setSpecialtyFullDraft(specialtyFull); }} title="Редактировать"><ActionIcon name="edit" /></button>
                                 <button type="button" className="btn-danger" onClick={() => setPendingSpecialtyDelete({ faculty: activeAdminFaculty, specialty })} title="Удалить"><ActionIcon name="trash" /></button>
@@ -4305,6 +4313,7 @@ function App() {
               deleteGroup={deleteGroup}
               facultiesCatalog={facultiesCatalog}
               specialtiesCatalog={specialtiesCatalog}
+              teachers={teachers}
               students={students}
               UiUtils={UiUtils}
               studentMetaOf={studentMetaOf}

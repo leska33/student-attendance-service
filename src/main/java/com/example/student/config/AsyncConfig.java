@@ -15,8 +15,6 @@ public class AsyncConfig {
     @Bean(name = "demoTaskExecutor")
     public Executor demoTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        // Параметры увеличены для нагрузочного запуска JMeter,
-        // чтобы не получать TaskRejectedException и HTTP 500 при пиках.
         executor.setCorePoolSize(16);
         executor.setMaxPoolSize(64);
         executor.setQueueCapacity(10_000);

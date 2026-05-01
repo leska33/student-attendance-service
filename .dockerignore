@@ -1,0 +1,13 @@
+target
+.git
+.github
+.idea
+*.iml
+logs
+**/logs
+frontend/node_modules
+node_modules
+**/.DS_Store
+agent-tools
+*.md
+!README.md

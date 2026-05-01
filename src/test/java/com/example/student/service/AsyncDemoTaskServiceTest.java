@@ -78,7 +78,6 @@ class AsyncDemoTaskServiceTest {
                             try {
                                 svc.runAsync(taskId).join();
                             } catch (Exception _) {
-                                // future завершается сразу после установки статуса FAILED
                             }
                         });
         worker.start();

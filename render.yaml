@@ -1,0 +1,36 @@
+databases:
+  - name: student-db
+    databaseName: studentdb
+    user: student
+    plan: free
+
+services:
+  - type: web
+    name: silverpear
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: student-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: student-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: student-db
+          property: database
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: student-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: student-db
+          property: password

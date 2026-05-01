@@ -89,3 +89,23 @@ DTO позволяет:
   - в новом терминале выполнить: `npx localtunnel --port 8080`
   - появится публичный URL вида `https://xxxx.loca.lt`
   - отправьте этот URL другим, и они смогут открыть сайт **EduFlow**
+
+# Docker и Docker Compose
+- Переменные окружения: скопируйте `.env.example` в `.env` и при необходимости измените пароль и порты.
+- Запуск приложения и PostgreSQL:
+  - `docker compose up --build`
+  - API и веб-интерфейс: `http://localhost:8080`
+  - Проверка здоровья: `http://localhost:8080/actuator/health`
+- Отдельная сборка образа: `docker build -t silverpear .`
+
+# Публикация на PaaS (Render)
+- В репозитории есть `render.yaml` (Blueprint): в [Render](https://render.com) создайте **Blueprint** и подключите GitHub-репозиторий — поднимутся **Web Service (Docker)** и **PostgreSQL**.
+- Приложение читает БД так: `DB_HOST`, `DB_PORT`, `DB_NAME`, `SPRING_DATASOURCE_USERNAME`, `DB_PASSWORD` (как в blueprint), либо можно задать полный `SPRING_DATASOURCE_URL` вручную.
+- Убедитесь, что тарифы **Free** на Render вам подходят (лимиты меняются — см. документацию Render).
+
+# CI/CD (GitHub Actions)
+- Файл `.github/workflows/ci-cd.yml`: при push и pull request в `main`/`master` выполняются сборка фронтенда, `mvn test` (профиль `ci`), сборка Docker-образа.
+- При **push** в `main`/`master` дополнительно:
+  - если задан секрет `RENDER_DEPLOY_HOOK_URL` — вызывается [Deploy Hook](https://render.com/docs/deploy-hooks) Render;
+  - если задан секрет `DEPLOY_URL` (публичный URL сервиса **без** завершающего `/`) — выполняется опрос `/actuator/health` до статуса `UP`.
+- Настройка секретов: репозиторий GitHub → **Settings → Secrets and variables → Actions**.

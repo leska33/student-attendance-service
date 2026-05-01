@@ -1,8 +1,5 @@
 package com.example.student.openapi;
 
-/**
- * Повторяющиеся тексты для OpenAPI/Swagger, чтобы не дублировать литералы в аннотациях.
- */
 public final class OpenApiDescriptions {
 
     private OpenApiDescriptions() {
