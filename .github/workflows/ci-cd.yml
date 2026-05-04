@@ -54,7 +54,7 @@ jobs:
       - name: Build Docker image
         env:
           DOCKER_BUILDKIT: 1
-        run: docker build -t silverpear:ci .
+        run: docker build -t student:ci .
 
   deploy:
     needs: [build-and-test, docker-image]

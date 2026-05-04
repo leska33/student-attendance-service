@@ -9,11 +9,6 @@
 
     <module name="TreeWalker">
 
-        <!-- ========================= -->
-        <!--     НАЗВАНИЯ              -->
-        <!-- ========================= -->
-
-        <!-- Классы - PascalCase -->
         <module name="TypeName">
             <property name="format" value="^[A-Z][a-zA-Z0-9]*$"/>
         </module>
@@ -23,18 +18,11 @@
             <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
         </module>
 
-        <!-- Переменные - camelCase -->
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
 
-        <!-- Константы - UPPER_CASE -->
         <module name="ConstantName"/>
 
-        <!-- ========================= -->
-        <!--     ФОРМАТИРОВАНИЕ        -->
-        <!-- ========================= -->
-
-        <!-- Отступы (4 пробела) -->
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
         </module>
