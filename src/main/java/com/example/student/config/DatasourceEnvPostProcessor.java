@@ -29,23 +29,26 @@ public class DatasourceEnvPostProcessor implements EnvironmentPostProcessor {
                     + "(?<host>[^/:?#]+)"
                     + "(?::(?<port>\\d+))?/"
                     + "(?<db>[^?#]+)"
-                    + "(?:\\?.*)?$");
+                    + "(?<query>\\?[^#]*)?$");
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        if (environment.getProperty(PROP_JDBC_URL) != null) {
-            return;
-        }
-
+        /*
+         * Railway sets DATABASE_URL / sometimes SPRING_DATASOURCE_URL to postgresql://...
+         * HikariCP needs jdbc:postgresql://... Early return on SPRING_DATASOURCE_URL broke that.
+         */
+        String springDsUrl = environment.getProperty(PROP_JDBC_URL);
         String databaseUrl = environment.getProperty(PROP_DATABASE_URL);
-        ParsedPostgresUri parsed = parsePostgresUri(databaseUrl);
-        if (parsed != null) {
+        String rawUrl = firstNonBlank(springDsUrl, databaseUrl);
+
+        ParsedPostgresUri parsed = parsePostgresUri(rawUrl);
+        if (parsed != null && parsed.fromNonJdbcUri()) {
             Map<String, Object> map = new HashMap<>();
             map.put("spring.datasource.url", parsed.jdbcUrl());
-            if (parsed.username() != null) {
+            if (parsed.username() != null && !hasExplicitUsername(environment)) {
                 map.put("spring.datasource.username", parsed.username());
             }
-            if (parsed.password() != null) {
+            if (parsed.password() != null && !hasExplicitPassword(environment)) {
                 map.put("spring.datasource.password", parsed.password());
             }
             environment.getPropertySources().addFirst(new MapPropertySource("jdbcFromDatabaseUrl", map));
@@ -65,15 +68,39 @@ public class DatasourceEnvPostProcessor implements EnvironmentPostProcessor {
         environment.getPropertySources().addFirst(new MapPropertySource("jdbcFromHostPort", map));
     }
 
+    private static String firstNonBlank(String a, String b) {
+        if (a != null && !a.isBlank()) {
+            return a;
+        }
+        if (b != null && !b.isBlank()) {
+            return b;
+        }
+        return null;
+    }
+
+    private static boolean hasExplicitUsername(ConfigurableEnvironment environment) {
+        return environment.getProperty("SPRING_DATASOURCE_USERNAME") != null
+                || environment.getProperty("PGUSER") != null
+                || environment.getProperty("POSTGRES_USER") != null;
+    }
+
+    private static boolean hasExplicitPassword(ConfigurableEnvironment environment) {
+        return environment.getProperty("SPRING_DATASOURCE_PASSWORD") != null
+                || environment.getProperty("PGPASSWORD") != null
+                || environment.getProperty("DB_PASSWORD") != null
+                || environment.getProperty("POSTGRES_PASSWORD") != null;
+    }
+
     private ParsedPostgresUri parsePostgresUri(String databaseUrl) {
         if (databaseUrl == null || databaseUrl.isBlank()) {
             return null;
         }
-        if (databaseUrl.startsWith("jdbc:postgresql://")) {
-            return new ParsedPostgresUri(databaseUrl, null, null);
+        String trimmed = databaseUrl.trim();
+        if (trimmed.startsWith("jdbc:postgresql://")) {
+            return new ParsedPostgresUri(trimmed, null, null, false);
         }
 
-        Matcher matcher = POSTGRES_URI_WITH_AUTH.matcher(databaseUrl.trim());
+        Matcher matcher = POSTGRES_URI_WITH_AUTH.matcher(trimmed);
         if (!matcher.matches()) {
             return null;
         }
@@ -81,22 +108,28 @@ public class DatasourceEnvPostProcessor implements EnvironmentPostProcessor {
         String host = matcher.group("host");
         String port = matcher.group("port") != null ? matcher.group("port") : "5432";
         String database = matcher.group("db");
-        String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database;
+        String query = matcher.group("query");
+        String jdbcUrl = "jdbc:postgresql://" + host + ":" + port + "/" + database
+                + (query != null ? query : "");
 
         String user = matcher.group("user");
         String pass = matcher.group("pass");
         if (user == null) {
-            return new ParsedPostgresUri(jdbcUrl, null, null);
+            return new ParsedPostgresUri(jdbcUrl, null, null, true);
         }
         return new ParsedPostgresUri(
                 jdbcUrl,
                 urlDecode(user),
-                pass != null ? urlDecode(pass) : "");
+                pass != null ? urlDecode(pass) : "",
+                true);
     }
 
     private static String urlDecode(String value) {
         return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }
 
-    private record ParsedPostgresUri(String jdbcUrl, String username, String password) {}
+    /**
+     * @param fromNonJdbcUri true when built from postgres:// or postgresql:// (needs EPP injection).
+     */
+    private record ParsedPostgresUri(String jdbcUrl, String username, String password, boolean fromNonJdbcUri) {}
 }
