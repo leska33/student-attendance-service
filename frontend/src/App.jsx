@@ -106,6 +106,9 @@ class ApiService {
 }
 
 class AuthService {
+  static ADMIN_LOGIN = "admin";
+  static ADMIN_PASSWORD = "adgjl123098";
+
   constructor(validators) {
     this.validators = validators;
   }
@@ -160,10 +163,10 @@ class AuthService {
   }
 
   loginAdmin(form) {
-    if (form.login !== "admin" || form.password !== "admin") {
+    if (form.login !== AuthService.ADMIN_LOGIN || form.password !== AuthService.ADMIN_PASSWORD) {
       return { ok: false, message: "Неверный логин или пароль администратора." };
     }
-    return { ok: true, session: { role: "admin", login: "admin" } };
+    return { ok: true, session: { role: "admin", login: AuthService.ADMIN_LOGIN } };
   }
 }
 
