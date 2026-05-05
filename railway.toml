@@ -1,6 +1,6 @@
 # Railway waits for HTTP 200 on this path before marking the deploy healthy.
-# Aggregate /actuator/health can return 503 when any contributor (e.g. DB) is DOWN.
-# Liveness only reflects that the Spring context is up — fix DB vars so the app actually works.
+# Spring Boot 4 maps liveness to /livez on the *main* server port when
+# management.endpoint.health.probes.add-additional-paths=true (see application.properties).
 [deploy]
-healthcheckPath = "/actuator/health/liveness"
+healthcheckPath = "/livez"
 healthcheckTimeout = 300
