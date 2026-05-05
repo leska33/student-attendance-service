@@ -40,32 +40,40 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: test
-    if: ${{ secrets.RAILWAY_TOKEN != '' && secrets.RAILWAY_PROJECT_ID != '' && secrets.RAILWAY_ENVIRONMENT_NAME != '' && secrets.RAILWAY_SERVICE_NAME != '' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+          RAILWAY_ENVIRONMENT_NAME: ${{ secrets.RAILWAY_ENVIRONMENT_NAME }}
+          RAILWAY_SERVICE_NAME: ${{ secrets.RAILWAY_SERVICE_NAME }}
         run: |
-          railway up --ci --service "${{ secrets.RAILWAY_SERVICE_NAME }}" --environment "${{ secrets.RAILWAY_ENVIRONMENT_NAME }}" --project "${{ secrets.RAILWAY_PROJECT_ID }}"
+          if [ -z "$RAILWAY_TOKEN" ] || [ -z "$RAILWAY_PROJECT_ID" ] || [ -z "$RAILWAY_ENVIRONMENT_NAME" ] || [ -z "$RAILWAY_SERVICE_NAME" ]; then
+            echo "Skipping Railway deploy: set repository secrets RAILWAY_TOKEN, RAILWAY_PROJECT_ID, RAILWAY_ENVIRONMENT_NAME, RAILWAY_SERVICE_NAME."
+            exit 0
+          fi
+          npm install -g @railway/cli
+          railway up --ci --service "$RAILWAY_SERVICE_NAME" --environment "$RAILWAY_ENVIRONMENT_NAME" --project "$RAILWAY_PROJECT_ID"
 
   healthcheck:
     runs-on: ubuntu-latest
     needs: deploy
-    if: ${{ secrets.DEPLOY_URL != '' }}
     steps:
       - name: Check app health
         env:
           DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
         run: |
+          if [ -z "$DEPLOY_URL" ]; then
+            echo "Skipping healthcheck: set repository secret DEPLOY_URL (public app URL, no trailing slash)."
+            exit 0
+          fi
           for i in {1..20}; do
-            if curl -fsS "$DEPLOY_URL/actuator/health" | grep -q '"status":"UP"'; then
+            if curl -fsS "$DEPLOY_URL/livez" | grep -q '"status":"UP"'; then
               echo "App is healthy"
               exit 0
             fi
