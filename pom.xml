@@ -14,7 +14,7 @@
     <name>Student</name>
     <description>Student</description>
     <properties>
-        <java.version>25</java.version>
+        <java.version>22</java.version>
         <lombok.version>1.18.40</lombok.version>
         <checkstyle.version>3.3.0</checkstyle.version>
         <springdoc.version>3.0.2</springdoc.version>
