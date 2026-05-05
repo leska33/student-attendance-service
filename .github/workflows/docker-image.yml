@@ -17,12 +17,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '22'
+          java-version: '25'
 
       - name: Build project
         run: |
           chmod +x mvnw
-          ./mvnw -B clean package -DskipTests -Dcheckstyle.skip
+          ./mvnw -B clean package -DskipTests "-Dcheckstyle.skip=true"
 
   test:
     runs-on: ubuntu-latest
@@ -33,12 +33,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '22'
+          java-version: '25'
 
       - name: Run tests
         run: |
           chmod +x mvnw
-          ./mvnw test -Dcheckstyle.skip
+          ./mvnw -B test "-Dcheckstyle.skip=true"
 
   docker:
     runs-on: ubuntu-latest
