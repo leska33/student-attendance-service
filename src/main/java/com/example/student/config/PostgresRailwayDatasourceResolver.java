@@ -8,10 +8,6 @@ import java.util.regex.Pattern;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
-/**
- * Normalizes Railway/Heroku {@code postgresql://...} URLs to {@code jdbc:postgresql://...} and
- * resolves credentials. Shared by {@link DatasourceEnvPostProcessor} and {@link RailwayJdbcConnectionDetailsConfiguration}.
- */
 public final class PostgresRailwayDatasourceResolver {
 
     private static final Pattern POSTGRES_URI_HOST_ONLY = Pattern.compile(
@@ -21,7 +17,8 @@ public final class PostgresRailwayDatasourceResolver {
                     + "(?<db>[^?#]+)"
                     + "(?<query>\\?[^#]*)?$");
 
-    private PostgresRailwayDatasourceResolver() {}
+    private PostgresRailwayDatasourceResolver() {
+    }
 
     public static boolean envHasRawPostgresUrl(Environment env) {
         return isRawPostgresUrl(env.getProperty("SPRING_DATASOURCE_URL"))
@@ -120,7 +117,6 @@ public final class PostgresRailwayDatasourceResolver {
         return firstNonBlankInOrder(a, b);
     }
 
-    /** First non-blank; if {@code fallback} is last and all prior are blank, returns {@code fallback} (may be blank). */
     private static String firstNonBlankInOrder(String... parts) {
         for (String p : parts) {
             if (p != null && !p.isBlank()) {
@@ -222,5 +218,7 @@ public final class PostgresRailwayDatasourceResolver {
         }
     }
 
-    public record ResolvedDatasource(String jdbcUrl, String username, String password) {}
+    public record ResolvedDatasource(String jdbcUrl, String username, String password) {
+
+    }
 }
