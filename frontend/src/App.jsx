@@ -1863,7 +1863,9 @@ function App() {
     };
   };
 
-  const myStudent = session?.role === "student" ? students.find((s) => UiUtils.fullName(s) === session.studentName) : null;
+  const myStudent = session?.role === "student"
+    ? students.find((s) => normalizeFullName(UiUtils.fullName(s)) === normalizeFullName(session.studentName))
+    : null;
   const myGrades = session?.role === "student" ? grades.filter((g) => g.studentName === session.studentName) : [];
   const mySchedule = session?.role === "student" && myStudent
     ? fullSchedule.filter((it) => String(it.group) === String(myStudent.groupNumber))
