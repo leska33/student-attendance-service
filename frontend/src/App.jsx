@@ -490,9 +490,10 @@ function App() {
   }, []);
   useEffect(() => {
     const intervalId = setInterval(() => {
-      Promise.all([api.fetchList("students"), api.fetchList("accounts")])
-        .then(([nextStudents, nextAccounts]) => {
+      Promise.all([api.fetchList("students"), api.fetchList("groups"), api.fetchList("accounts")])
+        .then(([nextStudents, nextGroups, nextAccounts]) => {
           setStudents(nextStudents);
+          setGroups(nextGroups);
           setUserAccounts(sanitizeUserAccounts(nextAccounts));
         })
         .catch(() => {});
@@ -1995,6 +1996,19 @@ function App() {
   const profileCourse = formatCourseDisplay(profileData.course || currentStudentAcademic.course);
   const profileFaculty = profileData.faculty || currentStudentAcademic.faculty || "Факультет не указан";
   const profileSpecialty = profileData.specialty || currentStudentAcademic.specialty || "Специальность не указана";
+  useEffect(() => {
+    if (session?.role !== "student" || !session.studentName || !myStudent?.groupNumber) return;
+    const academic = groupAcademicOfNumber(myStudent.groupNumber);
+    setStudentProfiles((prev) => ({
+      ...prev,
+      [session.studentName]: {
+        ...(prev[session.studentName] || {}),
+        course: academic.course || prev[session.studentName]?.course || "",
+        faculty: academic.faculty || prev[session.studentName]?.faculty || "",
+        specialty: academic.specialty || prev[session.studentName]?.specialty || ""
+      }
+    }));
+  }, [session, myStudent?.groupNumber, groups, groupMeta]);
   const teacherDisciplines = session?.role === "teacher" ? disciplines.filter((d) => d.teacherName === session.teacherName) : [];
   const teacherSchedule = session?.role === "teacher"
     ? fullSchedule.filter((it) => it.teacher === session.teacherName)
