@@ -108,9 +108,24 @@ class ApiService {
     return `${this.baseUrl}${path}`;
   }
 
+  async toRequestError(res, fallbackMessage) {
+    let serverMessage = "";
+    try {
+      const data = await res.json();
+      serverMessage = String(data?.message || "").trim();
+    } catch {
+      // ignore parse errors, fallback will be used
+    }
+    const error = new Error(serverMessage || fallbackMessage);
+    error.status = res.status;
+    throw error;
+  }
+
   async fetchList(entity) {
     const res = await fetch(this.endpoint(`/${entity}`));
-    if (!res.ok) throw new Error(`Request failed: GET /${entity} (${res.status})`);
+    if (!res.ok) {
+      await this.toRequestError(res, `Request failed: GET /${entity} (${res.status})`);
+    }
     return res.json();
   }
 
@@ -122,14 +137,18 @@ class ApiService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error(`Request failed: ${method} ${url} (${res.status})`);
+    if (!res.ok) {
+      await this.toRequestError(res, `Request failed: ${method} ${url} (${res.status})`);
+    }
     if (res.status === 204) return null;
     return res.json();
   }
 
   async remove(entity, id) {
     const res = await fetch(this.endpoint(`/${entity}/${id}`), { method: "DELETE" });
-    if (!res.ok) throw new Error(`Request failed: DELETE /${entity}/${id} (${res.status})`);
+    if (!res.ok) {
+      await this.toRequestError(res, `Request failed: DELETE /${entity}/${id} (${res.status})`);
+    }
   }
 }
 
@@ -604,15 +623,17 @@ function App() {
           disciplineIds: fallbackDisciplineIds
         });
         await loadAll();
-      } catch {
-        setMessage("Не удалось добавить студента в список администратора. Проверьте, что backend запущен.");
-        return;
+      } catch (error) {
+        if (error?.status !== 409) {
+          setMessage(error?.message || "Не удалось добавить студента в список администратора.");
+          return;
+        }
       }
     }
     try {
       await api.save("accounts", null, createdAccount);
-    } catch {
-      setMessage("Не удалось сохранить аккаунт. Повторите попытку.");
+    } catch (error) {
+      setMessage(error?.message || "Не удалось сохранить аккаунт. Повторите попытку.");
       return;
     }
     setStudentProfiles((prev) => ({
