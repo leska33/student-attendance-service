@@ -15,4 +15,10 @@ public class GroupCreateDto {
     @NotBlank
     @Size(min = 2, max = 7)
     private String number;
+
+    private String course;
+
+    private String faculty;
+
+    private String specialty;
 }

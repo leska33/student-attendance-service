@@ -919,7 +919,12 @@ function App() {
     const number = String(gForm.number || "").trim();
     if (!number || !gForm.faculty || !gForm.specialty || !gForm.course) return setMessage("Заполните название группы, курс, факультет и специальность.");
     const id = groups.find((g) => g.number === gForm.editTarget)?.id;
-    await api.save("groups", id, { number });
+    await api.save("groups", id, {
+      number,
+      course: gForm.course,
+      faculty: gForm.faculty,
+      specialty: gForm.specialty
+    });
     setGroupMeta((prev) => {
       const next = { ...prev };
       if (gForm.editTarget && gForm.editTarget !== number) {
@@ -1856,10 +1861,11 @@ function App() {
     const saved = groupMeta[String(number)] || {};
     const firstStudentName = group?.students?.[0];
     const firstMeta = firstStudentName ? studentMetaOf(firstStudentName) : {};
+    const groupFaculty = group?.faculty || saved.faculty || firstMeta.faculty || facultiesCatalog[0] || "";
     return {
-      course: saved.course || firstMeta.course || "1 курс",
-      faculty: saved.faculty || firstMeta.faculty || facultiesCatalog[0] || "",
-      specialty: saved.specialty || firstMeta.specialty || specialtiesCatalog[saved.faculty || firstMeta.faculty || facultiesCatalog[0]]?.[0] || ""
+      course: group?.course || saved.course || firstMeta.course || "1 курс",
+      faculty: groupFaculty,
+      specialty: group?.specialty || saved.specialty || firstMeta.specialty || specialtiesCatalog[groupFaculty]?.[0] || ""
     };
   };
 

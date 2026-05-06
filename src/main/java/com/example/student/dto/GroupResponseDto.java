@@ -11,5 +11,8 @@ public class GroupResponseDto {
 
     private Long id;
     private String number;
+    private String course;
+    private String faculty;
+    private String specialty;
     private List<String> students;
 }

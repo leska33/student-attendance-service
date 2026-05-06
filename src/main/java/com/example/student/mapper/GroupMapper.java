@@ -33,6 +33,9 @@ public final class GroupMapper {
         return new GroupResponseDto(
                 group.getId(),
                 group.getNumber(),
+                group.getCourse(),
+                group.getFaculty(),
+                group.getSpecialty(),
                 studentNames
         );
     }

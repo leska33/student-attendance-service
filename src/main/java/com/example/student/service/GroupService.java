@@ -51,7 +51,7 @@ public class GroupService {
     @LogExecutionTime
     public GroupResponseDto createGroup(GroupCreateDto dto) {
         Group group = new Group();
-        group.setNumber(dto.getNumber());
+        mapGroup(group, dto);
         return GroupMapper.toDto(groupRepository.save(group));
     }
 
@@ -78,7 +78,7 @@ public class GroupService {
     @LogExecutionTime
     public GroupResponseDto updateGroup(Long id, GroupCreateDto dto) {
         Group group = findGroupOrThrow(id);
-        group.setNumber(dto.getNumber());
+        mapGroup(group, dto);
         return GroupMapper.toDto(groupRepository.save(group));
     }
 
@@ -112,7 +112,14 @@ public class GroupService {
 
     private Group createGroupEntity(GroupCreateDto dto) {
         Group group = new Group();
-        group.setNumber(dto.getNumber());
+        mapGroup(group, dto);
         return group;
+    }
+
+    private void mapGroup(Group group, GroupCreateDto dto) {
+        group.setNumber(dto.getNumber());
+        group.setCourse(dto.getCourse());
+        group.setFaculty(dto.getFaculty());
+        group.setSpecialty(dto.getSpecialty());
     }
 }

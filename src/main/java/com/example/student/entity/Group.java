@@ -28,6 +28,12 @@ public class Group {
     @NotBlank
     private String number;
 
+    private String course;
+
+    private String faculty;
+
+    private String specialty;
+
     @OneToMany(
             mappedBy = "group",
             cascade = CascadeType.ALL,
