@@ -426,14 +426,15 @@ function App() {
   const [gForm, setGForm] = useState({ editTarget: "", number: "", course: "1 курс", faculty: "ФКСиС", specialty: "КИ (ВМСиС)", curator: "" });
   const [dForm, setDForm] = useState({ editTarget: "", name: "", fullName: "", teacherName: "", faculty: "ФКСиС", specialty: "КИ (ВМСиС)", course: "1 курс" });
   const loadAll = async () => {
-    const [s, t, g, d, gr] = await Promise.all(
-      ["students", "teachers", "groups", "disciplines", "grades"].map((e) => api.fetchList(e))
+    const [s, t, g, d, gr, accounts] = await Promise.all(
+      ["students", "teachers", "groups", "disciplines", "grades", "accounts"].map((e) => api.fetchList(e))
     );
     setStudents(s);
     setTeachers(t);
     setGroups(g);
     setDisciplines(d);
     setGrades(gr);
+    setUserAccounts(accounts);
   };
 
   useEffect(() => {
@@ -583,9 +584,12 @@ function App() {
         return;
       }
     }
-    const nextAccounts = [...userAccounts, createdAccount];
-    storage.setJson("userAccounts", nextAccounts);
-    setUserAccounts(nextAccounts);
+    try {
+      await api.save("accounts", null, createdAccount);
+    } catch {
+      setMessage("Не удалось сохранить аккаунт. Повторите попытку.");
+      return;
+    }
     setStudentProfiles((prev) => ({
       ...prev,
       [fullName]: {
@@ -596,6 +600,7 @@ function App() {
         birthDate: registerForm.birthDate || prev[fullName]?.birthDate || ""
       }
     }));
+    await loadAll();
     setSession({ role: "student", studentName: fullName, email: createdAccount.email });
     setRegisterForm({
       lastName: "",
@@ -682,7 +687,15 @@ function App() {
     return "";
   };
 
-  const resetPasswordByEmail = () => {
+  const saveAccountToApi = async (account) => {
+    if (!account) return null;
+    if (account.id) {
+      return api.save("accounts", account.id, account);
+    }
+    return api.save("accounts", null, account);
+  };
+
+  const resetPasswordByEmail = async () => {
     const email = resetPasswordForm.email.trim().toLowerCase();
     const account = userAccounts.find((a) => a.email.toLowerCase() === email);
     if (!Validators.emailByRegex(resetPasswordForm.email)) return setMessage("Введите корректный email.");
@@ -691,13 +704,20 @@ function App() {
     if (passwordError) return setMessage(passwordError);
     if (resetPasswordForm.newPassword === account.password) return setMessage("Новый пароль не должен совпадать со старым.");
     if (resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword) return setMessage("Подтверждение пароля не совпадает.");
-    setUserAccounts((prev) => prev.map((a) => (a.email.toLowerCase() === email ? { ...a, password: resetPasswordForm.newPassword } : a)));
+    const updatedAccount = { ...account, password: resetPasswordForm.newPassword };
+    try {
+      await saveAccountToApi(updatedAccount);
+      await loadAll();
+    } catch {
+      setMessage("Не удалось обновить пароль на сервере.");
+      return;
+    }
     setResetPasswordForm({ email: "", newPassword: "", confirmPassword: "" });
     setAuthMode("login");
     setMessage("Пароль обновлен. Теперь войдите с новым паролем.");
   };
 
-  const updateProfileSettings = () => {
+  const updateProfileSettings = async () => {
     if (!session?.email) return;
     if (!Validators.emailByRegex(settingsForm.email)) return setSettingsMessage("Введите корректный email.");
     const normalizedPhone = normalizeBelarusPhone(settingsForm.phone);
@@ -706,9 +726,20 @@ function App() {
     if (isEmailBusy) return setSettingsMessage("Эта почта уже занята.");
     const isPhoneBusy = userAccounts.some((a) => normalizeBelarusPhone(a.phone) === normalizedPhone && a.email.toLowerCase() !== session.email.toLowerCase());
     if (isPhoneBusy) return setSettingsMessage("Этот номер уже занят.");
-    setUserAccounts((prev) => prev.map((a) => (a.email.toLowerCase() === session.email.toLowerCase()
-      ? { ...a, email: settingsForm.email.trim(), phone: formatBelarusPhone(normalizedPhone) }
-      : a)));
+    const account = userAccounts.find((a) => a.email.toLowerCase() === session.email.toLowerCase());
+    if (!account) return setSettingsMessage("Аккаунт не найден.");
+    try {
+      await saveAccountToApi({
+        ...account,
+        email: settingsForm.email.trim(),
+        phone: formatBelarusPhone(normalizedPhone),
+        birthDate: settingsForm.birthDate || account.birthDate || ""
+      });
+      await loadAll();
+    } catch {
+      setSettingsMessage("Не удалось обновить профиль на сервере.");
+      return;
+    }
     setSession((prev) => ({ ...prev, email: settingsForm.email.trim() }));
     if (session?.studentName && settingsForm.birthDate) {
       setStudentProfiles((prev) => ({
@@ -722,7 +753,7 @@ function App() {
     setSettingsMessage("Контакты обновлены.");
   };
 
-  const updatePassword = () => {
+  const updatePassword = async () => {
     if (!session?.email) return;
     const account = userAccounts.find((a) => a.email.toLowerCase() === session.email.toLowerCase());
     if (!account) return;
@@ -733,7 +764,13 @@ function App() {
     if (passwordError) return setSettingsMessage(passwordError);
     if (next === account.password) return setSettingsMessage("Новый пароль не должен совпадать со старым.");
     if (next !== passwordForm.confirmPassword) return setSettingsMessage("Подтверждение пароля не совпадает.");
-    setUserAccounts((prev) => prev.map((a) => (a.email.toLowerCase() === session.email.toLowerCase() ? { ...a, password: next } : a)));
+    try {
+      await saveAccountToApi({ ...account, password: next });
+      await loadAll();
+    } catch {
+      setSettingsMessage("Не удалось обновить пароль на сервере.");
+      return;
+    }
     setPasswordForm({ oldPassword: "", newPassword: "", confirmPassword: "" });
     setSettingsMessage("Пароль обновлен.");
   };
@@ -1770,7 +1807,9 @@ function App() {
     ? absences.filter((a) => a.studentName === UiUtils.fullName(myStudent))
     : [];
   const myAvg = session?.role === "student" ? (avgMap[session.studentName] || "нет") : "нет";
-  const myGroup = session?.role === "student" && myStudent ? groups.find((g) => g.number === myStudent.groupNumber) : null;
+  const myGroup = session?.role === "student" && myStudent
+    ? groups.find((g) => String(g.number) === String(myStudent.groupNumber))
+    : null;
   const myGroupMembers = [...(myGroup?.students || [])].sort((a, b) => String(a).localeCompare(String(b), "ru"));
   const selectedAdminGroupMembers = groups.find((g) => String(g.number) === String(stForm.groupNumber))?.students || [];
   const groupSettings = myStudent?.groupNumber ? (groupMeta[String(myStudent.groupNumber)] || {}) : {};
