@@ -40,6 +40,31 @@ function formatBelarusPhone(value) {
   ].filter(Boolean).join("-");
 }
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function sanitizeUserAccounts(rows) {
+  if (!Array.isArray(rows)) return [];
+  const dedupByEmail = new Map();
+  rows.forEach((row, idx) => {
+    const safe = row && typeof row === "object" ? row : {};
+    const email = normalizeEmail(safe.email);
+    if (!email) return;
+    const normalized = {
+      id: safe.id ?? null,
+      fullName: String(safe.fullName || "").trim() || `Пользователь ${idx + 1}`,
+      phone: formatBelarusPhone(safe.phone || "+375"),
+      email,
+      password: String(safe.password || ""),
+      birthDate: String(safe.birthDate || "").trim()
+    };
+    // Keep the latest occurrence for the same email.
+    dedupByEmail.set(email, normalized);
+  });
+  return [...dedupByEmail.values()];
+}
+
 class StorageService {
   getJson(key, fallback) {
     try {
@@ -131,7 +156,7 @@ class AuthService {
     if (!String(form.password || "").trim()) {
       return { ok: false, message: "Введите пароль." };
     }
-    if (accounts.some((a) => a.email.toLowerCase() === form.email.toLowerCase())) {
+    if (accounts.some((a) => normalizeEmail(a.email) === normalizeEmail(form.email))) {
       return { ok: false, message: "Эта почта уже занята." };
     }
     if (accounts.some((a) => normalizeBelarusPhone(a.phone) === normalizedPhone)) {
@@ -158,7 +183,7 @@ class AuthService {
       return (byEmail || byLogin) && a.password === form.password;
     });
     if (!account) return { ok: false, message: "Неверный email или пароль." };
-    const hasTeacherAccess = teacherAccessEmails.some((mail) => mail.toLowerCase() === account.email.toLowerCase());
+    const hasTeacherAccess = teacherAccessEmails.some((mail) => normalizeEmail(mail) === normalizeEmail(account.email));
     if (hasTeacherAccess) {
       return { ok: true, session: { role: "teacher", teacherName: account.fullName, email: account.email } };
     }
@@ -434,7 +459,7 @@ function App() {
     setGroups(g);
     setDisciplines(d);
     setGrades(gr);
-    setUserAccounts(accounts);
+    setUserAccounts(sanitizeUserAccounts(accounts));
   };
 
   useEffect(() => {
@@ -697,7 +722,7 @@ function App() {
 
   const resetPasswordByEmail = async () => {
     const email = resetPasswordForm.email.trim().toLowerCase();
-    const account = userAccounts.find((a) => a.email.toLowerCase() === email);
+    const account = userAccounts.find((a) => normalizeEmail(a.email) === email);
     if (!Validators.emailByRegex(resetPasswordForm.email)) return setMessage("Введите корректный email.");
     if (!account) return setMessage("Почта не зарегистрирована.");
     const passwordError = validatePassword(resetPasswordForm.newPassword, account.email);
@@ -722,11 +747,11 @@ function App() {
     if (!Validators.emailByRegex(settingsForm.email)) return setSettingsMessage("Введите корректный email.");
     const normalizedPhone = normalizeBelarusPhone(settingsForm.phone);
     if (!Validators.phoneByRegex(settingsForm.phone)) return setSettingsMessage("Телефон должен быть в формате +375-25-501-23-91.");
-    const isEmailBusy = userAccounts.some((a) => a.email.toLowerCase() === settingsForm.email.toLowerCase() && a.email.toLowerCase() !== session.email.toLowerCase());
+    const isEmailBusy = userAccounts.some((a) => normalizeEmail(a.email) === normalizeEmail(settingsForm.email) && normalizeEmail(a.email) !== normalizeEmail(session.email));
     if (isEmailBusy) return setSettingsMessage("Эта почта уже занята.");
-    const isPhoneBusy = userAccounts.some((a) => normalizeBelarusPhone(a.phone) === normalizedPhone && a.email.toLowerCase() !== session.email.toLowerCase());
+    const isPhoneBusy = userAccounts.some((a) => normalizeBelarusPhone(a.phone) === normalizedPhone && normalizeEmail(a.email) !== normalizeEmail(session.email));
     if (isPhoneBusy) return setSettingsMessage("Этот номер уже занят.");
-    const account = userAccounts.find((a) => a.email.toLowerCase() === session.email.toLowerCase());
+    const account = userAccounts.find((a) => normalizeEmail(a.email) === normalizeEmail(session.email));
     if (!account) return setSettingsMessage("Аккаунт не найден.");
     try {
       await saveAccountToApi({
@@ -755,7 +780,7 @@ function App() {
 
   const updatePassword = async () => {
     if (!session?.email) return;
-    const account = userAccounts.find((a) => a.email.toLowerCase() === session.email.toLowerCase());
+    const account = userAccounts.find((a) => normalizeEmail(a.email) === normalizeEmail(session.email));
     if (!account) return;
     const next = passwordForm.newPassword;
     if (!passwordForm.oldPassword) return setSettingsMessage("Введите текущий пароль.");
@@ -1421,7 +1446,7 @@ function App() {
     return true;
   };
   const grantTeacherAccess = async (email) => {
-    const account = userAccounts.find((a) => a.email.toLowerCase() === email.toLowerCase());
+    const account = userAccounts.find((a) => normalizeEmail(a.email) === normalizeEmail(email));
     if (!account) return setMessage("Аккаунт не найден.");
     if (teacherAccessEmails.some((m) => m.toLowerCase() === email.toLowerCase())) return setMessage("Доступ уже выдан.");
     const isTeacherInBase = teachers.some((t) => UiUtils.fullName(t).toLowerCase() === account.fullName.toLowerCase());
@@ -1820,7 +1845,7 @@ function App() {
     ? (studentProfiles[session.studentName] || {})
     : {};
   const currentAccount = useMemo(
-    () => userAccounts.find((a) => a.email.toLowerCase() === (session?.email || "").toLowerCase()),
+    () => userAccounts.find((a) => normalizeEmail(a.email) === normalizeEmail(session?.email)),
     [userAccounts, session]
   );
   const scheduleDays = UiUtils.days.slice(0, 6);
@@ -4489,7 +4514,7 @@ function App() {
               <thead><tr><th>ФИО</th><th>Email</th><th>Статус</th><th>Действия</th></tr></thead>
               <tbody>
                 {accessPageRows.map((account, idx) => {
-                  const hasAccess = teacherAccessEmails.some((mail) => mail.toLowerCase() === account.email.toLowerCase());
+                  const hasAccess = teacherAccessEmails.some((mail) => normalizeEmail(mail) === normalizeEmail(account.email));
                   const isTeacher = teachers.some((t) => UiUtils.fullName(t).toLowerCase() === account.fullName.toLowerCase());
                   return (
                     <tr key={`${account.email}-${idx}`}>
