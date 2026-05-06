@@ -44,6 +44,10 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function normalizeFullName(value) {
+  return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
 function sanitizeUserAccounts(rows) {
   if (!Array.isArray(rows)) return [];
   const dedupByEmail = new Map();
@@ -484,6 +488,17 @@ function App() {
   useEffect(() => {
     loadAll().catch(() => setMessage("Не удалось загрузить API. Убедитесь, что backend запущен на :8080."));
   }, []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      Promise.all([api.fetchList("students"), api.fetchList("accounts")])
+        .then(([nextStudents, nextAccounts]) => {
+          setStudents(nextStudents);
+          setUserAccounts(sanitizeUserAccounts(nextAccounts));
+        })
+        .catch(() => {});
+    }, 15000);
+    return () => clearInterval(intervalId);
+  }, []);
   useEffect(() => storage.setJson("userAccounts", userAccounts), [userAccounts]);
   useEffect(() => storage.setJson("studentTheme", studentTheme), [studentTheme]);
   useEffect(() => storage.setJson("gradeLessonMeta", gradeLessonMeta), [gradeLessonMeta]);
@@ -609,8 +624,8 @@ function App() {
     const fullName = `${registerForm.lastName} ${registerForm.firstName} ${registerForm.middleName}`.trim();
     const result = auth.registerUser(userAccounts, students, teachers, { ...registerForm, fullName });
     if (!result.ok) return setMessage(result.message);
+    const existingStudent = students.find((student) => normalizeFullName(UiUtils.fullName(student)) === normalizeFullName(fullName));
     const createdAccount = { ...result.account, birthDate: registerForm.birthDate || "" };
-    const existingStudent = students.find((student) => UiUtils.fullName(student) === fullName);
     const existingAcademic = existingStudent?.groupNumber ? groupAcademicOfNumber(existingStudent.groupNumber) : {};
     const fallbackDisciplineIds = disciplines.slice(0, 2).map((discipline) => discipline.id).filter(Boolean);
     if (!existingStudent) {
@@ -631,23 +646,27 @@ function App() {
       }
     }
     try {
+      const latestStudents = await api.fetchList("students").catch(() => students);
+      const linkedStudent = latestStudents.find((student) => normalizeFullName(UiUtils.fullName(student)) === normalizeFullName(fullName));
+      const canonicalFullName = linkedStudent ? UiUtils.fullName(linkedStudent) : fullName;
+      createdAccount.fullName = canonicalFullName;
       await api.save("accounts", null, createdAccount);
+      setSession({ role: "student", studentName: canonicalFullName, email: createdAccount.email });
     } catch (error) {
       setMessage(error?.message || "Не удалось сохранить аккаунт. Повторите попытку.");
       return;
     }
     setStudentProfiles((prev) => ({
       ...prev,
-      [fullName]: {
-        ...(prev[fullName] || {}),
-        course: existingAcademic.course || prev[fullName]?.course || "",
-        faculty: existingAcademic.faculty || prev[fullName]?.faculty || "",
-        specialty: existingAcademic.specialty || prev[fullName]?.specialty || "",
-        birthDate: registerForm.birthDate || prev[fullName]?.birthDate || ""
+      [createdAccount.fullName]: {
+        ...(prev[createdAccount.fullName] || {}),
+        course: existingAcademic.course || prev[createdAccount.fullName]?.course || "",
+        faculty: existingAcademic.faculty || prev[createdAccount.fullName]?.faculty || "",
+        specialty: existingAcademic.specialty || prev[createdAccount.fullName]?.specialty || "",
+        birthDate: registerForm.birthDate || prev[createdAccount.fullName]?.birthDate || ""
       }
     }));
     await loadAll();
-    setSession({ role: "student", studentName: fullName, email: createdAccount.email });
     setRegisterForm({
       lastName: "",
       firstName: "",
@@ -665,7 +684,7 @@ function App() {
     if (!fullName) return;
     const split = parseFullName(fullName);
     const latestStudents = await api.fetchList("students").catch(() => students);
-    const existingStudent = latestStudents.find((student) => UiUtils.fullName(student) === fullName);
+    const existingStudent = latestStudents.find((student) => normalizeFullName(UiUtils.fullName(student)) === normalizeFullName(fullName));
     const academic = existingStudent?.groupNumber ? groupAcademicOfNumber(existingStudent.groupNumber) : {};
     if (existingStudent?.groupNumber) {
       setStudentProfiles((prev) => ({

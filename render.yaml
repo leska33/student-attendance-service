@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: silverpear
+    name: student
     runtime: docker
     dockerfilePath: ./Dockerfile
     plan: free
