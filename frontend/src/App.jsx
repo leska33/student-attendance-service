@@ -85,6 +85,7 @@ class ApiService {
 
   async fetchList(entity) {
     const res = await fetch(this.endpoint(`/${entity}`));
+    if (!res.ok) throw new Error(`Request failed: GET /${entity} (${res.status})`);
     return res.json();
   }
 
@@ -96,12 +97,14 @@ class ApiService {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    if (!res.ok) throw new Error(`Request failed: ${method} ${url} (${res.status})`);
     if (res.status === 204) return null;
     return res.json();
   }
 
   async remove(entity, id) {
-    await fetch(this.endpoint(`/${entity}/${id}`), { method: "DELETE" });
+    const res = await fetch(this.endpoint(`/${entity}/${id}`), { method: "DELETE" });
+    if (!res.ok) throw new Error(`Request failed: DELETE /${entity}/${id} (${res.status})`);
   }
 }
 
@@ -125,8 +128,8 @@ class AuthService {
     if (!this.validators.emailByRegex(form.email)) {
       return { ok: false, message: "Некорректный email." };
     }
-    if (form.password.length < 4) {
-      return { ok: false, message: "Пароль минимум 4 символа." };
+    if (!String(form.password || "").trim()) {
+      return { ok: false, message: "Введите пароль." };
     }
     if (accounts.some((a) => a.email.toLowerCase() === form.email.toLowerCase())) {
       return { ok: false, message: "Эта почта уже занята." };
@@ -171,7 +174,7 @@ class AuthService {
 }
 
 const storage = new StorageService();
-const api = new ApiService("");
+const api = new ApiService(import.meta.env.VITE_API_URL || "");
 const auth = new AuthService(Validators);
 const ACADEMIC_HOURS_PER_ABSENCE = 2;
 const hasExcuseReason = (reason) => {
@@ -551,6 +554,11 @@ function App() {
     }
     if (!registerForm.birthDate) {
       setMessage("Укажите дату рождения.");
+      return;
+    }
+    const passwordError = validatePassword(registerForm.password, registerForm.email);
+    if (passwordError) {
+      setMessage(passwordError);
       return;
     }
     const fullName = `${registerForm.lastName} ${registerForm.firstName} ${registerForm.middleName}`.trim();
